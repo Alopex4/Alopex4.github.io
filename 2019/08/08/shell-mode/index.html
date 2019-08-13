@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
+<meta name="keywords" content="bash,shopt,login-shell,interactive-shell,tmux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell的配置文件加载顺序">
+<meta property="og:url" content="http://alopex.cc/2019/08/08/shell-mode/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-13T03:42:51.792Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="shell的配置文件加载顺序">
+<meta name="twitter:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/08/08/shell-mode/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>shell的配置文件加载顺序 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/08/08/shell-mode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">shell的配置文件加载顺序
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-08 14:26:58" itemprop="dateCreated datePublished" datetime="2019-08-08T14:26:58+08:00">2019-08-08</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-13 11:42:51" itemprop="dateModified" datetime="2019-08-13T11:42:51+08:00">2019-08-13</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">5.8k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">10 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>如果说<code>bash</code>有什么令人初学者难以理解的, <code>配置文件加载顺序</code>纠纷问题, 必须占据一个席位.</p>
+</blockquote>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+</ul>
+<h2 id="辨清shell和bash"><a href="#辨清shell和bash" class="headerlink" title="辨清shell和bash"></a>辨清<code>shell</code>和<code>bash</code></h2><ul>
+<li><p>什么是<code>shell</code></p>
+<ul>
+<li><code>shell</code>: 是用户和操作系统沟通的桥梁.  </li>
+<li><code>shell</code>是用户接入操作系统的接口, 只有文本的用户接口称为(CLI), 拥有图形的用户接口称为(GUI). 一个现代完整的操作系统主要由<code>系统内核</code>与<code>应用程序</code>两部分组成. 系统内核承担: <code>进程管理</code>,  <code>内存管理</code>, <code>I/O设备管理</code> 以及 <code>系统调用</code> 的责任. 应用程序满足用户操作计算机完成各项任务的需求.</li>
+<li>为了使<code>系统内核</code>能顺利完成任务, 操作系统划分出了<code>内核空间</code>与<code>用户空间</code>, 前者对应<code>系统内核</code>, 后者对应<code>应用程序</code>. 计算机最根本的功能就是运算, 从<strong>内存</strong>中取出数据, 传递到<strong>CPU</strong>, 经过<strong>CPU</strong>加工运算出结果, 通过<strong>I/O总线</strong>按照需求输出. 在这个过程中, 用户有权利提交运算任务到操作系统上, 但无权告诉硬件 数据存放到<strong>内存</strong>的地址编号, <strong>CPU</strong>哪一个时刻进行调度, 选择使用哪一条<strong>I/O总线</strong>进行数据传输, 因为这些操作都被封装到<code>内核空间</code>这个黑盒子中.<br><code>shell</code>正是<code>用户空间</code>与<code>内核空间</code>沟通的隧道. 无论是<code>CLI</code>键入应用命令, 或是<code>GUI</code>的鼠标的操作, 无不例外是将用户得输入从<code>用户空间</code>通过相关得库(如果有), 传递给<code>系统调用</code>, 接着到达<code>内核空间</code>, 经硬件加工, 返回运算结果, 输出到指定目标.</li>
+</ul>
+</li>
+<li><p>什么是<code>unix shell</code></p>
+<ul>
+<li><p><code>unix shell</code>: 既是一个命令行解释器(CLI), 同时是一门编程语言.</p>
+</li>
+<li><p>作为命令行解释器, <code>unix shell</code>提供了丰富的<code>GNU</code>系统工具, 作为一门编程语言, <code>unix shell</code>允许多个<code>GNU</code>系统工具结合使用. 用户通常使用<code>终端模拟器</code>与<code>unxi shell</code>进行交互, 较为著名的<code>终端模拟器</code>有: <code>putty</code>,<code>Secure CRT</code>和<code>xshll</code>等. <code>unix shell</code>普遍提供如<code>文件通配符</code>, <code>管道符</code>, <code>here文档</code>, <code>命令替换</code>, <code>变量</code>, <code>流程控制</code>, <code>状态测试</code> 以及 <code>迭代</code>等功能.</p>
+</li>
+<li><p>文件通配符 ( *.py, file?.py, file[13].py)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls *.py</span><br><span class="line">&gt;&gt; file1.py  file2.py  file3.py</span><br><span class="line"></span><br><span class="line">$ ls file?.py</span><br><span class="line">&gt;&gt; file1.py  file2.py  file3.py</span><br><span class="line"></span><br><span class="line">$ ls file[13].py</span><br><span class="line">&gt;&gt; file1.py  file3.py</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>管道符 (|)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 提取ip命令的 IP地址</span></span><br><span class="line">$ ip a s | grep <span class="string">'inet '</span> | grep -v <span class="string">'127.0.0.1'</span> | xargs  | cut -d <span class="string">' '</span> -f2 </span><br><span class="line">&gt;&gt; 192.168.122.200/24</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>here文档 (cat &lt;&lt; EOF)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># filename --&gt; here.sh</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF</span><br><span class="line">1. This is a Here document</span><br><span class="line">2. Do you want know more</span><br><span class="line">3. Click this link <span class="string">'https://www.wikiwand.com/en/Here_document'</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">$ sh here.sh</span><br><span class="line">&gt;&gt; 1. This is a Here document</span><br><span class="line">   2. Do you want know more</span><br><span class="line">   3. Click this link <span class="string">'https://www.wikiwand.com/en/Here_document'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令替换 (`` / $())</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> $(grep root /etc/passwd）</span><br><span class="line"><span class="comment"># 等价于</span></span><br><span class="line">$ <span class="built_in">echo</span> `grep root /etc/passwd`</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>变量 (name=’hello’)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印出用户名</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$USER</span></span><br><span class="line">&gt;&gt; user</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印出上一个程序执行状态</span></span><br><span class="line">$ <span class="built_in">echo</span> $?</span><br><span class="line">&gt;&gt; 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>流程控制 (for..do..done)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印出 1 - 10 的整数, 利用换行符分割</span></span><br><span class="line">$ <span class="keyword">for</span> i <span class="keyword">in</span> `seq 1 10`; <span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$&#123;i&#125;</span>; <span class="keyword">done</span></span><br><span class="line">&gt;&gt; 1</span><br><span class="line">&gt;&gt; 2</span><br><span class="line">&gt;&gt; ..</span><br><span class="line">&gt;&gt; 10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>状态测试 ([[]]/test)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果/etc/passwd 是文件打印出 `file`, 否则打印 `dirctory`</span></span><br><span class="line">$  <span class="keyword">if</span> [[ -f /etc/passwd ]]; <span class="keyword">then</span>  <span class="built_in">echo</span> <span class="string">'file'</span>; <span class="keyword">else</span> <span class="built_in">echo</span> <span class="string">'dirctory'</span>; <span class="keyword">fi</span></span><br><span class="line">&gt;&gt; file</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>迭代</p>
+  <figure class="highlight bash"><figcaption><span>(for i in '1 2 3')</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">for</span> i <span class="keyword">in</span> 1 2 3 ; <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">" num: <span class="variable">$&#123;i&#125;</span>"</span>; <span class="keyword">done</span></span><br><span class="line">&gt;&gt; num: 1</span><br><span class="line">&gt;&gt; num: 2</span><br><span class="line">&gt;&gt; num: 3</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>什么是<code>bash</code></p>
+<ul>
+<li><code>bash</code>的全称是(Bourne-Again SHell), 这个名字十分生动, 说明了它是<code>Bourne SHell</code>的继任者, 而<code>Bourne SHell</code>是一款类<code>unix shell</code>的产品. 作为命令交互接口.</li>
+<li>事实上, <code>shell</code>的种类有不少, 其中主流分之有三支<code>Thompson shell --  Ken Thompson</code>, <code>Bourne shell -- Stephen Bourne</code> 和 <code>C shell</code>. 因为开发理念不同, 这些<code>shell</code>呈现出不同的姿态, 降低资源占用的<code>dash</code>, 提倡友好交互的<code>fish</code>, 为超越Bourne-shell而生的<code>bash</code>, 现代化具有开创性的<code>csh/tcsh</code>.</li>
+<li><code>shell</code>的世界百花齐放, 但唯独<code>bash</code>坐上了<code>Linux</code>和<code>macOS</code>的快车, 成为了系统默认<code>shell</code>. 名气居高不下, 因此不少学习linux的不少初学者, 甚至会误认为<code>bash</code>就是<code>shell</code>.</li>
+</ul>
+</li>
+</ul>
+<h1 id="具体解析"><a href="#具体解析" class="headerlink" title="具体解析"></a>具体解析</h1><h2 id="bash配置文件分类"><a href="#bash配置文件分类" class="headerlink" title="bash配置文件分类"></a><code>bash</code>配置文件分类</h2><ul>
+<li>全局配置文件<ul>
+<li>/etc/profile<blockquote>
+<p>用户用于设置环境变量的地方, 由于用户可以拥有多个<code>shell</code>, 但环境变量需要存储到同一个地方中. 特殊的地方在与该文件,对所有的<code>shell</code>都适用(<code>zsh</code>, <code>tcsh</code>, <code>bash</code>), 是用户首次登录时执行的文件, 用于获得系统信息</p>
+</blockquote>
+</li>
+<li>/ect/profile.d/*.sh<blockquote>
+<p><code>shell</code>启动的过程中, 系统的一些软件, 通过执行脚本, 进行初始化</p>
+</blockquote>
+</li>
+<li>/etc/bashrc<blockquote>
+<p> <code>bash</code>的专属的启动执行文件, <code>rc</code>表示(run commands), rc后缀常被用于含有初始化命令的文件中, 初始化的内容包括<code>bash命令的补齐</code>, <code>bash别名</code>, <code>bash颜色编码</code>等</p>
+</blockquote>
+</li>
+<li>全局配置系统启动bash时加载配置, 一般情况下不作修改.</li>
+</ul>
+</li>
+<li>个人配置文件<ul>
+<li>~/.bash_profile <blockquote>
+<p>专属个人的环境变量设置, 与<code>/etc/profile</code>相对应</p>
+</blockquote>
+</li>
+<li>~/.bashrc<blockquote>
+<p>专属个人的<code>bash</code>设置, 每当登录和启动一个新的shell的时候将会执行, 与<code>/etc/bashrc</code>相对应</p>
+</blockquote>
+</li>
+<li>个性化配置文件, 可添加<code>alias配置</code>, <code>自定义函数</code>, <code>自定义命令提示符</code>, 应保存于此, 可随意修改</li>
+</ul>
+</li>
+</ul>
+<h2 id="交互-非交互"><a href="#交互-非交互" class="headerlink" title="交互/非交互"></a>交互/非交互</h2><ul>
+<li><p>交互型shell</p>
+<ul>
+<li>模式特点: <code>shell</code>等待用户的输入, 执行用户键入的命令, 返回执行结果至指定地方(默认打印到当前屏幕), 继续等待用户输入, 直至用户退出.</li>
+<li>常见场景: 通过<code>ssh</code>登录至某台服务器</li>
+</ul>
+</li>
+<li><p>非交互型shell</p>
+<ul>
+<li>模式特点: <code>shell</code>通过读取存储在文件中的命令, 解析执行. 当读取到文件末尾得EOF时, 退出<code>shell</code>.</li>
+<li>常见场景: 使用<code>sh script.sh</code>执行脚本, <code>fork</code>出来的<code>子shell</code></li>
+</ul>
+</li>
+<li><p>查看当前shell – 交互/非交互</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一</span></span><br><span class="line">$ <span class="built_in">echo</span> $- | grep -q <span class="string">'i'</span> &amp;&amp; <span class="built_in">echo</span> <span class="string">'interactive'</span> || <span class="built_in">echo</span> <span class="string">'non-interactive'</span></span><br><span class="line">&gt;&gt; interactive</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二</span></span><br><span class="line"><span class="comment"># on--&gt; 登录 / off--&gt; 非登录</span></span><br><span class="line">$ <span class="built_in">shopt</span> <span class="string">'interactive_comments'</span></span><br><span class="line">&gt;&gt; interactive_comments    on</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="登录-非登录"><a href="#登录-非登录" class="headerlink" title="登录/非登录"></a>登录/非登录</h2><ul>
+<li><p>登录型shell</p>
+<ul>
+<li>模式特点: 需要用户名和密码才能进入<code>shell</code></li>
+<li>常见场景: 启用<code>--login</code>选项生成的<code>shell</code></li>
+</ul>
+</li>
+<li><p>非登录型shell</p>
+<ul>
+<li>模式特点: 不需要用户名和密码即可进入<code>shell</code> </li>
+<li>常见场景: 使用<code>bash</code>打开新的shell, GUI界面下打开”终端”(terminal)</li>
+</ul>
+</li>
+<li><p>查看当前shell – 登录/非登录</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># on--&gt; 登录 / off--&gt; 非登录</span></span><br><span class="line">$ <span class="built_in">shopt</span> login_shell</span><br><span class="line">&gt;&gt; login_shell     on</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="不同场景下执行顺序"><a href="#不同场景下执行顺序" class="headerlink" title="不同场景下执行顺序"></a>不同场景下执行顺序</h2><ul>
+<li><p>登录/交互shell</p>
+<ol>
+<li>/etc/<code>profile</code></li>
+<li>/etc/profile.d/<code>*.sh</code></li>
+<li>/etc/<code>bashrc</code></li>
+<li>~/<code>.bash_profile</code></li>
+<li>~/<code>.bashrc</code></li>
+</ol>
+</li>
+<li><p>登录/非交互shell</p>
+<ol>
+<li>/etc/<code>profile</code></li>
+<li>/etc/profile.d/<code>*.sh</code></li>
+<li>/etc/<code>bashrc</code></li>
+<li>~/<code>.bashrc</code></li>
+</ol>
+</li>
+<li><p>非登录shell</p>
+<ol>
+<li>/etc/<code>bashrc</code></li>
+<li>/etc/profile.d/<code>*.sh</code></li>
+<li>~/<code>.bashrc</code></li>
+</ol>
+</li>
+<li><p>序号同时表明运行顺序, 但实际运行过程, 往往并是非线性. 如<code>/etc/profile</code>脚本执行后, 将会去调度<code>/etc/profile.d/*.sh</code>进行执行. 当<code>/etc/profile.d/*.sh</code>运行结束后, <code>/etc/profile</code>才会执行</p>
+</li>
+</ul>
+<h1 id="延展内容"><a href="#延展内容" class="headerlink" title="延展内容"></a>延展内容</h1><h2 id="“-”含义"><a href="#“-”含义" class="headerlink" title="“${-}”含义"></a>“${-}”含义</h2><ul>
+<li><p>${-}/$- 是<code>bash</code>的系统变量, 作用在于显示出<code>当前shell</code>的<code>flag</code>设定参数.</p>
+</li>
+<li><p>查询<code>flag</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;-&#125;</span></span><br><span class="line">&gt;&gt; himBH</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>查询结果解析</p>
+<ul>
+<li><code>h</code> (hashall):<blockquote>
+<p>令bash记住通过PATH查询到的命令, 因此我们输入重复命令无需再查PATH</p>
+</blockquote>
+</li>
+<li><code>i</code> (interactive): <blockquote>
+<p>令shell可以进行交互, 因此我们能够键入输出返回结果</p>
+</blockquote>
+</li>
+<li><code>m</code> (monitor): <blockquote>
+<p>令shell可以控制jobs(作业), 因此我们能将作业放到后台</p>
+</blockquote>
+</li>
+<li><code>B</code> (brace expand): <blockquote>
+<p>令shell支持括号{}扩展, 因此我们能使用 mkdir file{1, 2}</p>
+</blockquote>
+</li>
+<li><code>H</code> (history expand):<blockquote>
+<p>令shell支持历史记录, 因此我们可以通过上下方向按键翻动历史命令, !#(history-number)执行命令</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p><strong>可能出现查询结果</strong></p>
+<ul>
+<li><p><code>s</code> :</p>
+<blockquote>
+<p>-s如果存在-s选项或者在处理选项后没有参数，则从标准输入读取命令, 因此在调用交互式shell时可设置位置参数。</p>
+</blockquote>
+</li>
+<li><p><code>e</code> (errexit):</p>
+<blockquote>
+<p>当输入的命令错误时, 立刻退出<code>bash</code></p>
+</blockquote>
+</li>
+<li><p><code>C</code> (noclobber):</p>
+<blockquote>
+<p>禁止使用重定向来覆盖文件</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>修改<code>flag</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># set +flag --&gt; 关闭`flag`</span></span><br><span class="line"><span class="comment"># set -flag --&gt; 启用`flag`</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看history记录的最后一条命令</span></span><br><span class="line">$ <span class="built_in">history</span> | head -n 1</span><br><span class="line">&gt;&gt; 1234 ping -c 2 www.qq.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前`flag`参数</span></span><br><span class="line">$ <span class="built_in">echo</span> $-</span><br><span class="line">&gt;&gt; himBH</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 H flag 启用后的特性</span></span><br><span class="line">$ !1234</span><br><span class="line">&gt;&gt; ping -c 2 www.qq.com</span><br><span class="line">   PING www-server-name (www-server-ip) 56(84) bytes of data.</span><br><span class="line">   64 bytes from www.server-name (www.server-ip): icmp_seq=1 ttl=55 time=5.17 ms</span><br><span class="line">   64 bytes from www.server-name (www.server-ip): icmp_seq=2 ttl=55 time=4.31 ms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭 H flag</span></span><br><span class="line">$ <span class="built_in">set</span> +H</span><br><span class="line"></span><br><span class="line"><span class="comment"># 无法执行</span></span><br><span class="line">$ !1234</span><br><span class="line">&gt;&gt; -bash: !1234: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="tmux小发现"><a href="#tmux小发现" class="headerlink" title="tmux小发现"></a>tmux小发现</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://tanmaync.wordpress.com/2017/10/02/install-screenfetch-centos7-rhel7/" target="_blank" rel="noopener">System Information – Install Screenfetch in CentOS/ Red Hat 7 – Tanmay Chandane</a> </li>
+<li><a href="https://www.techopedia.com/definition/3277/kernel" target="_blank" rel="noopener">What is Kernel? - Definition from Techopedia</a>  </li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/12/user_space_vs_kernel_space.html" target="_blank" rel="noopener">User space 与 Kernel space - 阮一峰的网络日志</a>  </li>
+<li><a href="https://www.gnu.org/software/bash/manual/bash.html#Comments" target="_blank" rel="noopener">Bash Reference Manual</a>  </li>
+<li><a href="https://www.wikiwand.com/en/Unix_shell" target="_blank" rel="noopener">Unix shell - Wikiwand</a>  </li>
+<li><a href="https://unix.stackexchange.com/questions/86012/what-is-the-purpose-of-the-hash-command" target="_blank" rel="noopener">bash - What is the purpose of the hash command? - Unix &amp; Linux Stack Exchange</a>  </li>
+<li><a href="https://www.chainsawonatireswing.com/2012/02/02/find-out-what-your-unix-shells-flags-are-then-change-them/" target="_blank" rel="noopener">Find out what your UNIX shell’s flags are &amp; then change them</a>  </li>
+<li><a href="http://fliplinux.com/s-5.html" target="_blank" rel="noopener">Что такое «s» внутри «$ -»? Flip Linux</a>  </li>
+<li><a href="https://www.wikiwand.com/en/Run_commands" target="_blank" rel="noopener">Run commands - Wikiwand</a>  </li>
+<li><a href="https://zhuanlan.zhihu.com/p/25944849" target="_blank" rel="noopener">/etc/profile，/etc/bashrc与~/.bashrc的区别及联系</a>  </li>
+<li><a href="http://blog.itpub.net/27040306/viewspace-732343/" target="_blank" rel="noopener">Linux下profile和bashrc四种的区别_ITPUB博客</a>  </li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/bash/" rel="tag"># bash</a>
+          
+            <a href="/tags/shopt/" rel="tag"># shopt</a>
+          
+            <a href="/tags/login-shell/" rel="tag"># login-shell</a>
+          
+            <a href="/tags/interactive-shell/" rel="tag"># interactive-shell</a>
+          
+            <a href="/tags/tmux/" rel="tag"># tmux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/13/execute-shell/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辨清shell和bash"><span class="nav-number">2.2.</span> <span class="nav-text">辨清shell和bash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体解析"><span class="nav-number">3.</span> <span class="nav-text">具体解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash配置文件分类"><span class="nav-number">3.1.</span> <span class="nav-text">bash配置文件分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交互-非交互"><span class="nav-number">3.2.</span> <span class="nav-text">交互/非交互</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录-非登录"><span class="nav-number">3.3.</span> <span class="nav-text">登录/非登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不同场景下执行顺序"><span class="nav-number">3.4.</span> <span class="nav-text">不同场景下执行顺序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#延展内容"><span class="nav-number">4.</span> <span class="nav-text">延展内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#“-”含义"><span class="nav-number">4.1.</span> <span class="nav-text">“${-}”含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tmux小发现"><span class="nav-number">4.2.</span> <span class="nav-text">tmux小发现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">6k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">10 分钟</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
