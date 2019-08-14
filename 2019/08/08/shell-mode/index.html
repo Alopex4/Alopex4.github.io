@@ -94,18 +94,20 @@
   };
 </script>
 
-  <meta name="description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
-<meta name="keywords" content="bash,login-shell,interactive-shell,shopt,tmux">
+  <meta name="description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入操">
+<meta name="keywords" content="bash,login-shell,interactive-shell,shopt">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shell的配置文件加载顺序">
 <meta property="og:url" content="http://alopex.cc/2019/08/08/shell-mode/index.html">
 <meta property="og:site_name" content="Alopex">
-<meta property="og:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
+<meta property="og:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入操">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-13T03:45:20.445Z">
+<meta property="og:image" content="https://i.stack.imgur.com/WFliw.png">
+<meta property="og:updated_time" content="2019-08-14T01:14:16.991Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="shell的配置文件加载顺序">
-<meta name="twitter:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入">
+<meta name="twitter:description" content="引言: 如果说bash有什么令人初学者难以理解的, 配置文件加载顺序纠纷问题, 必须占据一个席位.  前置知识系统基本信 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  辨清shell和bash 什么是shell  shell: 是用户和操作系统沟通的桥梁.   shell是用户接入操">
+<meta name="twitter:image" content="https://i.stack.imgur.com/WFliw.png">
 
 
 
@@ -377,7 +379,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-13 11:45:20" itemprop="dateModified" datetime="2019-08-13T11:45:20+08:00">2019-08-13</time>
+                <time title="修改时间：2019-08-14 09:14:16" itemprop="dateModified" datetime="2019-08-14T09:14:16+08:00">2019-08-14</time>
               </span>
             
           
@@ -427,7 +429,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">5.8k</span>
+              <span title="本文字数">5.9k</span>
             </span>
           
 
@@ -461,7 +463,7 @@
         <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
 <p>如果说<code>bash</code>有什么令人初学者难以理解的, <code>配置文件加载顺序</code>纠纷问题, 必须占据一个席位.</p>
 </blockquote>
-<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信"><a href="#系统基本信" class="headerlink" title="系统基本信"></a>系统基本信</h2><ul>
 <li>OS: CentOS 6.7 (Final)</li>
 <li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
 <li>Shell: bash 4.1.2</li>
@@ -508,7 +510,7 @@
 </li>
 <li><p>什么是<code>bash</code></p>
 <ul>
-<li><code>bash</code>的全称是(Bourne-Again SHell), 这个名字十分生动, 说明了它是<code>Bourne SHell</code>的继任者, 而<code>Bourne SHell</code>是一款类<code>unix shell</code>的产品. 作为命令交互接口.</li>
+<li><code>bash</code>的全称是(Bourne-Again SHell), 这个名字十分生动, 说明了它是<code>Bourne SHell</code>的继任者, 而<code>Bourne SHell</code>是一款类<code>unix shell</code>的产品, 作为命令交互接口.</li>
 <li>事实上, <code>shell</code>的种类有不少, 其中主流分之有三支<code>Thompson shell --  Ken Thompson</code>, <code>Bourne shell -- Stephen Bourne</code> 和 <code>C shell</code>. 因为开发理念不同, 这些<code>shell</code>呈现出不同的姿态, 降低资源占用的<code>dash</code>, 提倡友好交互的<code>fish</code>, 为超越Bourne-shell而生的<code>bash</code>, 现代化具有开创性的<code>csh/tcsh</code>.</li>
 <li><code>shell</code>的世界百花齐放, 但唯独<code>bash</code>坐上了<code>Linux</code>和<code>macOS</code>的快车, 成为了系统默认<code>shell</code>. 名气居高不下, 因此不少学习linux的不少初学者, 甚至会误认为<code>bash</code>就是<code>shell</code>.</li>
 </ul>
@@ -566,13 +568,13 @@
 <li><p>登录型shell</p>
 <ul>
 <li>模式特点: 需要用户名和密码才能进入<code>shell</code></li>
-<li>常见场景: 启用<code>--login</code>选项生成的<code>shell</code></li>
+<li>常见场景: 启用<code>--login</code>选项生成的<code>shell</code>, 如<code>su --login username</code>切换用户</li>
 </ul>
 </li>
 <li><p>非登录型shell</p>
 <ul>
 <li>模式特点: 不需要用户名和密码即可进入<code>shell</code> </li>
-<li>常见场景: 使用<code>bash</code>打开新的shell, GUI界面下打开”终端”(terminal)</li>
+<li>常见场景: 使用<code>bash</code>打开新的shell, GUI界面下打开”终端”(terminal), <code>su username</code> 切换用户时</li>
 </ul>
 </li>
 <li><p>查看当前shell – 登录/非登录</p>
@@ -605,8 +607,10 @@
 <li>~/<code>.bashrc</code></li>
 </ol>
 </li>
-<li><p>序号同时表明运行顺序, 但实际运行过程, 往往并是非线性. 如<code>/etc/profile</code>脚本执行后, 将会去调度<code>/etc/profile.d/*.sh</code>进行执行. 当<code>/etc/profile.d/*.sh</code>运行结束后, <code>/etc/profile</code>才会执行</p>
-</li>
+</ul>
+<h2 id="总结关系图"><a href="#总结关系图" class="headerlink" title="总结关系图"></a>总结关系图</h2><p><img src="https://i.stack.imgur.com/WFliw.png" alt="关系图"></p>
+<ul>
+<li>序号同时表明运行顺序, 但实际运行过程, 往往并是非线性. 如<code>/etc/profile</code>脚本执行后, 将会去调度<code>/etc/profile.d/*.sh</code>进行执行. 当<code>/etc/profile.d/*.sh</code>运行结束后, <code>/etc/profile</code>才会执行</li>
 </ul>
 <h1 id="延展内容"><a href="#延展内容" class="headerlink" title="延展内容"></a>延展内容</h1><h2 id="“-”含义"><a href="#“-”含义" class="headerlink" title="“${-}”含义"></a>“${-}”含义</h2><ul>
 <li><p>${-}/$- 是<code>bash</code>的系统变量, 作用在于显示出<code>当前shell</code>的<code>flag</code>设定参数.</p>
@@ -665,7 +669,7 @@
 
 </li>
 </ul>
-<h2 id="tmux小发现"><a href="#tmux小发现" class="headerlink" title="tmux小发现"></a>tmux小发现</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://tanmaync.wordpress.com/2017/10/02/install-screenfetch-centos7-rhel7/" target="_blank" rel="noopener">System Information – Install Screenfetch in CentOS/ Red Hat 7 – Tanmay Chandane</a> </li>
 <li><a href="https://www.techopedia.com/definition/3277/kernel" target="_blank" rel="noopener">What is Kernel? - Definition from Techopedia</a>  </li>
 <li><a href="http://www.ruanyifeng.com/blog/2016/12/user_space_vs_kernel_space.html" target="_blank" rel="noopener">User space 与 Kernel space - 阮一峰的网络日志</a>  </li>
@@ -677,6 +681,7 @@
 <li><a href="https://www.wikiwand.com/en/Run_commands" target="_blank" rel="noopener">Run commands - Wikiwand</a>  </li>
 <li><a href="https://zhuanlan.zhihu.com/p/25944849" target="_blank" rel="noopener">/etc/profile，/etc/bashrc与~/.bashrc的区别及联系</a>  </li>
 <li><a href="http://blog.itpub.net/27040306/viewspace-732343/" target="_blank" rel="noopener">Linux下profile和bashrc四种的区别_ITPUB博客</a>  </li>
+<li><a href="https://zhuanlan.zhihu.com/p/47819029" target="_blank" rel="noopener">千万别混淆 Bash/Zsh 的四种运行模式</a></li>
 </ul>
 
       
@@ -715,8 +720,6 @@
             <a href="/tags/interactive-shell/" rel="tag"># interactive-shell</a>
           
             <a href="/tags/shopt/" rel="tag"># shopt</a>
-          
-            <a href="/tags/tmux/" rel="tag"># tmux</a>
           
         </div>
       
@@ -859,7 +862,7 @@
         
           
         
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -916,7 +919,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辨清shell和bash"><span class="nav-number">2.2.</span> <span class="nav-text">辨清shell和bash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体解析"><span class="nav-number">3.</span> <span class="nav-text">具体解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash配置文件分类"><span class="nav-number">3.1.</span> <span class="nav-text">bash配置文件分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交互-非交互"><span class="nav-number">3.2.</span> <span class="nav-text">交互/非交互</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录-非登录"><span class="nav-number">3.3.</span> <span class="nav-text">登录/非登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不同场景下执行顺序"><span class="nav-number">3.4.</span> <span class="nav-text">不同场景下执行顺序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#延展内容"><span class="nav-number">4.</span> <span class="nav-text">延展内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#“-”含义"><span class="nav-number">4.1.</span> <span class="nav-text">“${-}”含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tmux小发现"><span class="nav-number">4.2.</span> <span class="nav-text">tmux小发现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辨清shell和bash"><span class="nav-number">2.2.</span> <span class="nav-text">辨清shell和bash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体解析"><span class="nav-number">3.</span> <span class="nav-text">具体解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash配置文件分类"><span class="nav-number">3.1.</span> <span class="nav-text">bash配置文件分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交互-非交互"><span class="nav-number">3.2.</span> <span class="nav-text">交互/非交互</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录-非登录"><span class="nav-number">3.3.</span> <span class="nav-text">登录/非登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不同场景下执行顺序"><span class="nav-number">3.4.</span> <span class="nav-text">不同场景下执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结关系图"><span class="nav-number">3.5.</span> <span class="nav-text">总结关系图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#延展内容"><span class="nav-number">4.</span> <span class="nav-text">延展内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#“-”含义"><span class="nav-number">4.1.</span> <span class="nav-text">“${-}”含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
