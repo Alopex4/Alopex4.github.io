@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: linux的用户管理设计十分精巧, 每一个命令分工合作, 本文将对常用命令选项选项进行讲解, 并且交叉补充一些易于混淆的知识点.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  主机/终端 资源总是有限的, 使用者普遍希望提高资源的利用率. 正因如此在C">
+<meta name="keywords" content="multi-user">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux用户管理知识汇总">
+<meta property="og:url" content="http://alopex.cc/2019/08/15/user-manage/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: linux的用户管理设计十分精巧, 每一个命令分工合作, 本文将对常用命令选项选项进行讲解, 并且交叉补充一些易于混淆的知识点.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  主机/终端 资源总是有限的, 使用者普遍希望提高资源的利用率. 正因如此在C">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-18T13:00:43.379Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux用户管理知识汇总">
+<meta name="twitter:description" content="引言: linux的用户管理设计十分精巧, 每一个命令分工合作, 本文将对常用命令选项选项进行讲解, 并且交叉补充一些易于混淆的知识点.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  主机/终端 资源总是有限的, 使用者普遍希望提高资源的利用率. 正因如此在C">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/08/15/user-manage/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>linux用户管理知识汇总 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/08/15/user-manage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux用户管理知识汇总
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-15 18:22:18" itemprop="dateCreated datePublished" datetime="2019-08-15T18:22:18+08:00">2019-08-15</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-18 21:00:43" itemprop="dateModified" datetime="2019-08-18T21:00:43+08:00">2019-08-18</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/system/" itemprop="url" rel="index"><span itemprop="name">system</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/system/comprehension/" itemprop="url" rel="index"><span itemprop="name">comprehension</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">6.9k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">12 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p><code>linux</code>的用户管理设计十分精巧, 每一个命令分工合作, 本文将对常用命令选项选项进行讲解,<br> 并且交叉补充一些易于混淆的知识点.</p>
+</blockquote>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+</ul>
+<h2 id="主机-终端"><a href="#主机-终端" class="headerlink" title="主机/终端"></a>主机/终端</h2><ul>
+<li>资源总是有限的, 使用者普遍希望提高资源的利用率. 正因如此在<code>CPU</code>计算资源特别缺乏的计算机<code>开荒时代</code>,</li>
+<li>为了使造价高昂且稀缺的计算资源得到充分利用, 计算机被划分为了两个部分<code>主机</code>和<code>终端</code></li>
+<li>主机是计算机的核心部件, 它包含着<code>CPU</code>与<code>内存</code>在内的硬件资源, 运行着一个操作系统</li>
+<li>终端一般由<code>键盘</code>和<code>屏幕</code>组成的输入输入设备, 通过网络终端可以和主机进行连接, 进而用上主机的计算存储资源</li>
+</ul>
+<h2 id="多用户系统-multi-user-OS"><a href="#多用户系统-multi-user-OS" class="headerlink" title="多用户系统(multi-user OS)"></a>多用户系统(multi-user OS)</h2><ul>
+<li><code>主机/终端</code>的结构, 决定了在主机端上的操作系统, 必须实现多用户的接入, 这个功能就是现在的<code>多用户操作系统</code></li>
+<li>在实操上, 多个用户可以通过<code>终端</code>使用同一台计算机, 执行所需操作</li>
+<li>在本质上, 系统为每一位<code>终端</code>用户提供固定的时间片, 并照预设时间片轮流为用户服务</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户基本知识"><a href="#用户基本知识" class="headerlink" title="用户基本知识"></a>用户基本知识</h3><ul>
+<li><p>用户也被称为<code>账户</code>, 它可以由数字和字母字符组成, 最小长度为1个字符, 最大长度为32字符</p>
+</li>
+<li><p>用户可分为<code>系统管理员</code>,<code>系统用户</code>和<code>一般用户</code></p>
+</li>
+<li><p>系统管理员用户: 也称为root, 具有一切的操作权限</p>
+</li>
+<li><p>系统用户: 与一般用户做区分, 一般被<code>系统服务</code>所使用, 软件安装时自动创建居多, 无登录shell居多</p>
+</li>
+<li><p>一般用户: 一般是真实的<code>用户</code>(人), 用户主动创建居多, 一般设置登录shell</p>
+</li>
+<li><p>用户名主要是便于人们记忆, 而操作系统更为敏感, 因此<code>用户ID</code>(UID)才是操作系统最关心的标识符</p>
+</li>
+<li><p>一个用户名会对应一个<code>用户ID</code>, 用户ID有特殊的含义</p>
+<table>
+<thead>
+<tr>
+<th align="center">id 范围</th>
+<th align="center">用户</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">系统管理员(root)</td>
+</tr>
+<tr>
+<td align="center">1 ~ 499</td>
+<td align="center">保留系统使用</td>
+</tr>
+<tr>
+<td align="center">500 ~ 65535</td>
+<td align="center">一般用户</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h3 id="用户创建-删除-修改-查看操作"><a href="#用户创建-删除-修改-查看操作" class="headerlink" title="用户创建/删除/修改/查看操作"></a>用户创建/删除/修改/查看操作</h3><h4 id="用户创建-useradd"><a href="#用户创建-useradd" class="headerlink" title="用户创建 useradd"></a>用户创建 useradd</h4><ul>
+<li><p>查看创建用户的默认配置 (读取的文件是 /etc/default/useradd)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ useradd -D</span><br><span class="line">&gt;&gt; GROUP=100        <span class="comment"># 如果useradd没有指定组, 并且/etc/login.defs中的`USERGROUPS_ENAB`为no</span></span><br><span class="line">                                  <span class="comment"># 或者useradd使用了-N选项时, 此时该参数生效</span></span><br><span class="line">&gt;&gt; HOME=/home       <span class="comment"># 默认home目录的前缀, 用户真正家目录 /home/USERNAME</span></span><br><span class="line">&gt;&gt; INACTIVE=-1      <span class="comment"># 用户的密码失效 用户保留日期</span></span><br><span class="line">                                  <span class="comment"># -1 --&gt; 永不失效</span></span><br><span class="line">                                  <span class="comment"># 0 --&gt; 立即失效</span></span><br><span class="line">                                  <span class="comment"># #(非负数): 用户密码失效后, 依然保留#天使用</span></span><br><span class="line">&gt;&gt; EXPIRE=          <span class="comment">#　用户被停用的日期</span></span><br><span class="line">&gt;&gt; SHELL=/bin/bash  <span class="comment"># 默认的she家目录的内容</span></span><br><span class="line">&gt;&gt; SKEL=/etc/skel   <span class="comment"># 模板文件目录</span></span><br><span class="line"></span><br><span class="line">&gt;&gt; CREATE_MAIL_SPOOL=yes  <span class="comment"># 是否创建邮件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 命令修改默认配置 (默认shell)</span></span><br><span class="line">$ useradd -D -s /bin//sh</span><br><span class="line">$ grep <span class="string">'SHELL'</span> /etc/default/useradd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用户创建常用模板</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ useradd -s &lt;SHELL&gt; -m -d &lt;HomeDir&gt; -g &lt;Group&gt; UserName</span><br><span class="line"><span class="comment"># -s: &lt;shell/path&gt; 登录使用的shell</span></span><br><span class="line"><span class="comment"># -m: 如果用户同名家目录不存在则创建该目录</span></span><br><span class="line"><span class="comment"># -d &lt;homeDir&gt;: 家目录名称</span></span><br><span class="line"><span class="comment"># -ｇ &lt;group-name or group ID&gt;: 用户组名字／用户组ID</span></span><br><span class="line"><span class="comment"># UserName: 登录用户名</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项解析</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -c: 为用户设置注释 (将在/etc/passwd 第五项中出现)</span></span><br><span class="line"><span class="comment"># -e YYYY-MM-DD: 设置用户失效时间</span></span><br><span class="line"><span class="comment"># -f INACTIVE: 超过失效日期后, 多少天用户无法登录 0-&gt;立即失效 -1-&gt;永不失效</span></span><br><span class="line"><span class="comment"># -G group1, group2 .. : 添加到用户组xx, xx</span></span><br><span class="line"><span class="comment"># -k SKEL_DIR: 模板目录, 将模板下的文件复制之到家目录下</span></span><br><span class="line"><span class="comment"># -l: 不将用户收录如lastlog 和 faillog 的数据库中</span></span><br><span class="line"><span class="comment"># -M: 不创建家目录</span></span><br><span class="line"><span class="comment"># -N: 不设置用户组</span></span><br><span class="line"><span class="comment"># -p PASSWORD: 设置密码(不推荐) 因为这将会是明文的 可通过history 查看</span></span><br><span class="line"><span class="comment"># -r: 设置系统用户 (没有家目录)</span></span><br><span class="line"><span class="comment"># -U: 创建与用户同名的用户组</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户删除-userdel"><a href="#用户删除-userdel" class="headerlink" title="用户删除 userdel"></a>用户删除 userdel</h4><ul>
+<li><p>常用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除用户, 同时删除用户的家目录, 邮箱</span></span><br><span class="line">$ userdel -r USERNAME</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -f: 强制删除用户, 即使用户正在登录中</span></span><br><span class="line"><span class="comment"># -r: 删除用户同时删除用户的家目录</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户修改-usermod"><a href="#用户修改-usermod" class="headerlink" title="用户修改 usermod"></a>用户修改 usermod</h4><ul>
+<li><p>常用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为userX追加补充组 group1, group2</span></span><br><span class="line">$ usrmod -a -G group1, group2 userX</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -a -G group1,group2 : -a和-G 一起使用, 可将用户追加 group1, group2补充组中</span></span><br><span class="line"><span class="comment"># -d NEWHOME: 修改用户家目录为 NEWHOME</span></span><br><span class="line"><span class="comment"># -c COMMENT: 为用户写入注释, 这将会显示在/etc/passwd第五个域中</span></span><br><span class="line"><span class="comment"># -e YYYY-MM-DD: 设置帐号失效时间</span></span><br><span class="line"><span class="comment"># -f INACTIVE: 超过失效日期后, 多少天用户无法登录 0-&gt;立即失效 -1-&gt;永不失效</span></span><br><span class="line"><span class="comment"># -g GROUP: 修改用户的gid, 可以给出gid或组名字</span></span><br><span class="line"><span class="comment"># -G group1, group2 : 用户将会仅会属于 group1, group2 和用户自己的所属组</span></span><br><span class="line"><span class="comment"># -L: 锁定用户, 使其无法登录 (在/etc/shadown文件中 加密密码处插入 !)</span></span><br><span class="line"><span class="comment"># -l NEWNAME: 修改用户名为 NEWNAME</span></span><br><span class="line"><span class="comment"># -s SHELL: 修改默认登录shell</span></span><br><span class="line"><span class="comment"># -u UID: 修改用户ID</span></span><br><span class="line"><span class="comment"># -p PASSWORD: 设置密码(不推荐) 因为这将会是明文的 可通过history 查看</span></span><br><span class="line"><span class="comment"># -U: 解除对用户密码的锁定 (清除/etc/shadow中的 !)</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户查看"><a href="#用户查看" class="headerlink" title="用户查看"></a>用户查看</h4><ul>
+<li><p>指定用户名, 打印出用户和用户组信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ id userX</span><br><span class="line">&gt;&gt; uid=1111(userX) gid=502(user1) groups=502(user1)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>显示 Name-Service-Switch库(/etc/nsswitch.conf中配置)支持的数据库中的条目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ getent passwd</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br><span class="line">&gt;&gt; bin:x:1:1:bin:/bin:/sbin/nologin</span><br><span class="line">&gt;&gt; ...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用户信息查询</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ finger userX</span><br><span class="line">&gt;&gt; Login: userX                            Name: </span><br><span class="line">&gt;&gt; Directory: /home/user1                  Shell: /bin//bash</span><br><span class="line">&gt;&gt; Never logged <span class="keyword">in</span>.</span><br><span class="line">&gt;&gt; No mail.</span><br><span class="line">&gt;&gt; No Plan.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>显示系统中已有用户的信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ lslogins -u</span><br><span class="line">&gt;&gt;  UID USER  PWD-LOCK PWD-DENY LAST-LOGIN GECOS</span><br><span class="line">&gt;&gt;    0 root         0        0   05:08:11 root</span><br><span class="line">&gt;&gt;  500 nginx        0        1            </span><br><span class="line">&gt;&gt;  501 mysql        0        1            </span><br><span class="line">&gt;&gt; 1111 userX        0        0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>bash 内置命令，显示所有用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ compgen -u</span><br><span class="line">&gt;&gt; root</span><br><span class="line">&gt;&gt; bin</span><br><span class="line">&gt;&gt; ..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="用户密码管理-password"><a href="#用户密码管理-password" class="headerlink" title="用户密码管理 password"></a>用户密码管理 password</h3><ul>
+<li><p>常用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 强制用户登录后, 设置密码</span></span><br><span class="line">$ passwd -f USERNAME</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -l: 锁定口令,禁用密码 仅root有权限</span></span><br><span class="line"><span class="comment"># -u: 解除锁定</span></span><br><span class="line"><span class="comment"># -d: 清除帐号密码, 用户禁止登录</span></span><br><span class="line"><span class="comment"># -e: 设置用户的密码过期</span></span><br><span class="line"><span class="comment"># -n mindays: 设置最小的密码可用时间</span></span><br><span class="line"><span class="comment"># -m maxdays: 设置最大的密码可用时间</span></span><br><span class="line"><span class="comment"># -w warndays: 设置密码失效前, 多少天通知用户</span></span><br><span class="line"><span class="comment"># -S: 输出用户的密码信息</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="理解用户文件"><a href="#理解用户文件" class="headerlink" title="理解用户文件"></a>理解用户文件</h3><ul>
+<li>用户相关文件<ul>
+<li>/etc/passwd</li>
+<li>/etc/shadow<br><strong><a href="https://www.example.com" target="_blank" rel="noopener">了解更多 - 用户管理之文件大全</a></strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="用户模板文件-登录设置文件"><a href="#用户模板文件-登录设置文件" class="headerlink" title="用户模板文件/登录设置文件"></a>用户模板文件/登录设置文件</h2><ul>
+<li><p>模板文件常用选项</p>
+<ul>
+<li>/etc/skel/<br><strong><a href="https://www.example.com" target="_blank" rel="noopener">了解更多 - 用户管理之文件大全</a></strong></li>
+</ul>
+</li>
+<li><p>登录设置文件</p>
+<ul>
+<li>/etc/login.defs<br><strong><a href="https://www.example.com" target="_blank" rel="noopener">了解更多 - 用户管理之文件大全</a></strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="用户组管理"><a href="#用户组管理" class="headerlink" title="用户组管理"></a>用户组管理</h2><h3 id="用户组基本知识"><a href="#用户组基本知识" class="headerlink" title="用户组基本知识"></a>用户组基本知识</h3><ul>
+<li>默认情况下, 系统会为创建的用户同时创建同名的用户组(主组)</li>
+<li>用户组可分为<code>主组</code>和<code>从属组(补充组)</code></li>
+<li>主组: 用户的默认组，用户的gid所标识的组</li>
+<li>从属组: 用户添加到的组别</li>
+</ul>
+<h3 id="用户组创建-删除-修改-查看操作"><a href="#用户组创建-删除-修改-查看操作" class="headerlink" title="用户组创建/删除/修改/查看操作"></a>用户组创建/删除/修改/查看操作</h3><h4 id="用户组创建-groupadd"><a href="#用户组创建-groupadd" class="headerlink" title="用户组创建 groupadd"></a>用户组创建 groupadd</h4><ul>
+<li><p>常用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ groupadd NewGroup</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -g GID: 创建组别, 其gid设置为GID</span></span><br><span class="line"><span class="comment"># -P PASSWD: 为组别创建密码, 但并不推介使用, 因为密码是名文的</span></span><br><span class="line"><span class="comment"># -r: 创建系统组别</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户组删除-groupdel"><a href="#用户组删除-groupdel" class="headerlink" title="用户组删除 groupdel"></a>用户组删除 groupdel</h4><ul>
+<li>常用方式<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ groupdel GroupName</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户组修改-groupmod"><a href="#用户组修改-groupmod" class="headerlink" title="用户组修改 groupmod"></a>用户组修改 groupmod</h4><ul>
+<li><p>常用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改组别的名字</span></span><br><span class="line">$ groupmod -n NewName GroupName</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -g GID: 修改组别的GID编号</span></span><br><span class="line"><span class="comment"># -n GNAME: 修改组别的名字为GNAME</span></span><br><span class="line"><span class="comment"># -P PASSWD: 修改组别密码, 但并不推介使用, 因为密码是名文的</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="用户组查看-groups"><a href="#用户组查看-groups" class="headerlink" title="用户组查看 groups"></a>用户组查看 groups</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印出用户存在的所有组别</span></span><br><span class="line">$ groups userX</span><br><span class="line">&gt;&gt; userX : user1</span><br><span class="line"></span><br><span class="line"><span class="comment"># userX添加一个组别 mysql</span></span><br><span class="line">$ usermod -a -G mysql userX</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其中第一个是当前的用户组</span></span><br><span class="line">$ groups userX</span><br><span class="line">&gt;&gt; userX : user1 mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="切换用户组别"><a href="#切换用户组别" class="headerlink" title="切换用户组别"></a>切换用户组别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当用户登录后 使用newgrp YOURGROUP 修</span></span><br><span class="line"><span class="comment"># 需要的前提是YOURGROUP 必须为当前切换用户的附加组</span></span><br><span class="line">$ groups</span><br><span class="line">&gt;&gt; mysql user1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换用户组到 mysql</span></span><br><span class="line">$ newgrp mysql</span><br><span class="line">$ groups</span><br><span class="line">&gt;&gt; user1 mysql </span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件 cc.txt</span></span><br><span class="line">$ touch cc.txt</span><br><span class="line">$ ls -l cc.txt </span><br><span class="line">&gt;&gt; -rw-r--r--. 1 userX mysql 0 Aug 18 07:10 cc.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="理解用户组文件"><a href="#理解用户组文件" class="headerlink" title="理解用户组文件"></a>理解用户组文件</h3><ul>
+<li>用户组文件<ul>
+<li>/etc/group</li>
+<li>/etc/gshadow<br><strong><a href="https://www.example.com" target="_blank" rel="noopener">了解更多 - 用户管理之文件大全</a></strong></li>
+</ul>
+</li>
+</ul>
+<h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="useradd-vs-adduser"><a href="#useradd-vs-adduser" class="headerlink" title="useradd vs adduser"></a>useradd vs adduser</h2><ul>
+<li><code>useradd</code>: 是系统编译好的二进制文件</li>
+<li><code>adduser</code>: <ul>
+<li>Debian/Ubuntu: 是一个<code>perl</code>脚本, 其后端调用的是<code>useradd</code></li>
+<li>RedHat/CentOS: 是一个指向<code>useradd</code>的连接文件</li>
+</ul>
+</li>
+<li>作用: 二者均可实现用户的创建, </li>
+<li>对比: <code>useradd</code>属于低级的系统命令, 自定义性强; (ubuntu)<code>adduser</code>提供交互式用户创建, 人性化十足</li>
+</ul>
+<h2 id="用户批量创建-newusers-chpasswd"><a href="#用户批量创建-newusers-chpasswd" class="headerlink" title="用户批量创建 newusers/chpasswd"></a>用户批量创建 newusers/chpasswd</h2><ul>
+<li>用户的批量下载, 指的是一次性实现多个用户的创建</li>
+<li>传统的思路是依靠<code>useradd和passsd</code>通过编辑脚本的方式实现, 需要使用者对<code>shell编程有所了解</code></li>
+<li>如果没有<code>shell 编程经验</code>, 那么<code>newusers/chpasswd</code>是很好的工具</li>
+<li>newusers<ul>
+<li>功能: 创建批量用户</li>
+<li>工作方式: 通过读取文件(格式与<code>/etc/passwd</code>相同), 批量创建出用户</li>
+</ul>
+</li>
+<li>chpasswd<ul>
+<li>功能: 批量修改用户密码</li>
+<li>工作方式: 通过读取文件(格式: <code>用户名:口令</code>,回车分割), 批量修改用户密码</li>
+</ul>
+</li>
+<li>具体操作<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 目标: 创建5个用户</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建newusers读取的文件 `nu.txt`</span></span><br><span class="line"><span class="comment"># 注意 '&gt;' 是系统自动补的, nu.txt 中不出现</span></span><br><span class="line">$ cat  &lt;&lt; eof &gt; nu.txt</span><br><span class="line">&gt; user1:x:521:521::/home/user1:/bin/bash</span><br><span class="line">&gt; user2:x:522:522::/home/user2:/bin/bash</span><br><span class="line">&gt; user3:x:523:523::/home/user3:/bin/bash</span><br><span class="line">&gt; user4:x:524:524::/home/user4:/bin/bash</span><br><span class="line">&gt; user5:x:525:525::/home/user5:/bin/bash</span><br><span class="line">eof</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建chpasswd读取的文件 `cp.txt`</span></span><br><span class="line"><span class="comment"># 注意 '&gt;' 是系统自动补的, cp.txt 中不出现</span></span><br><span class="line">$ cat &lt;&lt; eof &gt; cp.txt</span><br><span class="line">&gt; user1:hello-user1</span><br><span class="line">&gt; user2:hello-user2</span><br><span class="line">&gt; user3:hello-user3</span><br><span class="line">&gt; user4:hello-user4</span><br><span class="line">&gt; user5:hello-user5</span><br><span class="line">eof</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建用户</span></span><br><span class="line">$ newusers nu.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改密码</span></span><br><span class="line">$ chpasswd &lt; cp.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意</span></span><br><span class="line"><span class="comment"># `/etc/skel/`目录下得配置文件未复制到制定的家目录用户文件夹中</span></span><br><span class="line"><span class="comment"># 复制/etc/skel/ 下隐藏文件到用户家目录</span></span><br><span class="line"><span class="comment"># 隐藏文件复制 因此多了一个 (.)</span></span><br><span class="line">$ cp -R /etc/skel/. /home/user1/</span><br><span class="line"><span class="comment"># 修改 user1下 所属用户</span></span><br><span class="line">$ chown -R user1:user1 /home/user1/</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="系统用户与普通用户比较"><a href="#系统用户与普通用户比较" class="headerlink" title="系统用户与普通用户比较"></a>系统用户与普通用户比较</h2><table>
+<thead>
+<tr>
+<th align="left">对比条目</th>
+<th align="center">系统用户</th>
+<th>普通用户</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">用户ID</td>
+<td align="center">1 ~ 499</td>
+<td>500</td>
+</tr>
+<tr>
+<td align="left">用户产生方式</td>
+<td align="center">应用程序安装时产生</td>
+<td>用户手工创建</td>
+</tr>
+<tr>
+<td align="left">用户创建目的</td>
+<td align="center">应用程序管理访问权限</td>
+<td>用于管理设备</td>
+</tr>
+<tr>
+<td align="left">用户使用者</td>
+<td align="center">服务应用程序</td>
+<td>自然人</td>
+</tr>
+<tr>
+<td align="left">用户登录shell</td>
+<td align="center">/bin/false</td>
+<td>/bin/bash</td>
+</tr>
+</tbody></table>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="http://www.xue51.com/tuwen/duoyonghu-4191.html" target="_blank" rel="noopener">什么是多用户操作系统？</a>  </li>
+<li><a href="http://bbs.chinaunix.net/thread-1927951-1-1.html" target="_blank" rel="noopener">请教关于linux用户名的最大长度 - Linux系统管理-Chinaunix</a>    </li>
+<li><a href="https://www.cnblogs.com/diantong/p/10597709.html" target="_blank" rel="noopener">/etc/default/useradd配置文件详解 - 苦逼运维 - 博客园</a>  </li>
+<li><a href="http://cn.linux.vbird.org/linux_basic/fedora_4/0410accountmanager-fc4.php#account" target="_blank" rel="noopener">鸟哥的 Linux 私房菜 – Linux 账号管理</a> </li>
+<li><a href="https://www.thegeekstuff.com/2009/06/useradd-adduser-newuser-how-to-create-linux-users/#comments" target="_blank" rel="noopener">The Ultimate Guide to Create Users in Linux / Unix</a>  </li>
+<li><a href="https://blog.51cto.com/urchin/987186" target="_blank" rel="noopener">Usermod 命令详解-Obscur-51CTO博客</a> </li>
+<li><a href="https://zhuanlan.zhihu.com/p/43311751" target="_blank" rel="noopener">6 个简单的方式来查看 Linux 中的用户名和其它信息</a>  </li>
+<li><a href="https://unix.stackexchange.com/questions/314725/what-is-the-difference-between-user-and-service-account" target="_blank" rel="noopener">What is the difference between user and service account? - Unix &amp; Linux Stack Exchange</a></li>
+<li><a href="https://unix.stackexchange.com/questions/115177/how-come-each-program-or-service-has-an-account-of-its-own-in-etc-passwd/115184#115184" target="_blank" rel="noopener">users - How come each program or service has an account of its own in /etc/passwd? - Unix &amp; Linux Stack Exchange</a>  </li>
+<li><a href="http://www.runoob.com/linux/linux-user-manage.html" target="_blank" rel="noopener">Linux 用户和用户组管理 | 菜鸟教程</a>  </li>
+<li><a href="https://blog.csdn.net/magicbreaker/article/details/2108426" target="_blank" rel="noopener">newusers和chpasswd的用法(批量) - Magicbreaker的专栏 - CSDN博客</a></li>
+<li><a href="https://blog.csdn.net/yockie/article/details/52872623" target="_blank" rel="noopener">Linux下cp目录下的带隐藏文件的子目录 - 华秋实的专栏 - CSDN博客</a>  </li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/multi-user/" rel="tag"># multi-user</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/08/shell-mode/" rel="next" title="shell的配置文件加载顺序">
+                <i class="fa fa-chevron-left"></i> shell的配置文件加载顺序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主机-终端"><span class="nav-number">2.2.</span> <span class="nav-text">主机/终端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多用户系统-multi-user-OS"><span class="nav-number">2.3.</span> <span class="nav-text">多用户系统(multi-user OS)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用户管理"><span class="nav-number">3.1.</span> <span class="nav-text">用户管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用户基本知识"><span class="nav-number">3.1.1.</span> <span class="nav-text">用户基本知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户创建-删除-修改-查看操作"><span class="nav-number">3.1.2.</span> <span class="nav-text">用户创建/删除/修改/查看操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用户创建-useradd"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">用户创建 useradd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户删除-userdel"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">用户删除 userdel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户修改-usermod"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">用户修改 usermod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户查看"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">用户查看</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户密码管理-password"><span class="nav-number">3.1.3.</span> <span class="nav-text">用户密码管理 password</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解用户文件"><span class="nav-number">3.1.4.</span> <span class="nav-text">理解用户文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户模板文件-登录设置文件"><span class="nav-number">3.2.</span> <span class="nav-text">用户模板文件/登录设置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户组管理"><span class="nav-number">3.3.</span> <span class="nav-text">用户组管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用户组基本知识"><span class="nav-number">3.3.1.</span> <span class="nav-text">用户组基本知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户组创建-删除-修改-查看操作"><span class="nav-number">3.3.2.</span> <span class="nav-text">用户组创建/删除/修改/查看操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用户组创建-groupadd"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">用户组创建 groupadd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户组删除-groupdel"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">用户组删除 groupdel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户组修改-groupmod"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">用户组修改 groupmod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户组查看-groups"><span class="nav-number">3.3.2.4.</span> <span class="nav-text">用户组查看 groups</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切换用户组别"><span class="nav-number">3.3.3.</span> <span class="nav-text">切换用户组别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解用户组文件"><span class="nav-number">3.3.4.</span> <span class="nav-text">理解用户组文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#useradd-vs-adduser"><span class="nav-number">4.1.</span> <span class="nav-text">useradd vs adduser</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户批量创建-newusers-chpasswd"><span class="nav-number">4.2.</span> <span class="nav-text">用户批量创建 newusers/chpasswd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统用户与普通用户比较"><span class="nav-number">4.3.</span> <span class="nav-text">系统用户与普通用户比较</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">17k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">29 分钟</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
