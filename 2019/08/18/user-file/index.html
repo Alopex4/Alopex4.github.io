@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 在linux里一切介文件. 在用户的管理中, 这点体现的淋漓尽致. 如果你希望对用户管理有一个深刻的理解, 那么对于用户文件的学习将显得无比重要.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  正文内容用户文件/etc/passwd 简介: 用户信息">
+<meta name="keywords" content="users-file,configuration">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用户管理之文件大全">
+<meta property="og:url" content="http://alopex.cc/2019/08/18/user-file/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 在linux里一切介文件. 在用户的管理中, 这点体现的淋漓尽致. 如果你希望对用户管理有一个深刻的理解, 那么对于用户文件的学习将显得无比重要.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  正文内容用户文件/etc/passwd 简介: 用户信息">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-20T04:40:39.477Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用户管理之文件大全">
+<meta name="twitter:description" content="引言: 在linux里一切介文件. 在用户的管理中, 这点体现的淋漓尽致. 如果你希望对用户管理有一个深刻的理解, 那么对于用户文件的学习将显得无比重要.  前置知识系统基本信息 OS: CentOS 6.7 (Final) Kernel: i686 Linux 2.6.32-573.el6.i686 Shell: bash 4.1.2  正文内容用户文件/etc/passwd 简介: 用户信息">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/08/18/user-file/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>用户管理之文件大全 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/08/18/user-file/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">用户管理之文件大全
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-18 21:36:39" itemprop="dateCreated datePublished" datetime="2019-08-18T21:36:39+08:00">2019-08-18</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-20 12:40:39" itemprop="dateModified" datetime="2019-08-20T12:40:39+08:00">2019-08-20</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/system/" itemprop="url" rel="index"><span itemprop="name">system</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/system/comprehension/" itemprop="url" rel="index"><span itemprop="name">comprehension</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">5.4k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">9 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>在<code>linux</code>里一切介文件. 在用户的管理中, 这点体现的淋漓尽致. 如果你希望对用户管理有一个深刻的理解, 那么对于用户文件的学习<br>将显得无比重要.</p>
+</blockquote>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="用户文件"><a href="#用户文件" class="headerlink" title="用户文件"></a>用户文件</h2><h3 id="etc-passwd"><a href="#etc-passwd" class="headerlink" title="/etc/passwd"></a>/etc/passwd</h3><ul>
+<li>简介: 用户信息</li>
+<li>文件分析<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n 1 /etc/passwd</span><br><span class="line">&gt;&gt; user5:x:525:525::/home/user5:/bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># passwd文件记录的用户信息被(:)划分为 7个域</span></span><br><span class="line"><span class="comment"># 用户域: 密码域: UID域: GID域: 注释域: 家目录域:登录shell</span></span><br><span class="line"><span class="comment"># ---</span></span><br><span class="line"><span class="comment"># user5: 登录使用的用户名, 其长度必须大于1小与32</span></span><br><span class="line"><span class="comment"># x: 用户密码, x意味着密码已被加密保存到/etc/shadow文件中</span></span><br><span class="line"><span class="comment"># 525: 用户ID, 每一位用户都将分配有用户ID, 系统以用户ID区分用户</span></span><br><span class="line"><span class="comment"># 535: 组ID, 主组ID, 该信息保存在/etc/group</span></span><br><span class="line"><span class="comment"># (空): 这个域是注释, 可人为添加额外信息, 以此对用户进行说明</span></span><br><span class="line"><span class="comment"># /home/user5: 用户家目录的绝对路径</span></span><br><span class="line"><span class="comment"># /bin/bash: 用户登录时使用的shell</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改事项:</span></span><br><span class="line">    * `用户域`: usermod -l user_name user5</span><br><span class="line">    * `密码域`: <span class="built_in">echo</span> <span class="string">"passwd"</span> | passwd --stdin user_name (安全性不足)</span><br><span class="line">    * `UID域`: usermod -u 1234 user_name</span><br><span class="line">    * `GID域`: usermod -g 1234 user_name</span><br><span class="line">    * `注释域`: usermod -c <span class="string">'this is comment'</span> user_name</span><br><span class="line">    * `家目录域`: usermod -d /home/user1 user_name</span><br><span class="line">    * `登录shell`: usermod -s /bin/sh user_name</span><br><span class="line"></span><br><span class="line">    $ groupadd -g 1234 user_name</span><br><span class="line">    $ tail -n 1 /etc/passwd</span><br><span class="line">    &gt;&gt; user_name:x:1234:1234:this is comment:/home/user1:/bin/sh</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="etc-shadow"><a href="#etc-shadow" class="headerlink" title="/etc/shadow"></a>/etc/shadow</h3><ul>
+<li>简介: 安全的用户信息</li>
+<li>文件分析<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n 1 /etc/shadow</span><br><span class="line">&gt;&gt; user5:<span class="variable">$6</span><span class="variable">$kj1R6LsU81O0E</span><span class="variable">$tu40IL</span>.ZXnpSO5CP...:18126:0:99999:7::: </span><br><span class="line"></span><br><span class="line"><span class="comment"># shadow文件记录的用户信息被(:)划分为 9个域</span></span><br><span class="line"><span class="comment"># 用户域: 密码域: 最近密码修改日期: 密码不可变更天数: 密码重新变更天数: 密码需变更前警告期限: 密码过期后宽恕天数: 帐号失效日期: 保留</span></span><br><span class="line"><span class="comment"># ---</span></span><br><span class="line"><span class="comment"># user5: 登录使用的用户名, 其长度必须大于1小与32</span></span><br><span class="line"><span class="comment"># $6$kj1R6LsU81O0E$tu40IL.ZXnpSO5CP...: 加密的密码</span></span><br><span class="line">    <span class="comment"># 格式 $&lt;id&gt;$&lt;salt&gt;$&lt;hashed&gt;</span></span><br><span class="line">    <span class="comment"># $id表示使用的摘要算法</span></span><br><span class="line">    <span class="comment"># $1$ -- MD5</span></span><br><span class="line">    <span class="comment"># $2a$ -- Blowfish</span></span><br><span class="line">    <span class="comment"># $2y$ -- Blowfish</span></span><br><span class="line">    <span class="comment"># $5$ -- SHA-256</span></span><br><span class="line">    <span class="comment"># $6$ -- SHA-512 (该处选用的算法)</span></span><br><span class="line"><span class="comment"># 18126: 修改日期需要通过将1970/1/1加18126天获得 --&gt; 2019年8月18日</span></span><br><span class="line"><span class="comment"># 0: 表示密码可以随时进行修改</span></span><br><span class="line"><span class="comment"># 99999: 表示密码不需要重新修改</span></span><br><span class="line"><span class="comment"># 7: 如果密码需要变更, 将会提前7天通知用户, 密码即将失效</span></span><br><span class="line"><span class="comment"># (空): 在密码失效后, 倒计时N天内依可以登录, 为空则立即失效</span></span><br><span class="line"><span class="comment"># (空): 和第三个字段类似, 都是从1970/1/1开始加上这个数, 表示日期的失效时间</span></span><br><span class="line"><span class="comment"># (空): 保留字段</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改事项:</span></span><br><span class="line">    * `用户域`: usermod -l user_name user5</span><br><span class="line">    * `密码域`: <span class="built_in">echo</span> <span class="string">"passwd"</span> | passwd --stdin username (安全性不足)</span><br><span class="line">    * `最近密码修改日期`: 更新密码后自动调整</span><br><span class="line">    * `密码不可变更天数`: chage -m 5 user5</span><br><span class="line">    * `密码重新变更天数`: chage -M 10 user5</span><br><span class="line">    * `密码需变更前警告期限`: chage -W 20 user5</span><br><span class="line">    * `密码过期后宽恕天数`: chage -I 30 user5</span><br><span class="line">    * `帐号失效日期`: chage -E <span class="string">'2019-12-12'</span> user5</span><br><span class="line"></span><br><span class="line">    $ tail -n 1 /etc/shadow</span><br><span class="line">    &gt;&gt; user5:<span class="variable">$6</span><span class="variable">$kj1R6LsU81O0E</span><span class="variable">$tu40IL</span>.ZXnpSO5CP...:18126:5:10:20:30:18242:</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="etc-default-useradd"><a href="#etc-default-useradd" class="headerlink" title="/etc/default/useradd"></a>/etc/default/useradd</h3><ul>
+<li>简介: 用户创建时的默认信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># useradd defaults file</span></span><br><span class="line">&gt;&gt; GROUP=100        <span class="comment"># 如果useradd没有指定组, 并且/etc/login.defs中的`USERGROUPS_ENAB`为no</span></span><br><span class="line">                                  <span class="comment"># 或者useradd使用了-N选项时, 此时该参数生效</span></span><br><span class="line">&gt;&gt; HOME=/home       <span class="comment"># 默认home目录的前缀, 用户真正家目录 /home/USERNAME</span></span><br><span class="line">&gt;&gt; INACTIVE=-1      <span class="comment"># 用户的密码失效 用户保留日期</span></span><br><span class="line">                                  <span class="comment"># -1 --&gt; 永不失效</span></span><br><span class="line">                                  <span class="comment"># 0 --&gt; 立即失效</span></span><br><span class="line">                                  <span class="comment"># #(非负数): 用户密码失效后, 依然保留#天使用</span></span><br><span class="line">&gt;&gt; EXPIRE=          <span class="comment">#　用户被停用的日期</span></span><br><span class="line">&gt;&gt; SHELL=/bin/bash  <span class="comment"># 默认的she家目录的内容</span></span><br><span class="line">&gt;&gt; SKEL=/etc/skel   <span class="comment"># 模板文件目录</span></span><br><span class="line">&gt;&gt; CREATE_MAIL_SPOOL=yes  <span class="comment"># 是否创建邮件</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="用户模板目录"><a href="#用户模板目录" class="headerlink" title="用户模板目录"></a>用户模板目录</h2><h3 id="etc-skel"><a href="#etc-skel" class="headerlink" title="/etc/skel/"></a>/etc/skel/</h3><ul>
+<li>简介: 含有默认文件的模板目录</li>
+<li>当用户被创建时, 该目录下的所有文件将被复制到用户家目录中<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ ls -A1 /etc/skel/</span><br><span class="line">.bash_logout    <span class="comment"># 当登录shell退出时，bash读取.bash_logout命令执行</span></span><br><span class="line">.bash_profile   <span class="comment"># bash配置文件(专属个人的环境变量设置), 登录shell时执行</span></span><br><span class="line">.bashrc         <span class="comment"># bash配置文件(专属个人的bash设置), 登录shell时执行</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改用户模板目录 </span></span><br><span class="line">$ touch new_skel/&#123;a,b,c&#125;.txt</span><br><span class="line">$ ls -1 new_skel/</span><br><span class="line">&gt;&gt; a.txt</span><br><span class="line">&gt;&gt; b.txt</span><br><span class="line">&gt;&gt; c.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># -k 必须配合 -m(创建家目录) 一起使用</span></span><br><span class="line">$ useradd -m -k /tmp/T/new_skel/ user_skel</span><br><span class="line">$ ls -1 /home/user_skel/</span><br><span class="line">&gt;&gt; a.txt</span><br><span class="line">&gt;&gt; b.txt</span><br><span class="line">&gt;&gt; c.txt</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="用户组文件"><a href="#用户组文件" class="headerlink" title="用户组文件"></a>用户组文件</h2><h3 id="etc-group"><a href="#etc-group" class="headerlink" title="/etc/group"></a>/etc/group</h3><ul>
+<li>简介: 用户组信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n 1 /ect/group </span><br><span class="line">&gt;&gt; user_name:x:1234:</span><br><span class="line"><span class="comment"># group文件记录的用户信息被(:)划分为 4个域</span></span><br><span class="line"><span class="comment"># 组名: 密码: GID: 组列表</span></span><br><span class="line"><span class="comment"># ---</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># user_name: 组的名字, 默认情况下创建用户会同时创建同名组</span></span><br><span class="line"><span class="comment"># x: 组密码一般不需要使用, 加密的密码将存储到/etc/gshadow</span></span><br><span class="line"><span class="comment"># 1234: 用户组ID编号, 唯一标示</span></span><br><span class="line"><span class="comment"># (空): 表示该组没有其他成员, 与组名同名的成员不会在此显示</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改事项:</span></span><br><span class="line">    * `组名`: groupmod -n group_new user_name</span><br><span class="line">    * `密码`: gpasswd group_new</span><br><span class="line">    * `GID`: groupmod -g 4321 group_new</span><br><span class="line">    * `组列表`: usermod -G group_new user1</span><br><span class="line"></span><br><span class="line">    $ tail -n 1 /etc/group</span><br><span class="line">    &gt;&gt; group_new:x:4321:user1</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="etc-gshadow"><a href="#etc-gshadow" class="headerlink" title="/etc/gshadow"></a>/etc/gshadow</h3><ul>
+<li>简介: 安全的用户组信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n 1 /etc/gshadow</span><br><span class="line">&gt;&gt; group_new:<span class="variable">$6</span><span class="variable">$FGSsGIWx</span><span class="variable">$pD8V8WIv</span>.stZhIqV6hIoH..::user1</span><br><span class="line"><span class="comment"># gshadown文件记录的用户信息被(:)划分为 4个域</span></span><br><span class="line"><span class="comment"># 组名: 密码: 组管理员: 组员</span></span><br><span class="line"><span class="comment"># ---</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># group_new: 组别的名称</span></span><br><span class="line"><span class="comment"># $6$FGSsGIWx$pD8V8WIv.stZhIqV6hIoH..: 这个组group_new的密码</span></span><br><span class="line"><span class="comment"># (空): 组管理员为空 (管理员可以更改组密码和成员)</span></span><br><span class="line"><span class="comment"># user1: 该组的组员有user1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改事项:</span></span><br><span class="line">    * `组名`: groupmod -n group_new2 group_new</span><br><span class="line">    * `密码`: gpasswd group_new2 (删除密码: gpasswd -r group_new2)</span><br><span class="line">    * `组管理员`: -</span><br><span class="line">    * `组员`: gpasswd -A user2 group_new2</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="登录设置文件"><a href="#登录设置文件" class="headerlink" title="登录设置文件"></a>登录设置文件</h2><h3 id="etc-login-defs"><a href="#etc-login-defs" class="headerlink" title="/etc/login.defs"></a>/etc/login.defs</h3><ul>
+<li>简介: shadow密码的设置信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># [邮箱]</span></span><br><span class="line"><span class="comment"># QMAIL 邮件路径</span></span><br><span class="line">QMAIL_DIR      Maildir</span><br><span class="line"><span class="comment"># 用户邮箱路径</span></span><br><span class="line">MAIL_DIR        /var/spool/mail</span><br><span class="line"><span class="comment"># 邮件后缀名</span></span><br><span class="line">MAIL_FILE      .mail</span><br><span class="line"></span><br><span class="line"><span class="comment"># [密码]</span></span><br><span class="line"><span class="comment"># 密码最大可用日期</span></span><br><span class="line">PASS_MAX_DAYS   99999</span><br><span class="line"><span class="comment"># 密码最小可用日期</span></span><br><span class="line">PASS_MIN_DAYS   0</span><br><span class="line"><span class="comment"># 密码最小长度</span></span><br><span class="line">PASS_MIN_LEN    5</span><br><span class="line"><span class="comment"># 密码失效提前通知</span></span><br><span class="line">PASS_WARN_AGE   7</span><br><span class="line"></span><br><span class="line"><span class="comment"># [用户]</span></span><br><span class="line"><span class="comment"># 当默认创建用户时, 用户ID选择值(从最小开始自动递增1)</span></span><br><span class="line">UID_MIN                   500</span><br><span class="line">UID_MAX                 60000</span><br><span class="line"><span class="comment"># 当用户删除时, 执行该脚本 (默认注释)</span></span><br><span class="line">USERDEL_CMD    /usr/sbin/userdel_local</span><br><span class="line"><span class="comment"># 创建家目录</span></span><br><span class="line">CREATE_HOME     yes</span><br><span class="line"><span class="comment"># 文件umask值</span></span><br><span class="line">UMASK           077</span><br><span class="line"> </span><br><span class="line"><span class="comment"># [组别]</span></span><br><span class="line"><span class="comment"># 当默认创建组别时, 组别ID选择值(从最小开始自动递增1)</span></span><br><span class="line">GID_MIN                   500</span><br><span class="line">GID_MAX                 60000</span><br><span class="line"><span class="comment"># 删除用户时, 是否同时删除用户组  </span></span><br><span class="line">USERGROUPS_ENAB yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># [密码]</span></span><br><span class="line"><span class="comment"># 默认使用sha-512加密</span></span><br><span class="line">USERGROUPS_ENAB yes</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="passwd和shadow文件比较"><a href="#passwd和shadow文件比较" class="headerlink" title="passwd和shadow文件比较"></a>passwd和shadow文件比较</h2><ul>
+<li>二者都使用了(:)作为分隔符, 以回车作为一条记录的结束</li>
+<li>二者除了第一个域都是用户名外, 其它域的信息都不同</li>
+<li>passwd 关注的是用户的细节信息, shadow关注的是密码的信息</li>
+<li>passwd的信息每个用户都可以读取, shadow的信息只有root用户才能读取</li>
+<li>用户的加密密码只能存放于shadow中</li>
+<li>passwd存放的信息近乎静态很少修改, shadow的信息更新得较为频繁</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.cyberciti.biz/faq/understanding-etcpasswd-file-format/" target="_blank" rel="noopener">Understanding /etc/passwd File Format - nixCraft</a> </li>
+<li><a href="https://blog.51cto.com/3069201/2054698" target="_blank" rel="noopener">usermod命令，用户密码修改命令passwd以及密码生成mkpasswd命令-Linux学习空间-51CTO博客</a></li>
+<li><a href="https://blog.csdn.net/QiaoRui_/article/details/81172109" target="_blank" rel="noopener">Linux用户修改密码有效期（chage命令） - 乔瑞的博客 - CSDN博客</a></li>
+<li><a href="http://cn.linux.vbird.org/linux_basic/fedora_4/0410accountmanager-fc4.php#account_user" target="_blank" rel="noopener">鸟哥的 Linux 私房菜 – Linux 账号管理</a></li>
+<li><a href="https://www.cyberciti.biz/faq/understanding-etcshadow-file/" target="_blank" rel="noopener">Understanding /etc/shadow file - nixCraft</a></li>
+<li><a href="https://www.jianshu.com/p/b6a7db60f8c9" target="_blank" rel="noopener">Linux用户和组管理 - 简书</a></li>
+<li><a href="https://www.cnblogs.com/zoulongbin/p/7250360.html" target="_blank" rel="noopener">Linux 用户与用户组管理 - DB哥 - 博客园</a></li>
+<li><a href="https://kerneltalks.com/linux/difference-between-etc-passwd-and-etc-shadow/" target="_blank" rel="noopener">Difference between /etc/passwd and /etc/shadow - Kernel Talks</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/users-file/" rel="tag"># users-file</a>
+          
+            <a href="/tags/configuration/" rel="tag"># configuration</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/15/user-manage/" rel="next" title="linux用户管理知识汇总">
+                <i class="fa fa-chevron-left"></i> linux用户管理知识汇总
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用户文件"><span class="nav-number">3.1.</span> <span class="nav-text">用户文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-passwd"><span class="nav-number">3.1.1.</span> <span class="nav-text">/etc/passwd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-shadow"><span class="nav-number">3.1.2.</span> <span class="nav-text">/etc/shadow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-default-useradd"><span class="nav-number">3.1.3.</span> <span class="nav-text">/etc/default/useradd</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户模板目录"><span class="nav-number">3.2.</span> <span class="nav-text">用户模板目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-skel"><span class="nav-number">3.2.1.</span> <span class="nav-text">/etc/skel/</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户组文件"><span class="nav-number">3.3.</span> <span class="nav-text">用户组文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-group"><span class="nav-number">3.3.1.</span> <span class="nav-text">/etc/group</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-gshadow"><span class="nav-number">3.3.2.</span> <span class="nav-text">/etc/gshadow</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录设置文件"><span class="nav-number">3.4.</span> <span class="nav-text">登录设置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-login-defs"><span class="nav-number">3.4.1.</span> <span class="nav-text">/etc/login.defs</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#passwd和shadow文件比较"><span class="nav-number">4.1.</span> <span class="nav-text">passwd和shadow文件比较</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">23k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">39 分钟</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
