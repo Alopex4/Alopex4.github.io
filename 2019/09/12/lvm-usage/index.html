@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 计算机的世界中, 当一个问题难以解决时, 中间层的引入将为我们开启新世界大门.  前置知识lvm简介 lvm 全称为logical volume manager lvm的主要功能是弹性调整文件系统的大小, 提高磁盘空间分配自由 概念理解 PV, VG, PE, LV PV (Physical Volume): 分区被打上lvm标识码(8e)后, 利用pvcreate创建而成 VG (Vir">
+<meta name="keywords" content="storage,lvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="磁盘三剑客 -- &quot;lvm&quot;一般弹跳自如">
+<meta property="og:url" content="http://alopex.cc/2019/09/12/lvm-usage/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 计算机的世界中, 当一个问题难以解决时, 中间层的引入将为我们开启新世界大门.  前置知识lvm简介 lvm 全称为logical volume manager lvm的主要功能是弹性调整文件系统的大小, 提高磁盘空间分配自由 概念理解 PV, VG, PE, LV PV (Physical Volume): 分区被打上lvm标识码(8e)后, 利用pvcreate创建而成 VG (Vir">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-13T03:37:31.273Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="磁盘三剑客 -- &quot;lvm&quot;一般弹跳自如">
+<meta name="twitter:description" content="引言: 计算机的世界中, 当一个问题难以解决时, 中间层的引入将为我们开启新世界大门.  前置知识lvm简介 lvm 全称为logical volume manager lvm的主要功能是弹性调整文件系统的大小, 提高磁盘空间分配自由 概念理解 PV, VG, PE, LV PV (Physical Volume): 分区被打上lvm标识码(8e)后, 利用pvcreate创建而成 VG (Vir">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/09/12/lvm-usage/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>磁盘三剑客 -- "lvm"一般弹跳自如 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/09/12/lvm-usage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">磁盘三剑客 -- "lvm"一般弹跳自如
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-12 09:00:12" itemprop="dateCreated datePublished" datetime="2019-09-12T09:00:12+08:00">2019-09-12</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-13 11:37:31" itemprop="dateModified" datetime="2019-09-13T11:37:31+08:00">2019-09-13</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/utility/" itemprop="url" rel="index"><span itemprop="name">utility</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/utility/application/" itemprop="url" rel="index"><span itemprop="name">application</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">13k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">22 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>计算机的世界中, 当一个问题难以解决时, 中间层的引入将为我们开启新世界大门.</p>
+</blockquote>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="lvm简介"><a href="#lvm简介" class="headerlink" title="lvm简介"></a>lvm简介</h2><ul>
+<li>lvm 全称为<code>logical volume manager</code></li>
+<li>lvm的主要功能是<code>弹性调整</code>文件系统的大小, 提高磁盘空间分配自由</li>
+<li>概念理解 PV, VG, PE, LV<ul>
+<li>PV (Physical Volume): 分区被打上lvm标识码(<code>8e</code>)后, 利用pvcreate创建而成</li>
+<li>VG (Virtual Group): 将<code>PV</code>进行整合我们将得到VG, VG充当lvm的中间层容器</li>
+<li>PE (Physical Extend): <code>VG</code>由大小一致的PE所组成. 由于系统默认PE为<code>4M</code>, VG最多可容纳<code>65534</code>个PE(256G), 因此对PE的调整十分重要.</li>
+<li>LV (Logical Volume): 对<code>VG</code>空间的分割将获得LV, LV大小总是和<code>PE</code>有整数倍关系</li>
+</ul>
+</li>
+<li>比喻理解 PV, VG, PE, LV<ul>
+<li>假设有一个做蛋糕的场景, 面粉是主要原材料</li>
+<li>PV: 买回来<code>不同厂商</code>生产的面粉</li>
+<li>VG: 将<code>不同厂商</code>的面粉倒入的一个巨型面粉机</li>
+<li>PE: 规定从面粉机中取出面团的最小单位</li>
+<li>LV: 蛋糕师按最小单位整数倍, 从面粉机取出面团制作蛋糕</li>
+</ul>
+</li>
+<li>lvm建立使用全流程<ol>
+<li>将需要进行lvm制作的磁盘进行分区, 系统ID修改为<code>lvm</code></li>
+<li>使用<code>pvcreate</code>创建PV</li>
+<li>使用<code>vgcreate</code>创建VG</li>
+<li>使用<code>lvcreate</code>创建LV</li>
+<li>通过对<code>/dev/vg-name/lv-name</code>进行格式化</li>
+<li>挂载<code>/dev/vg-name/lv-name</code>到制定挂载点</li>
+<li>通过<code>blkid</code>获得lv的的文件UUID, 写入到<code>/etc/fstab</code>, 实现开机挂载</li>
+</ol>
+</li>
+</ul>
+<h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+<li>LVM version:     2.02.118(2)-RHEL6 (2015-04-15)</li>
+<li>Library version: 1.02.95-RHEL6 (2015-04-15)</li>
+<li>Driver version:  4.29.0</li>
+</ul>
+<h2 id="磁盘预处理"><a href="#磁盘预处理" class="headerlink" title="磁盘预处理"></a>磁盘预处理</h2><ul>
+<li>添加一块<code>3.5G</code>空间大小的磁盘</li>
+<li>将磁盘划分为3个空间大小为<code>1G</code>的主分区</li>
+<li>调整分区类型为<code>lvm</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ fdisk -l /dev/sdb</span><br><span class="line"></span><br><span class="line">&gt;&gt; Disk /dev/sdb: 3758 MB, 3758096384 bytes</span><br><span class="line">&gt;&gt; 255 heads, 63 sectors/track, 456 cylinders</span><br><span class="line">&gt;&gt; Units = cylinders of 16065 * 512 = 8225280 bytes</span><br><span class="line">&gt;&gt; Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">&gt;&gt; I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">&gt;&gt; Disk identifier: 0xf2a5777e</span><br><span class="line">&gt;&gt; </span><br><span class="line">&gt;&gt;    Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">&gt;&gt; /dev/sdb1               1         132     1060258+  8e  Linux LVM</span><br><span class="line">&gt;&gt; /dev/sdb2             133         264     1060290   8e  Linux LVM</span><br><span class="line">&gt;&gt; /dev/sdb3             265         396     1060290   8e  Linux LVM</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="pv-创建-扫描-查看-移除"><a href="#pv-创建-扫描-查看-移除" class="headerlink" title="pv 创建/ 扫描/ 查看/ 移除"></a>pv 创建/ 扫描/ 查看/ 移除</h2><h3 id="创建-pvcreate"><a href="#创建-pvcreate" class="headerlink" title="创建(pvcreate)"></a>创建(pvcreate)</h3><ul>
+<li>善用bash的Brace Expansion<code>{}</code>, 对操作效率和可读性都有好处</li>
+<li>将<code>/dev/sdb1</code>, <code>/dev/sdb2</code>, <code>/dev/sdb3</code> 都创建为pv<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pvcreate /dev/sdb&#123;1,2,3&#125;</span><br><span class="line">&gt;&gt; Physical volume <span class="string">"/dev/sdb1"</span> successfully created</span><br><span class="line">&gt;&gt; Physical volume <span class="string">"/dev/sdb2"</span> successfully created</span><br><span class="line">&gt;&gt; Physical volume <span class="string">"/dev/sdb3"</span> successfully created</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="扫描-pvscan"><a href="#扫描-pvscan" class="headerlink" title="扫描(pvscan)"></a>扫描(pvscan)</h3><ul>
+<li>显示<code>PV</code>概要信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pvscan </span><br><span class="line">&gt;&gt; PV /dev/sdb1                 lvm2 [1.01 GiB]</span><br><span class="line">&gt;&gt; PV /dev/sdb2                 lvm2 [1.01 GiB]</span><br><span class="line">&gt;&gt; PV /dev/sdb3                 lvm2 [1.01 GiB]</span><br><span class="line">&gt;&gt; Total: 3 [3.03 GiB] / <span class="keyword">in</span> use: 0 [0 ] / <span class="keyword">in</span> no VG: 3 [3.03 GiB]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="查看-pvdisplay"><a href="#查看-pvdisplay" class="headerlink" title="查看(pvdisplay)"></a>查看(pvdisplay)</h3><ul>
+<li>显示<code>PV</code>详细信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ pvdisplay</span><br><span class="line">&gt;&gt; ...</span><br><span class="line">&gt;&gt;  <span class="string">"/dev/sdb3"</span> is a new physical volume of <span class="string">"1.01 GiB"</span></span><br><span class="line">&gt;&gt;  --- NEW Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb3  <span class="comment"># 分区的具体位置</span></span><br><span class="line">&gt;&gt;  VG Name                          <span class="comment"># VG名称</span></span><br><span class="line">&gt;&gt;  PV Size               1.01 GiB   <span class="comment"># 空间容量</span></span><br><span class="line">&gt;&gt;  Allocatable           NO         <span class="comment"># 是否分配 否</span></span><br><span class="line">&gt;&gt;  PE Size               0          <span class="comment"># PE空间大小</span></span><br><span class="line">&gt;&gt;  Total PE              0          <span class="comment"># PE总大小</span></span><br><span class="line">&gt;&gt;  Free PE               0          <span class="comment"># 空闲PE</span></span><br><span class="line">&gt;&gt;  Allocated PE          0          <span class="comment"># 以分配PE</span></span><br><span class="line">&gt;&gt;  PV UUID               Zik7Na-gswk-BZl1-zvoz-sCIB-U3XF-crBAbB</span><br><span class="line">&gt;&gt; ...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="删除-pvremove"><a href="#删除-pvremove" class="headerlink" title="删除(pvremove)"></a>删除(pvremove)</h3><ul>
+<li>将<code>/dev/sdb3</code>从<code>PV</code>中删除<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pvremove /dev/sdb3 </span><br><span class="line">&gt;&gt; Labels on physical volume <span class="string">"/dev/sdb3"</span> successfully wiped</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="vg-创建-扫描-查看-增加-减少-删除"><a href="#vg-创建-扫描-查看-增加-减少-删除" class="headerlink" title="vg 创建/ 扫描/ 查看/ 增加/ 减少/ 删除"></a>vg 创建/ 扫描/ 查看/ 增加/ 减少/ 删除</h2><h3 id="创建-vgcreate"><a href="#创建-vgcreate" class="headerlink" title="创建(vgcreate)"></a>创建(vgcreate)</h3><ul>
+<li>创建一个<code>PE</code>大小为16M, <code>VG</code>名称为<code>x_vg</code>, <code>PV</code>使用<code>/dev/sdb1</code>, <code>/dev/sdb2</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vgcreate -s PE-SIZE VG-NAME PV-NAME</span></span><br><span class="line">$ vgcreate -s 16m x_vg /dev/sdb&#123;1,2&#125;</span><br><span class="line">&gt;&gt; Volume group <span class="string">"x_vg"</span> successfully created</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="扫描-vgscan"><a href="#扫描-vgscan" class="headerlink" title="扫描(vgscan)"></a>扫描(vgscan)</h3><ul>
+<li>显示<code>VG</code>概要信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vgscan </span><br><span class="line">&gt;&gt; Reading all physical volumes.  This may take a <span class="keyword">while</span>...</span><br><span class="line">&gt;&gt; Found volume group <span class="string">"x_vg"</span> using metadata <span class="built_in">type</span> lvm2</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="查看-vgdisplay"><a href="#查看-vgdisplay" class="headerlink" title="查看(vgdisplay)"></a>查看(vgdisplay)</h3><ul>
+<li>显示<code>VG</code>详细信息</li>
+<li>此时使用<code>pvdisplay</code>可以查看, 每个<code>PV</code>的<code>PE</code>个数<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ vgdisplay x_vg</span><br><span class="line">&gt;&gt;  --- Volume group ---</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  System ID                 </span><br><span class="line">&gt;&gt;  Format                lvm2</span><br><span class="line">&gt;&gt;  Metadata Areas        2      </span><br><span class="line">&gt;&gt;  Metadata Sequence No  1</span><br><span class="line">&gt;&gt;  VG Access             <span class="built_in">read</span>/write</span><br><span class="line">&gt;&gt;  VG Status             resizable</span><br><span class="line">&gt;&gt;  MAX LV                0</span><br><span class="line">&gt;&gt;  Cur LV                0</span><br><span class="line">&gt;&gt;  Open LV               0</span><br><span class="line">&gt;&gt;  Max PV                0</span><br><span class="line">&gt;&gt;  Cur PV                2</span><br><span class="line">&gt;&gt;  Act PV                2</span><br><span class="line">&gt;&gt;  VG Size               2.00 GiB   <span class="comment"># VG空间大小</span></span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB  <span class="comment"># PE的空间大小</span></span><br><span class="line">&gt;&gt;  Total PE              128        <span class="comment"># PE的个数</span></span><br><span class="line">&gt;&gt;  Alloc PE / Size       0 / 0      <span class="comment"># 已分配 PE / 空间</span></span><br><span class="line">&gt;&gt;  Free  PE / Size       128 / 2.00 GiB  <span class="comment"># 可分配 PE / 空间</span></span><br><span class="line">&gt;&gt;  VG UUID               j7SaTn-XIKa-NrIt-Hu0N-hCt3-7hnW-IOdgBR</span><br><span class="line"></span><br><span class="line">$ pvdisplay | egrep -i <span class="string">"\---|pe|name"</span> </span><br><span class="line">...</span><br><span class="line">&gt;&gt;  --- Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb1</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB  <span class="comment"># PE大小</span></span><br><span class="line">&gt;&gt;  Total PE              64         <span class="comment"># 总PE个数</span></span><br><span class="line">&gt;&gt;  Free PE               64         <span class="comment"># 可分配PE个数</span></span><br><span class="line">&gt;&gt;  Allocated PE          0          <span class="comment"># 已分配PE个数</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="增加-vgexpand"><a href="#增加-vgexpand" class="headerlink" title="增加(vgexpand)"></a>增加(vgexpand)</h3><ul>
+<li><p>方法一: 一步到位增加</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vgextend x_vg /dev/sdb3</span><br><span class="line">&gt;&gt; Physical volume <span class="string">"/dev/sdb3"</span> successfully created</span><br><span class="line">&gt;&gt; Volume group <span class="string">"x_vg"</span> successfully extended</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方法二: 先增加<code>PV</code>再增加<code>VG</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pvcreate /dev/sdb3 </span><br><span class="line">&gt;&gt; Physical volume <span class="string">"/dev/sdb3"</span> successfully created</span><br><span class="line">$ vgextend x_vg /dev/sdb3 </span><br><span class="line">&gt;&gt; Volume group <span class="string">"x_vg"</span> successfully extended</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="减少-vgreduce"><a href="#减少-vgreduce" class="headerlink" title="减少(vgreduce)"></a>减少(vgreduce)</h3><ul>
+<li>减少<code>/dev/sdb3</code>这个<code>pv</code>的空间<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vgreduce x_vg /dev/sdb3</span><br><span class="line">&gt;&gt; Removed <span class="string">"/dev/sdb3"</span> from volume group <span class="string">"x_vg"</span></span><br><span class="line">$ pvremove /dev/sdb3 </span><br><span class="line">&gt;&gt; Labels on physical volume <span class="string">"/dev/sdb3"</span> successfully wiped</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="删除-vgremove"><a href="#删除-vgremove" class="headerlink" title="删除(vgremove)"></a>删除(vgremove)</h3><ul>
+<li>删除<code>x_vg</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ vgremove x_vg</span><br><span class="line">&gt;&gt; Volume group <span class="string">"x_vg"</span> successfully removed</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="lv-创建-扫描-查看-删除"><a href="#lv-创建-扫描-查看-删除" class="headerlink" title="lv 创建/ 扫描/ 查看/ 删除"></a>lv 创建/ 扫描/ 查看/ 删除</h2><h3 id="创建-lvcreate"><a href="#创建-lvcreate" class="headerlink" title="创建(lvcreate)"></a>创建(lvcreate)</h3><ul>
+<li>创建一个名称为<code>x_lv</code>的lv, 使用<code>100</code>个PE, 使用的vg为<code>x_vg</code>, </li>
+<li>创建完成后, 将会产生<code>/dev/vg-name/lv-name</code>的链接文件(连接到块文件dm上)<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lvcreate [-l N] [-n LV-NAME] VG-Name</span></span><br><span class="line"><span class="comment"># -l N 使用的是PE个数作为分割依据</span></span><br><span class="line"><span class="comment"># -L N 使用空间进行分割, 但由于本质使用PE分割 </span></span><br><span class="line"><span class="comment">#      因此空间分割将会通过系统自动计算PE个数分割 (空间大小或有出入)</span></span><br><span class="line">$ lvcreate -l 100 -n x_lv x_vg</span><br><span class="line">&gt;&gt;  Logical volume <span class="string">"x_lv"</span> created.</span><br><span class="line">$ ls -l /dev/x_vg/x_lv</span><br><span class="line">&gt;&gt; lrwxrwxrwx. 1 root root 7 Sep 11 23:13 /dev/x_vg/x_lv -&gt; ../dm-0</span><br><span class="line">$ file /dev/dm-0 </span><br><span class="line">&gt;&gt; /dev/dm-0: block special</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="扫描-lvscan"><a href="#扫描-lvscan" class="headerlink" title="扫描(lvscan)"></a>扫描(lvscan)</h3><ul>
+<li>查看<code>LV</code>概要信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ lvscan </span><br><span class="line">&gt;&gt;  ACTIVE <span class="string">'/dev/x_vg/x_lv'</span> [1.56 GiB] inherit</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="查看-lvdisplay"><a href="#查看-lvdisplay" class="headerlink" title="查看(lvdisplay)"></a>查看(lvdisplay)</h3><ul>
+<li><p>查看<code>LV</code>详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lvdisplay VG-NAME</span></span><br><span class="line">$ lvdisplay x_vg</span><br><span class="line">  --- Logical volume ---</span><br><span class="line">  LV Path                /dev/x_vg/x_lv   <span class="comment"># lv文件路径</span></span><br><span class="line">  LV Name                x_lv             <span class="comment"># lv名称</span></span><br><span class="line">  VG Name                x_vg             <span class="comment"># vg名称</span></span><br><span class="line">  LV UUID                gLtyu2-YbmL-7jr1-AtP9-zc2K-zh9I-pLYkR2</span><br><span class="line">  LV Write Access        <span class="built_in">read</span>/write       <span class="comment"># lv权限</span></span><br><span class="line">  LV Creation host, time www.alpha.com, 2019-09-11 23:13:34 -0400</span><br><span class="line">  LV Status              available</span><br><span class="line">  <span class="comment"># open                 0</span></span><br><span class="line">  LV Size                1.56 GiB         <span class="comment"># lv空间大小</span></span><br><span class="line">  Current LE             100              <span class="comment"># PE个数</span></span><br><span class="line">  Segments               2</span><br><span class="line">  Allocation             inherit</span><br><span class="line">  Read ahead sectors     auto</span><br><span class="line">  - currently <span class="built_in">set</span> to     256</span><br><span class="line">  Block device           253:2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>至此lvm创建完成, 使用请参考以下步骤</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式化文件系统</span></span><br><span class="line">$ mkfs.ext4 /dev/x_vg/x_lv</span><br><span class="line"><span class="comment"># 挂载文件系统</span></span><br><span class="line">$ mkdir /mnt/lvm</span><br><span class="line">$ mount /dev/x_vg/x_lv /mnt/lvm</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">"hello"</span> &gt; /mnt/lvm/a.txt</span><br><span class="line"><span class="comment"># 查询UUID</span></span><br><span class="line">$ blkid /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; /dev/x_vg/x_lv: UUID=<span class="string">"fe62b839-9ba4-42df-bf65-ab2e5c23ead7"</span> TYPE=<span class="string">"ext4"</span> </span><br><span class="line"><span class="comment"># 修改/etc/fstab</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">"UUID=fe62b839-9ba4-42df-bf65-ab2e5c23ead7 /mnt/lvm   ext4    defaults        0 0 "</span> &gt;&gt; /etc/fstab</span><br><span class="line"><span class="comment"># 使用 mount -a 测试</span></span><br><span class="line">$ unmount /dev/x_vg/x_lv</span><br><span class="line">$ mount -a</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="删除-lvremove"><a href="#删除-lvremove" class="headerlink" title="删除(lvremove)"></a>删除(lvremove)</h3><ul>
+<li>删除<code>LV</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ umount /dev/x_vg/x_lv</span><br><span class="line">$ lvremove /dev/x_vg/x_lv</span><br><span class="line">&gt;&gt; Do you really want to remove active logical volume x_lv? [y/n]: y</span><br><span class="line">&gt;&gt; Logical volume <span class="string">"x_lv"</span> successfully removed</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="lv-容量调整"><a href="#lv-容量调整" class="headerlink" title="lv 容量调整"></a>lv 容量调整</h2><h3 id="增加-lvresize"><a href="#增加-lvresize" class="headerlink" title="增加(lvresize)"></a>增加(lvresize)</h3><ul>
+<li><code>lv</code>支持热扩容</li>
+<li>步骤<ul>
+<li><code>lvresize</code>对x_lv增加20个<code>PE</code></li>
+<li>利用<code>resize2fs</code> 同步文件系统空间大小</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 调整前查看文件系统大小</span></span><br><span class="line">$ df -h /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; Filesystem              Size  Used Avail Use% Mounted on</span><br><span class="line">&gt;&gt; /dev/mapper/x_vg-x_lv   1.6G  2.4M  1.5G   1% /mnt/lvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># lvresize 调整空间</span></span><br><span class="line"><span class="comment"># lvresize -l +N /dev/VG-NAME/LV-NAME</span></span><br><span class="line">$ lvresize -l +20 /dev/x_vg/x_lv</span><br><span class="line">  Size of logical volume x_vg/x_lv changed from 1.56 GiB (100 extents) to 1.88 GiB (120 extents).</span><br><span class="line">  Logical volume x_lv successfully resized</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次查看文件系统大小, 未生效</span></span><br><span class="line">$ df -h /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; Filesystem              Size  Used Avail Use% Mounted on</span><br><span class="line">&gt;&gt; /dev/mapper/x_vg-x_lv   1.6G  2.4M  1.5G   1% /mnt/lvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># resize2fs 同步文件系统大小</span></span><br><span class="line">$ resize2fs /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; resize2fs 1.41.12 (17-May-2010)</span><br><span class="line">&gt;&gt; Filesystem at /dev/x_vg/x_lv is mounted on /mnt/lvm; on-line resizing required</span><br><span class="line">&gt;&gt; old desc_blocks = 1, new_desc_blocks = 1</span><br><span class="line">&gt;&gt; Performing an on-line resize of /dev/x_vg/x_lv to 491520 (4k) blocks.</span><br><span class="line">&gt;&gt; The filesystem on /dev/x_vg/x_lv is now 491520 blocks long.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件系统大小生效</span></span><br><span class="line">$ df -h /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; Filesystem              Size  Used Avail Use% Mounted on</span><br><span class="line">&gt;&gt; /dev/mapper/x_vg-x_lv   1.9G  2.4M  1.8G   1% /mnt/lvm</span><br></pre></td></tr></table></figure>
+
+<h3 id="减少-lvresize"><a href="#减少-lvresize" class="headerlink" title="减少(lvresize)"></a>减少(lvresize)</h3><ul>
+<li><code>lv</code>不支持热缩小</li>
+<li>步骤<ul>
+<li>卸载需要缩小的<code>lv</code></li>
+<li><code>e2fsck -f</code>进行磁盘检查</li>
+<li><code>resize2fs</code>缩小文件系统容量至800M(50个PE)</li>
+<li>重新挂载缩小空间后的<code>lv</code></li>
+<li><code>lvresize</code>减少<code>64</code>PE数量</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载</span></span><br><span class="line">$ umount /dev/x_vg/x_lv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 磁盘检测</span></span><br><span class="line">$ e2fsck -f /dev/x_vg/x_lv</span><br><span class="line">&gt;&gt; Pass 1: Checking inodes, blocks, and sizes</span><br><span class="line">&gt;&gt; Pass 2: Checking directory structure</span><br><span class="line">&gt;&gt; Pass 3: Checking directory connectivity</span><br><span class="line">&gt;&gt; Pass 4: Checking reference counts</span><br><span class="line">&gt;&gt; Pass 5: Checking group summary information</span><br><span class="line">&gt;&gt; /dev/x_vg/x_lv: 11/118320 files (9.1% non-contiguous), 16229/491520 blocks</span><br><span class="line"></span><br><span class="line"><span class="comment"># 减少文件系统空间到 800M </span></span><br><span class="line">$ resize2fs /dev/x_vg/x_lv 800M</span><br><span class="line">&gt;&gt; resize2fs 1.41.12 (17-May-2010)</span><br><span class="line">&gt;&gt; Resizing the filesystem on /dev/x_vg/x_lv to 204800 (4k) blocks.</span><br><span class="line">&gt;&gt; The filesystem on /dev/x_vg/x_lv is now 204800 blocks long.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新挂载</span></span><br><span class="line">$ mount /dev/x_vg/x_lv /mnt/lvm/</span><br><span class="line"><span class="comment"># 查看空间</span></span><br><span class="line">$ df -h /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt; Filesystem              Size  Used Avail Use% Mounted on</span><br><span class="line">&gt;&gt; /dev/mapper/x_vg-x_lv   755M  1.6M  715M   1% /mnt/lvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除PE</span></span><br><span class="line">$ lvresize -l -64 /dev/x_vg/x_lv </span><br><span class="line">&gt;&gt;   WARNING: Reducing active and open logical volume to 896.00 MiB</span><br><span class="line">&gt;&gt;   THIS MAY DESTROY YOUR DATA (filesystem etc.)</span><br><span class="line">&gt;&gt; Do you really want to reduce x_lv? [y/n]: y</span><br><span class="line">&gt;&gt;   Size of logical volume x_vg/x_lv changed from 1.88 GiB (120 extents) to 896.00 MiB (56 extents).</span><br><span class="line">&gt;&gt;   Logical volume x_lv successfully resized</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 移除PV </span></span><br><span class="line"><span class="comment"># 查看目前PV</span></span><br><span class="line">$ pvdisplay | egrep -i <span class="string">'\---|name|pe'</span></span><br><span class="line">&gt;&gt;  --- Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb1</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB</span><br><span class="line">&gt;&gt;  Total PE              64</span><br><span class="line">&gt;&gt;  Free PE               8</span><br><span class="line">&gt;&gt;  Allocated PE          56</span><br><span class="line">&gt;&gt;  --- Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb2</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB</span><br><span class="line">&gt;&gt;  Total PE              64 </span><br><span class="line">&gt;&gt;  Free PE               64</span><br><span class="line">&gt;&gt;  Allocated PE          0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转移sdb1的数据到sdb2, 最终对sdb1移除</span></span><br><span class="line">$ pvmove /dev/sdb1 /dev/sdb2 </span><br><span class="line">&gt;&gt;  /dev/sdb1: Moved: 100.0%</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次查看</span></span><br><span class="line">$ pvdisplay | egrep -i <span class="string">'\---|name|pe'</span></span><br><span class="line">&gt;&gt;  --- Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb1</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB</span><br><span class="line">&gt;&gt;  Total PE              64</span><br><span class="line">&gt;&gt;  Free PE               64</span><br><span class="line">&gt;&gt;  Allocated PE          0</span><br><span class="line">&gt;&gt;  --- Physical volume ---</span><br><span class="line">&gt;&gt;  PV Name               /dev/sdb2</span><br><span class="line">&gt;&gt;  VG Name               x_vg</span><br><span class="line">&gt;&gt;  PE Size               16.00 MiB</span><br><span class="line">&gt;&gt;  Total PE              64</span><br><span class="line">&gt;&gt;  Free PE               8</span><br><span class="line">&gt;&gt;  Allocated PE          56</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除/dev/sdb1</span></span><br><span class="line">$ vgreduce x_vg /dev/sdb1 </span><br><span class="line">&gt;&gt;  Removed <span class="string">"/dev/sdb1"</span> from volume group <span class="string">"x_vg"</span></span><br><span class="line">$ pvremove /dev/sdb1 </span><br><span class="line">&gt;&gt;  Labels on physical volume <span class="string">"/dev/sdb1"</span> successfully wiped</span><br></pre></td></tr></table></figure>
+
+<h2 id="lvm-快照功能"><a href="#lvm-快照功能" class="headerlink" title="lvm 快照功能"></a>lvm 快照功能</h2><ul>
+<li>lvm快照与<code>vmware</code>的快照相类似</li>
+<li>在功能上lvm快照将保存lv某一时刻的存储内容, 可待用户后续恢复(如同时光倒流)</li>
+<li>实现方式 <ul>
+<li>快照完成后, 快照和被快照的文件系统将共享所有PE数据, 此时快照和文件系统中看到的内容完全相同</li>
+<li>当文件系统发送修改时候, 快照将对把<code>旧有</code>内容转移到快照的PE上</li>
+<li>简单概括, lvm快照只备份被更动的信息</li>
+</ul>
+</li>
+<li>过程<ul>
+<li>创建快照</li>
+<li>修改文件系统的内容</li>
+<li>利用快照, 创建备份文件</li>
+<li>利用备份文件, 还原系统</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前文件系统内容</span></span><br><span class="line">$ ls /mnt/lvm/</span><br><span class="line">&gt;&gt; a.txt  bin  index.html  lost+found</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建快照</span></span><br><span class="line"><span class="comment"># lvcreate -s -l PE-NUM -n SNAPSHOUT-NAME /file/to/take-snapshout-lv</span></span><br><span class="line">$ lvcreate -s -l 8 -n x_lvs /dev/x_vg/x_lv</span><br><span class="line">&gt;&gt; Logical volume <span class="string">"x_lvs"</span> created.</span><br><span class="line">$ ls  -l /dev/x_vg/x_lvs </span><br><span class="line">&gt;&gt; lrwxrwxrwx. 1 root root 7 Sep 12 23:16 /dev/x_vg/x_lvs -&gt; ../dm-1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改文件系统内容</span></span><br><span class="line">$ : &gt; /mnt/lvm/index.html</span><br><span class="line">$ mv /mnt/lvm/a.txt /mnt/lvm/new_name.txt</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">"cool"</span> &gt; /mnt/lvm/cool-text.txt</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建备份文件</span></span><br><span class="line">$ umount  /dev/x_vg/x_lv</span><br><span class="line">$ mount /dev/x_vg/x_lvs  /mnt/lvm/</span><br><span class="line">$ <span class="built_in">cd</span> /mnt/lvm</span><br><span class="line">$ tar -jcvf /home/backup-lv.bz2 *</span><br><span class="line">$ <span class="built_in">cd</span> -; umount /dev/x_vg/x_lvs</span><br><span class="line">$ ls -l /home/backup-lv.bz2</span><br><span class="line">&gt;&gt; -rw-r--r--. 1 root root 2314144 Sep 12 23:24 /home/backup-lv.bz2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 还原文件系统</span></span><br><span class="line">$ mkfs.ext4 /dev/x_vg/x_lv</span><br><span class="line">$ mount /dev/x_vg/x_lv /mnt/lvm</span><br><span class="line">$ tar -jxvf /home/backup-lv.bz2 -C /mnt/lvm/</span><br><span class="line">$ ls /mnt/lvm/</span><br><span class="line">&gt;&gt; a.txt  bin  index.html  lost+found</span><br></pre></td></tr></table></figure>
+
+<h2 id="lvm-关闭"><a href="#lvm-关闭" class="headerlink" title="lvm 关闭"></a>lvm 关闭</h2><ul>
+<li>步骤<ul>
+<li>卸载文件系统</li>
+<li>移除lv –&gt; lvremove</li>
+<li>让VG不再active –&gt; 用 vgchange -a n VG-NAME</li>
+<li>移除VG –&gt; vgremove</li>
+<li>移除PV –&gt; pvremove</li>
+<li>修改文件系统ID</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载文件系统</span></span><br><span class="line">$ unmount /dev/x_vg/x_lv</span><br><span class="line">$ lvs</span><br><span class="line">&gt;&gt;  LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert</span><br><span class="line">&gt;&gt;  x_lv    x_vg     owi<span class="_">-a</span><span class="_">-s</span>--- 896.00m                                                    </span><br><span class="line">&gt;&gt;  x_lvs   x_vg     swi<span class="_">-a</span><span class="_">-s</span>--- 128.00m      x_lv   28.25                                  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载lv</span></span><br><span class="line">$ lvremove /dev/x_vg/x_lvs </span><br><span class="line">&gt;&gt; Do you really want to remove active logical volume x_lvs? [y/n]: y</span><br><span class="line">&gt;&gt;  Logical volume <span class="string">"x_lvs"</span> successfully removed</span><br><span class="line">$ lvremove /dev/x_vg/x_lv</span><br><span class="line">&gt;&gt; Do you really want to remove active logical volume x_lv? [y/n]: y</span><br><span class="line">&gt;&gt;   Logical volume <span class="string">"x_lv"</span> successfully removed</span><br><span class="line"></span><br><span class="line"><span class="comment"># no active 标记 vg</span></span><br><span class="line">$ vgchange -a n x_vg</span><br><span class="line">&gt;&gt;  0 logical volume(s) <span class="keyword">in</span> volume group <span class="string">"x_vg"</span> now active</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除vg</span></span><br><span class="line">$ vgremove x_vg</span><br><span class="line">&gt;&gt;  Volume group <span class="string">"x_vg"</span> successfully removed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除pv</span></span><br><span class="line">$ pvremove /dev/sdb&#123;1,2,3&#125;</span><br><span class="line">&gt;&gt;  No PV label found on /dev/sdb1.</span><br><span class="line">&gt;&gt;  Labels on physical volume <span class="string">"/dev/sdb2"</span> successfully wiped</span><br><span class="line">&gt;&gt;  Labels on physical volume <span class="string">"/dev/sdb3"</span> successfully wiped</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="http://tiramisutes.github.io/images/PDF/vbird-linux-basic-4e.pdf" target="_blank" rel="noopener">鸟哥linux</a>  </p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/storage/" rel="tag"># storage</a>
+          
+            <a href="/tags/lvm/" rel="tag"># lvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/18/user-file/" rel="next" title="用户管理之文件大全">
+                <i class="fa fa-chevron-left"></i> 用户管理之文件大全
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#lvm简介"><span class="nav-number">2.1.</span> <span class="nav-text">lvm简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.2.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘预处理"><span class="nav-number">2.3.</span> <span class="nav-text">磁盘预处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pv-创建-扫描-查看-移除"><span class="nav-number">3.1.</span> <span class="nav-text">pv 创建/ 扫描/ 查看/ 移除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-pvcreate"><span class="nav-number">3.1.1.</span> <span class="nav-text">创建(pvcreate)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描-pvscan"><span class="nav-number">3.1.2.</span> <span class="nav-text">扫描(pvscan)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看-pvdisplay"><span class="nav-number">3.1.3.</span> <span class="nav-text">查看(pvdisplay)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除-pvremove"><span class="nav-number">3.1.4.</span> <span class="nav-text">删除(pvremove)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vg-创建-扫描-查看-增加-减少-删除"><span class="nav-number">3.2.</span> <span class="nav-text">vg 创建/ 扫描/ 查看/ 增加/ 减少/ 删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-vgcreate"><span class="nav-number">3.2.1.</span> <span class="nav-text">创建(vgcreate)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描-vgscan"><span class="nav-number">3.2.2.</span> <span class="nav-text">扫描(vgscan)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看-vgdisplay"><span class="nav-number">3.2.3.</span> <span class="nav-text">查看(vgdisplay)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增加-vgexpand"><span class="nav-number">3.2.4.</span> <span class="nav-text">增加(vgexpand)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#减少-vgreduce"><span class="nav-number">3.2.5.</span> <span class="nav-text">减少(vgreduce)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除-vgremove"><span class="nav-number">3.2.6.</span> <span class="nav-text">删除(vgremove)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lv-创建-扫描-查看-删除"><span class="nav-number">3.3.</span> <span class="nav-text">lv 创建/ 扫描/ 查看/ 删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-lvcreate"><span class="nav-number">3.3.1.</span> <span class="nav-text">创建(lvcreate)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描-lvscan"><span class="nav-number">3.3.2.</span> <span class="nav-text">扫描(lvscan)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看-lvdisplay"><span class="nav-number">3.3.3.</span> <span class="nav-text">查看(lvdisplay)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除-lvremove"><span class="nav-number">3.3.4.</span> <span class="nav-text">删除(lvremove)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lv-容量调整"><span class="nav-number">3.4.</span> <span class="nav-text">lv 容量调整</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#增加-lvresize"><span class="nav-number">3.4.1.</span> <span class="nav-text">增加(lvresize)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#减少-lvresize"><span class="nav-number">3.4.2.</span> <span class="nav-text">减少(lvresize)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvm-快照功能"><span class="nav-number">3.5.</span> <span class="nav-text">lvm 快照功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvm-关闭"><span class="nav-number">3.6.</span> <span class="nav-text">lvm 关闭</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">36k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">1:01</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
