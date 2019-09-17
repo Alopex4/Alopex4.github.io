@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言:  这, 是一切的开始.">
+<meta name="keywords" content="BIOS,MBR,GRUB,Systemd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux系统启动攻略 (centOS7)">
+<meta property="og:url" content="http://alopex.cc/2019/09/16/boot-process/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言:  这, 是一切的开始.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-17T12:07:55.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux系统启动攻略 (centOS7)">
+<meta name="twitter:description" content="引言:  这, 是一切的开始.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/09/16/boot-process/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>linux系统启动攻略 (centOS7) | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/09/16/boot-process/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux系统启动攻略 (centOS7)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-16 16:32:07" itemprop="dateCreated datePublished" datetime="2019-09-16T16:32:07+08:00">2019-09-16</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-17 20:07:55" itemprop="dateModified" datetime="2019-09-17T20:07:55+08:00">2019-09-17</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/therory/" itemprop="url" rel="index"><span itemprop="name">therory</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/therory/comprehensive/" itemprop="url" rel="index"><span itemprop="name">comprehensive</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">4.1k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">7 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p> 这, 是一切的开始.</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS </li>
+<li>Shell: bash 4.2.46</li>
+<li>Kernel: x86_64 Linux 3.10.0-514.el7.x86_64</li>
+</ul>
+<h2 id="系统启动框架"><a href="#系统启动框架" class="headerlink" title="系统启动框架"></a>系统启动框架</h2><ol>
+<li><code>BIOS</code> <strong>Basic Input Output System</strong></li>
+<li><code>MBR</code> <strong>Master Board Record</strong></li>
+<li><code>GRUB</code> <strong>Grand Unified Bootloader</strong></li>
+<li><code>Kernel</code> <strong>Kernel of linux</strong></li>
+<li><code>Systemd</code> <strong>A Linux initialization system and service manager</strong></li>
+<li><code>Target</code> <strong>Predefined groups of units</strong></li>
+</ol>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h2><ul>
+<li>什么是<code>BIOS</code><ul>
+<li><code>BIOS</code>是嵌入在计算机主板芯片上的一个<code>固件</code><ul>
+<li>固件: 写入于硬件的芯片中, 为硬件服务</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>为什么需要<code>BIOS</code><ul>
+<li>计算机启动后, 硬件是否可用需要检查机制 (BIOS提供POST功能)</li>
+<li>选择通过哪个存储介质进行启动需要管理机制 (BIOS提供启动优先级启动顺序)</li>
+<li>完成自身工作后, 控制权移交 (BIOS提供控制权转移)</li>
+<li>程序运行时, 屏蔽不同I/O设备的差异 (BIOS提供I/O设备抽象层)</li>
+</ul>
+</li>
+<li><code>BIOS</code>工作流程<ol>
+<li>检查执行<code>CMOS</code>中的设定和自定义设置<ul>
+<li>CMOS: 是一种<code>RAM</code>存储,需要电子为其供电, 掉电后数据清空</li>
+<li>自定义设置: <code>BIOS密码</code>等</li>
+</ul>
+</li>
+<li>加载<code>中断处理程序</code>和<code>设备驱动程序</code><ul>
+<li>中断处理程序: 硬件组件和操作系统之间的转换器: 如当按下键盘后, 信号将发送给键盘中断处理程序</li>
+<li>设备驱动程序: 识别基本的硬件信息/操作控制特定的硬件: 键盘, 鼠标, 硬盘等</li>
+</ul>
+</li>
+<li>初始化<code>寄存器</code>和<code>电源管理</code></li>
+<li>提供<code>电源启动自我检查</code>(POST)</li>
+<li>显示<code>提示信息</code><ul>
+<li>提示信息: 开机提示: 如’Press <code>__</code> to Enter SETUP’</li>
+</ul>
+</li>
+<li>选拔<code>启动设备</code>(bootstrap)<ul>
+<li>启动设备: 用于加载操作系统的设备</li>
+<li>常见的加载设备: CD, 硬盘, U盘, 网络等</li>
+</ul>
+</li>
+<li>移交<code>控制权</code><ul>
+<li>控制权: 控制权被转交回<code>CPU</code></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="SMPS-switched-mode-power-supply"><a href="#SMPS-switched-mode-power-supply" class="headerlink" title="SMPS (switched-mode power supply)"></a>SMPS (switched-mode power supply)</h3><ul>
+<li>按下启动/重启按钮后, 计算机的供电将通过<code>SMPS</code>进行供给<ul>
+<li>什么是<code>SMPS</code><ul>
+<li>SMPS: 将交流电转换为稳定直流电的电子装置</li>
+</ul>
+</li>
+<li>为什么需要<code>SMPS</code><ul>
+<li>家用插座一般提供220V交流电, 而计算机需要使用直流电驱动</li>
+<li>因此交流电必须转换为直流电, 普遍的转换方式有<code>线性调节</code>和<code>开关调节</code>两种</li>
+<li>相对而言, <code>开关调节</code>对功率损耗较低, 因此被大量应用于计算机电源中</li>
+</ul>
+</li>
+<li>形象理解稳定电源<ul>
+<li>场景: 在一根流量直径30CM的大水管中, 提取到流量直径为5CM的小水管中</li>
+<li>解决:<ul>
+<li>线性电源: 使用一个转接阀门(晶体管), 并将阀门开启到较小位置 (阀门因此需要承受很大的压力 表现为热能散失)</li>
+<li>开关调节: 将大水管的水接入到一个大水桶中, 小水管接入到大水桶, 开关大水桶与打水管连接阀门, 保证水桶内有水和防止桶内水溢出</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CPU将被唤醒, 执行首条指令, 将控制权移交给<code>BIOS</code></li>
+</ul>
+<h3 id="POST-Power-On-Self-Test"><a href="#POST-Power-On-Self-Test" class="headerlink" title="POST (Power On Self Test)"></a>POST (Power On Self Test)</h3><ul>
+<li><code>BIOS</code>检查并执行<code>CMOS</code>上的设定和自定义设定…</li>
+<li><code>BIOS</code>进行<code>POST</code>检查<ul>
+<li>检查所需的硬件核心硬件, 如CPU, 内存, 显卡等<ul>
+<li>由于在<code>POST</code>检查在显卡初始化之前, 因此当发生错误时<code>BIOS</code>将通过<code>蜂鸣器</code>发出<code>du..du..</code>声进行报警</li>
+<li>短促的<code>du</code>一声, 一般意味着正常启动</li>
+</ul>
+</li>
+<li><code>POST</code>检查方式<ul>
+<li><code>BIOS</code>会记录上一次计算机启动时的所有设备</li>
+<li>在当前的启动中, <code>BIOS</code>将会依据上一次的记录, 发送电脉冲到每个设备(记录)</li>
+<li>如设备<code>回应电脉冲</code>, 该设备将被认为<code>工作良好</code></li>
+<li>如设备<code>不回应电脉冲</code>, 该设备就被认为<code>无法工作</code>或<code>被移除</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="bootstrap"><a href="#bootstrap" class="headerlink" title="bootstrap"></a>bootstrap</h3><ul>
+<li><code>BIOS</code>通过<code>CMOS</code>中用户指定的硬件加载顺序</li>
+<li>读取硬件设备相应的<code>启动</code>或<code>引导工具</code><ul>
+<li>如硬件加载序列中, 无法找到操作系统, 将显示提示信息’No boot device found’</li>
+</ul>
+</li>
+<li>将控制权交还<code>CPU</code></li>
+</ul>
+<h2 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h2><ul>
+<li><code>CPU</code>取得控制权后, 将对<code>启动设备</code>的<code>MBR</code>进行加载<ul>
+<li>启动设备: 此处定义为<code>硬盘</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="MBR简介"><a href="#MBR简介" class="headerlink" title="MBR简介"></a>MBR简介</h3><ul>
+<li>什么是MBR<ul>
+<li>MBR是硬盘中记录了操作系统<code>引导方式</code>和<code>分区表</code>等信息的第一个区块(<code>512Bytes</code>)</li>
+</ul>
+</li>
+<li>为什么需要MBR<ul>
+<li>对于<code>BIOS</code><ul>
+<li>bootstrap中需要寻找操作系统进行引导 (MBR提供magic number标识硬盘是否有操作系统)</li>
+</ul>
+</li>
+<li>对于<code>操作系统</code><ul>
+<li>如何进行引导 (MBR提供boot code协助)</li>
+<li>引导硬盘以及其他硬盘信息 (MBR提供分区表)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>MBR是如何建立的<ul>
+<li>当硬盘<code>分区</code>完成时, MBR将被创建</li>
+</ul>
+</li>
+<li>MBR存放在哪里<ul>
+<li>MBR位于硬盘的第一个<code>扇区</code>上, 不属于硬盘中任何<code>分区</code></li>
+<li>MBR具体物理地址为: 0 Cylinder, 0 Header, 1 Sector</li>
+</ul>
+</li>
+</ul>
+<h3 id="MBR信息查看"><a href="#MBR信息查看" class="headerlink" title="MBR信息查看"></a>MBR信息查看</h3><ul>
+<li><p>查看扇区的前<code>512Bytes</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ dd <span class="keyword">if</span>=/dev/vda bs=512 count=1 2&gt; /dev/null | hexdump -C</span><br><span class="line">00000000  eb 63 90 10 8e d0 bc 00  b0 b8 00 00 8e d8 8e c0  |.c..............|</span><br><span class="line">00000010  fb be 00 7c bf 00 06 b9  00 02 f3 a4 ea 21 06 00  |...|.........!..|</span><br><span class="line">...</span><br><span class="line">000001b0  00 00 00 00 00 00 00 00  fd 8c 0c 00 00 00 80 20  |............... | </span><br><span class="line">000001c0  21 00 83 9f 06 19 00 08  00 00 00 40 06 00 00 9f  |!..........@....|</span><br><span class="line">000001d0  07 19 82 b4 56 1e 00 48  06 00 00 00 40 00 00 b4  |....V..H....@...|</span><br><span class="line">000001e0  57 1e 83 fe ff ff 00 48  46 00 00 b8 f9 00 00 00  |W......HF.......|</span><br><span class="line">000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|  </span><br><span class="line">00000200</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>0000 0000 - 0000 01bd –&gt; 引导代码 (446Bytes)</p>
+</li>
+<li><p>0000 01be - 0000 01fe –&gt; 分区表 (64Bytes)</p>
+</li>
+<li><p>0000 01fe - 0000 01ff –&gt; 结束标记 (2Bytes)</p>
+</li>
+</ul>
+<h3 id="MBR简要解析"><a href="#MBR简要解析" class="headerlink" title="MBR简要解析"></a>MBR简要解析</h3><ul>
+<li><p>引导代码 </p>
+<ul>
+<li>内容: <code>jump to boot program</code>, <code>disk parameters</code>, <code>boot program code</code>, <code>disk signature</code></li>
+<li>目的: 找到<code>引导分区</code>进习启动</li>
+<li>过程:<ul>
+<li>找到活动分区 (<code>0x0800</code> 标识的<code>bootable</code>分区)</li>
+<li>查询是否还存在其他标记为<code>bootable</code>的分区</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>分区表</p>
+<ul>
+<li>内容: <code>status</code>, <code>starting head</code>, <code>staring sector</code>, <code>staring cylinder</code>, <code>partition type</code>, <code>ending head</code>, <code>ending sector</code>, <code>ending cylinder</code>, <code>relative start sector</code>, <code>total sectors</code><ul>
+<li>status: 标识磁盘是否为’bootable’</li>
+<li>partition type: 分区类型<ul>
+<li>0x00: 空白</li>
+<li>0x82: swap</li>
+<li>0x83: linux</li>
+<li>0x8e: LVM</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>目的: 提供系统分区状态信息</li>
+</ul>
+</li>
+<li><p>结束标记(魔术码)</p>
+<ul>
+<li>内容: 0x55aa</li>
+<li>目的: 表示<code>MBR</code>的结束</li>
+</ul>
+</li>
+</ul>
+<h2 id="GRUB"><a href="#GRUB" class="headerlink" title="GRUB"></a>GRUB</h2><ul>
+<li>通过<code>MBR</code>可以找到<code>活动分区</code>以及<code>引导程序</code><ul>
+<li>活动分区: 标记为<code>bootable</code>的分区, 在分区表状态中表现为<code>0x80</code></li>
+<li>引导程序: 引导系统启动的软件, 如<code>GRUB</code>(本文例子), <code>lilo</code></li>
+</ul>
+</li>
+<li><code>GRUB</code>选择菜单出现, 提供用户选择</li>
+</ul>
+<h3 id="GRUB简介"><a href="#GRUB简介" class="headerlink" title="GRUB简介"></a>GRUB简介</h3><ul>
+<li>什么是GRUB</li>
+<li>为什么需要GRUB</li>
+</ul>
+<h3 id="GRUB三个阶段"><a href="#GRUB三个阶段" class="headerlink" title="GRUB三个阶段"></a>GRUB三个阶段</h3><ul>
+<li>stage1</li>
+<li>stage1.5</li>
+<li>stage2</li>
+</ul>
+<h3 id="GRUB文件信息"><a href="#GRUB文件信息" class="headerlink" title="GRUB文件信息"></a>GRUB文件信息</h3><h3 id="GRUB文件内容"><a href="#GRUB文件内容" class="headerlink" title="GRUB文件内容"></a>GRUB文件内容</h3><h2 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h2><h3 id="Initramfs简介"><a href="#Initramfs简介" class="headerlink" title="Initramfs简介"></a>Initramfs简介</h3><h3 id="Initramfs文件"><a href="#Initramfs文件" class="headerlink" title="Initramfs文件"></a>Initramfs文件</h3><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h2 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h2><h3 id="systemd简介"><a href="#systemd简介" class="headerlink" title="systemd简介"></a>systemd简介</h3><h3 id="sbin-init-启动"><a href="#sbin-init-启动" class="headerlink" title="/sbin/init 启动"></a>/sbin/init 启动</h3><h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><h2 id="target"><a href="#target" class="headerlink" title="target"></a>target</h2><h3 id="target简介"><a href="#target简介" class="headerlink" title="target简介"></a>target简介</h3><h3 id="systemd-启动target"><a href="#systemd-启动target" class="headerlink" title="systemd 启动target"></a>systemd 启动target</h3><h3 id="mulit-user-target讲解"><a href="#mulit-user-target讲解" class="headerlink" title="mulit-user.target讲解"></a>mulit-user.target讲解</h3><h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="驱动-device-drvier-vs-固件-firmware"><a href="#驱动-device-drvier-vs-固件-firmware" class="headerlink" title="驱动(device drvier) vs 固件(firmware)"></a>驱动(device drvier) vs 固件(firmware)</h2><h2 id="lilo-vs-grub-vs-grub2"><a href="#lilo-vs-grub-vs-grub2" class="headerlink" title="lilo vs grub vs grub2"></a>lilo vs grub vs grub2</h2><h2 id="initrd-vs-initramfs"><a href="#initrd-vs-initramfs" class="headerlink" title="initrd vs initramfs"></a>initrd vs initramfs</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.datarecovery.co.nz/faq/bios/" target="_blank" rel="noopener">Why Do Computer Devices Need a BIOS? | Computer Forensics NZ</a></li>
+<li><a href="https://computer.howstuffworks.com/bios3.htm" target="_blank" rel="noopener">Configuring BIOS - How BIOS Works | HowStuffWorks</a></li>
+<li><a href="https://www.linode.com/docs/quick-answers/linux-essentials/what-is-systemd/" target="_blank" rel="noopener">What is systemd?</a>  </li>
+<li><a href="https://www.lifewire.com/what-is-cmos-2625826" target="_blank" rel="noopener">CMOS: What It Is and What It’s For</a>  </li>
+<li><a href="https://www.zhihu.com/question/22175660/answer/20547502" target="_blank" rel="noopener">驱动与固件的区别是什么？ - 时国怀的回答 - 知乎</a>  </li>
+<li><a href="https://www.quora.com/What-are-the-pros-and-cons-of-linear-versus-switch-mode-power-supply#" target="_blank" rel="noopener">What are the pros and cons of linear versus switch-mode power supply? - Quora</a></li>
+<li><a href="https://www.wikiwand.com/zh-hk/%E9%96%8B%E9%97%9C%E6%A8%A1%E5%BC%8F%E9%9B%BB%E6%BA%90" target="_blank" rel="noopener">開關模式電源 - Wikiwand</a></li>
+<li><a href="https://www.lifewire.com/what-is-a-master-boot-record-mbr-2625936" target="_blank" rel="noopener">Master Boot Record Definition (MBR, Sector Zero)</a></li>
+<li><a href="http://www.invoke-ir.com/2015/05/ontheforensictrail-part2.html" target="_blank" rel="noopener">Invoke-IR | PowerShell Digital Forensics and Incident Response</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/BIOS/" rel="tag"># BIOS</a>
+          
+            <a href="/tags/MBR/" rel="tag"># MBR</a>
+          
+            <a href="/tags/GRUB/" rel="tag"># GRUB</a>
+          
+            <a href="/tags/Systemd/" rel="tag"># Systemd</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/12/lvm-usage/" rel="next" title="伸缩自如的lvm">
+                <i class="fa fa-chevron-left"></i> 伸缩自如的lvm
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统启动框架"><span class="nav-number">2.2.</span> <span class="nav-text">系统启动框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMPS-switched-mode-power-supply"><span class="nav-number">3.1.1.</span> <span class="nav-text">SMPS (switched-mode power supply)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST-Power-On-Self-Test"><span class="nav-number">3.1.2.</span> <span class="nav-text">POST (Power On Self Test)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap"><span class="nav-number">3.1.3.</span> <span class="nav-text">bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR"><span class="nav-number">3.2.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">MBR简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR信息查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">MBR信息查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简要解析"><span class="nav-number">3.2.3.</span> <span class="nav-text">MBR简要解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB"><span class="nav-number">3.3.</span> <span class="nav-text">GRUB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB简介"><span class="nav-number">3.3.1.</span> <span class="nav-text">GRUB简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB三个阶段"><span class="nav-number">3.3.2.</span> <span class="nav-text">GRUB三个阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件信息"><span class="nav-number">3.3.3.</span> <span class="nav-text">GRUB文件信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件内容"><span class="nav-number">3.3.4.</span> <span class="nav-text">GRUB文件内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel"><span class="nav-number">3.4.</span> <span class="nav-text">Kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs简介"><span class="nav-number">3.4.1.</span> <span class="nav-text">Initramfs简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs文件"><span class="nav-number">3.4.2.</span> <span class="nav-text">Initramfs文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.4.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Systemd"><span class="nav-number">3.5.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd简介"><span class="nav-number">3.5.1.</span> <span class="nav-text">systemd简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sbin-init-启动"><span class="nav-number">3.5.2.</span> <span class="nav-text">/sbin/init 启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-1"><span class="nav-number">3.5.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#target"><span class="nav-number">3.6.</span> <span class="nav-text">target</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#target简介"><span class="nav-number">3.6.1.</span> <span class="nav-text">target简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd-启动target"><span class="nav-number">3.6.2.</span> <span class="nav-text">systemd 启动target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mulit-user-target讲解"><span class="nav-number">3.6.3.</span> <span class="nav-text">mulit-user.target讲解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-2"><span class="nav-number">3.6.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动-device-drvier-vs-固件-firmware"><span class="nav-number">4.1.</span> <span class="nav-text">驱动(device drvier) vs 固件(firmware)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lilo-vs-grub-vs-grub2"><span class="nav-number">4.2.</span> <span class="nav-text">lilo vs grub vs grub2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initrd-vs-initramfs"><span class="nav-number">4.3.</span> <span class="nav-text">initrd vs initramfs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">41k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">1:08</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
