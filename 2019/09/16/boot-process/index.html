@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言:  这, 是一切的开始.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-17T12:07:55.687Z">
+<meta property="og:updated_time" content="2019-09-18T13:15:51.676Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux系统启动攻略 (centOS7)">
 <meta name="twitter:description" content="引言:  这, 是一切的开始.">
@@ -409,7 +409,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-17 20:07:55" itemprop="dateModified" datetime="2019-09-17T20:07:55+08:00">2019-09-17</time>
+                <time title="修改时间：2019-09-18 21:15:51" itemprop="dateModified" datetime="2019-09-18T21:15:51+08:00">2019-09-18</time>
               </span>
             
           
@@ -466,7 +466,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">4.1k</span>
+              <span title="本文字数">8k</span>
             </span>
           
 
@@ -478,7 +478,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">7 分钟</span>
+              <span title="阅读时长">13 分钟</span>
             </span>
           
 
@@ -680,6 +680,12 @@
 </ul>
 </li>
 <li>目的: 提供系统分区状态信息</li>
+<li>补充: <ul>
+<li>由于MBR使用4Byte存储扇区总数, 最大表示为2^32个扇区</li>
+<li>磁盘扇区固定大小为512k(2^9)</li>
+<li>MBR最大磁盘容量大小 512K * 2^32 –&gt; 2^41 –&gt; 2TB</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p>结束标记(魔术码)</p>
@@ -698,15 +704,107 @@
 <li><code>GRUB</code>选择菜单出现, 提供用户选择</li>
 </ul>
 <h3 id="GRUB简介"><a href="#GRUB简介" class="headerlink" title="GRUB简介"></a>GRUB简介</h3><ul>
-<li>什么是GRUB</li>
-<li>为什么需要GRUB</li>
+<li>什么是GRUB<ul>
+<li>GRUB是一种<code>引导程序</code>, 负责加载系统内核, 引导系统启动</li>
+<li>引导程序软件: <code>GRUB</code>, <code>lilo</code>等</li>
+</ul>
+</li>
+<li>引导程序常用场景<ul>
+<li>linux中用户安装多个内核时, 引导程序提供界面让用户选择</li>
+<li>计算机安装用多个系统时, 引导程序提供界面让用户进行选择</li>
+</ul>
+</li>
+<li>GRUB的优势<ul>
+<li>支持LBA(Logical Block Addressing Mode) </li>
+<li>灵活加载操作系统 (提供加载选项参数)</li>
+<li>引导只需提供硬盘分区号和内核文件名而非硬盘地址</li>
+<li>可支持多类型操作系统</li>
+</ul>
+</li>
 </ul>
 <h3 id="GRUB三个阶段"><a href="#GRUB三个阶段" class="headerlink" title="GRUB三个阶段"></a>GRUB三个阶段</h3><ul>
-<li>stage1</li>
-<li>stage1.5</li>
-<li>stage2</li>
+<li>stage1<ul>
+<li><code>MBR</code>上存在<code>GRUB</code>第一阶段的代</li>
+<li>由于引导需要做的工作不少, 难以仅用<code>446</code>Byte存储</li>
+<li>stage1的任务是将控制权交给下一stage(1.5或2)</li>
 </ul>
-<h3 id="GRUB文件信息"><a href="#GRUB文件信息" class="headerlink" title="GRUB文件信息"></a>GRUB文件信息</h3><h3 id="GRUB文件内容"><a href="#GRUB文件内容" class="headerlink" title="GRUB文件内容"></a>GRUB文件内容</h3><h2 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h2><h3 id="Initramfs简介"><a href="#Initramfs简介" class="headerlink" title="Initramfs简介"></a>Initramfs简介</h3><h3 id="Initramfs文件"><a href="#Initramfs文件" class="headerlink" title="Initramfs文件"></a>Initramfs文件</h3><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h2 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h2><h3 id="systemd简介"><a href="#systemd简介" class="headerlink" title="systemd简介"></a>systemd简介</h3><h3 id="sbin-init-启动"><a href="#sbin-init-启动" class="headerlink" title="/sbin/init 启动"></a>/sbin/init 启动</h3><h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><h2 id="target"><a href="#target" class="headerlink" title="target"></a>target</h2><h3 id="target简介"><a href="#target简介" class="headerlink" title="target简介"></a>target简介</h3><h3 id="systemd-启动target"><a href="#systemd-启动target" class="headerlink" title="systemd 启动target"></a>systemd 启动target</h3><h3 id="mulit-user-target讲解"><a href="#mulit-user-target讲解" class="headerlink" title="mulit-user.target讲解"></a>mulit-user.target讲解</h3><h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="驱动-device-drvier-vs-固件-firmware"><a href="#驱动-device-drvier-vs-固件-firmware" class="headerlink" title="驱动(device drvier) vs 固件(firmware)"></a>驱动(device drvier) vs 固件(firmware)</h2><h2 id="lilo-vs-grub-vs-grub2"><a href="#lilo-vs-grub-vs-grub2" class="headerlink" title="lilo vs grub vs grub2"></a>lilo vs grub vs grub2</h2><h2 id="initrd-vs-initramfs"><a href="#initrd-vs-initramfs" class="headerlink" title="initrd vs initramfs"></a>initrd vs initramfs</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+</li>
+<li>stage1.5<ul>
+<li><code>stage1.5</code>是被<code>stage1</code>调用的</li>
+<li>仅当系统硬件要求时, 才会调用<code>stage1.5</code></li>
+<li>该阶段文件名字格式: <code>e2fs_stage1_5</code>, <code>fat_stage1_5</code></li>
+<li><code>stage1.5</code>将会加载<code>stage2</code></li>
+</ul>
+</li>
+<li>stage2<ul>
+<li>运行<code>GRUB</code>的主体代码</li>
+<li>加载<code>配置文件</code></li>
+<li>显示<code>GRUB 菜单</code></li>
+<li>启动用户选择的系统</li>
+</ul>
+</li>
+</ul>
+<h3 id="GRUB文件信息介绍"><a href="#GRUB文件信息介绍" class="headerlink" title="GRUB文件信息介绍"></a>GRUB文件信息介绍</h3><ul>
+<li><p>查看配置相关文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /boot/grub2</span><br><span class="line">&gt;&gt; device.map   <span class="comment"># grub2 的设备对应档</span></span><br><span class="line">&gt;&gt; fonts        <span class="comment"># 开机过程中的画面会使用到的字体数据</span></span><br><span class="line">&gt;&gt; grub.cfg     <span class="comment"># grub2 的主配置文件 (核心)</span></span><br><span class="line">&gt;&gt; grubenv      <span class="comment"># 一些环境区块的符号</span></span><br><span class="line">&gt;&gt; i386-pc      <span class="comment"># 针对一般 x86 PC 所需要的 grub2 的相关模块</span></span><br><span class="line">&gt;&gt; locale       <span class="comment"># 语系相关的数据啰</span></span><br><span class="line">&gt;&gt; themes       <span class="comment"># 开机主题数据</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>GRUB</code>的核心功能之一是加载硬盘中的内核, 使得内核能驱动整个系统的硬件</p>
+</li>
+<li><p>因此<code>GRUB</code>必须识别硬盘</p>
+</li>
+<li><p><code>GRUB</code>识别硬盘的语法</p>
+<ul>
+<li>(hd0,1)         # 一般的默认语法，由 grub2 自动判断分区格式</li>
+<li>(hd0,msdos1)    # 此磁盘的分区为传统的 MBR 模式</li>
+<li>(hd0,gpt1)      # 此磁盘的分区为 GPT 模式<ul>
+<li>说明1: 硬盘代号以小括号 ( ) 包起来</li>
+<li>说明2: 每颗硬盘的第一个 partition 代号为 1 ，依序类推</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="grub-cfg文件解析"><a href="#grub-cfg文件解析" class="headerlink" title="grub.cfg文件解析"></a>grub.cfg文件解析</h3><ul>
+<li><code>grub.cfg</code> 文件位置 <code>/boot/grub2/grub.cfg</code></li>
+<li><code>GRUB</code>并不推介直接修改该文件</li>
+<li><code>GRUB</code>推介修改<code>特定</code>配置文件, 使用<code>grub2-mkconfig</code>生产<code>grub.cfg</code>文件<ul>
+<li>特定文件: <code>/etc/default/grub</code>, <code>/etc/grub.d</code></li>
+</ul>
+</li>
+<li>查看文件内容<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment"># !!核心信息!!</span></span><br><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment">### BEGIN /etc/grub.d/10_linux ###</span></span><br><span class="line"><span class="comment"># 普通模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux (3.10.0-514.el7.x86_64) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-3.10.0-514.el7.x86_64-advanced-52193f20-fb04-497c-b603-9ab093866e04'</span> &#123;</span><br><span class="line">	load_video</span><br><span class="line">	<span class="built_in">set</span> gfxpayload=keep</span><br><span class="line">    <span class="comment"># insmod --&gt; 在linux系统中插入模块</span></span><br><span class="line">	insmod gzio</span><br><span class="line">	insmod part_msdos</span><br><span class="line">	insmod ext2</span><br><span class="line">    <span class="comment"># 指定grub2配置文件在哪个设备上</span></span><br><span class="line">	<span class="built_in">set</span> root=<span class="string">'hd0,msdos1'</span></span><br><span class="line">	<span class="keyword">if</span> [ x<span class="variable">$feature_platform_search_hint</span> = xy ]; <span class="keyword">then</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root --hint=<span class="string">'hd0,msdos1'</span>  598becc1-655d-42f0-b66c-6be1fa8a2642</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root 598becc1-655d-42f0-b66c-6be1fa8a2642</span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line">    <span class="comment"># vmlinuz --&gt; 内核文件</span></span><br><span class="line">    <span class="comment"># ro --&gt; read only</span></span><br><span class="line">    <span class="comment"># crashkernel --&gt; kdump相关</span></span><br><span class="line">    <span class="comment"># initrd16 --&gt; initramfs文件</span></span><br><span class="line">	linux16 /vmlinuz-3.10.0-514.el7.x86_64 root=UUID=52193f20-fb04-497c-b603-9ab093866e04 ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8</span><br><span class="line">	initrd16 /initramfs-3.10.0-514.el7.x86_64.img</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 救援模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux (0-rescue-a256efa9202c4c0084d138735ee6b14b) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-0-rescue-a256efa9202c4c0084d138735ee6b14b-advanced-52193f20-fb04-497c-b603-9ab093866e04'</span> &#123;</span><br><span class="line">...</span><br><span class="line"><span class="comment">### END /etc/grub.d/10_linux ###</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="grub配置文件-etc-default-grub-与-etc-grub-d"><a href="#grub配置文件-etc-default-grub-与-etc-grub-d" class="headerlink" title="grub配置文件 /etc/default/grub 与 /etc/grub.d"></a>grub配置文件 /etc/default/grub 与 /etc/grub.d</h3><h4 id="环境配置文件-etc-default-grub"><a href="#环境配置文件-etc-default-grub" class="headerlink" title="环境配置文件 /etc/default/grub"></a>环境配置文件 /etc/default/grub</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/default/grub </span><br><span class="line">&gt;&gt; GRUB_TIMEOUT=5      <span class="comment"># 指定倒数秒数</span></span><br><span class="line">&gt;&gt; GRUB_DISTRIBUTOR=<span class="string">"<span class="variable">$(sed 's, release .*$,,g' /etc/system-release)</span>"</span> <span class="comment"># 发行版信息</span></span><br><span class="line">&gt;&gt; GRUB_DEFAULT=saved  <span class="comment"># 指定默认由哪一个菜单来开机，默认开机菜单之意</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_SUBMENU=<span class="literal">true</span> <span class="comment"># 是否要隐藏次菜单</span></span><br><span class="line">&gt;&gt; GRUB_TERMINAL_OUTPUT=<span class="string">"console"</span> <span class="comment"># 定数据输出的终端机格式，默认是通过文字终端机</span></span><br><span class="line">&gt;&gt; GRUB_CMDLINE_LINUX=<span class="string">"crashkernel=auto rhgb quiet"</span> <span class="comment"># menuentry 括号内的 linux16后续参数</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_RECOVERY=<span class="string">"true"</span> <span class="comment"># 取消救援菜单的制作</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>倒数时间参数: <code>GRUB_TIMEOUT</code><ul>
+<li>这个设置值相当简单，后面就是接你要倒数的秒数即可, 如要等待<code>30</code>秒</li>
+<li>这边改成<code>“GRUB_TIMEOUT=30</code>即可！如果不想等待则输入<code>0</code></li>
+<li>如果一定要使用者选择，则填<code>-1</code>即可</li>
+</ul>
+</li>
+<li>是否隐藏菜单项目: <code>GRUB_TIMEOUT_STYLE [menu, countdown, hidden]</code><ul>
+<li><code>menu</code>: 默认菜单</li>
+<li><code>countdown</code>: 仅显示剩余的等待秒数(无菜单)</li>
+<li><code>hidden</code>: 隐藏所有</li>
+</ul>
+</li>
+<li>讯息输出的终端机模式: <code>GRUB_TERMINAL_OUTPUT</code><ul>
+<li>指定输出的画面应该使用哪一个终端机来显示</li>
+</ul>
+</li>
+<li>默认开机菜单项目： <code>GRUB_DEFAULT [save, id, title..]</code><ul>
+<li>指定要用哪一个菜单 (menuentry)来作为默认开机</li>
+</ul>
+</li>
+</ul>
+<h4 id="菜单创建的脚本-etc-grub-d"><a href="#菜单创建的脚本-etc-grub-d" class="headerlink" title="菜单创建的脚本 /etc/grub.d"></a>菜单创建的脚本 /etc/grub.d</h4><ul>
+<li><code>grub2-mkconfig</code>将调用<code>/etc/grub.d/</code>文件创建<code>grub.cfg</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /etc/grub.d/</span><br><span class="line">&gt;&gt; 00_header       <span class="comment"># 创建初始的显示项目</span></span><br><span class="line">&gt;&gt; 00_tuned        <span class="comment"># </span></span><br><span class="line">&gt;&gt; 01_users</span><br><span class="line">&gt;&gt; 10_linux        <span class="comment"># 根据/boot下文件, 尝试找到正确的内核</span></span><br><span class="line">                   <span class="comment"># 并读取这个核心需要的文件系统模块与参数</span></span><br><span class="line">&gt;&gt; 20_linux_xen</span><br><span class="line">&gt;&gt; 20_ppc_terminfo</span><br><span class="line">&gt;&gt; 30_os-prober    <span class="comment"># 到系统上找其他的分区含有的操作系统</span></span><br><span class="line">                   <span class="comment"># 添加到菜单中</span></span><br><span class="line">&gt;&gt; 40_custom       <span class="comment"># 手动加上去的菜单项目</span></span><br><span class="line">&gt;&gt; 41_custom</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h2><h3 id="Initramfs简介"><a href="#Initramfs简介" class="headerlink" title="Initramfs简介"></a>Initramfs简介</h3><h3 id="Initramfs文件"><a href="#Initramfs文件" class="headerlink" title="Initramfs文件"></a>Initramfs文件</h3><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h2 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h2><h3 id="systemd简介"><a href="#systemd简介" class="headerlink" title="systemd简介"></a>systemd简介</h3><h3 id="sbin-init-启动"><a href="#sbin-init-启动" class="headerlink" title="/sbin/init 启动"></a>/sbin/init 启动</h3><h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><h2 id="target"><a href="#target" class="headerlink" title="target"></a>target</h2><h3 id="target简介"><a href="#target简介" class="headerlink" title="target简介"></a>target简介</h3><h3 id="systemd-启动target"><a href="#systemd-启动target" class="headerlink" title="systemd 启动target"></a>systemd 启动target</h3><h3 id="mulit-user-target讲解"><a href="#mulit-user-target讲解" class="headerlink" title="mulit-user.target讲解"></a>mulit-user.target讲解</h3><h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="驱动-device-drvier-vs-固件-firmware"><a href="#驱动-device-drvier-vs-固件-firmware" class="headerlink" title="驱动(device drvier) vs 固件(firmware)"></a>驱动(device drvier) vs 固件(firmware)</h2><h2 id="lilo-vs-grub-vs-grub2"><a href="#lilo-vs-grub-vs-grub2" class="headerlink" title="lilo vs grub vs grub2"></a>lilo vs grub vs grub2</h2><h2 id="initrd-vs-initramfs"><a href="#initrd-vs-initramfs" class="headerlink" title="initrd vs initramfs"></a>initrd vs initramfs</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://www.datarecovery.co.nz/faq/bios/" target="_blank" rel="noopener">Why Do Computer Devices Need a BIOS? | Computer Forensics NZ</a></li>
 <li><a href="https://computer.howstuffworks.com/bios3.htm" target="_blank" rel="noopener">Configuring BIOS - How BIOS Works | HowStuffWorks</a></li>
 <li><a href="https://www.linode.com/docs/quick-answers/linux-essentials/what-is-systemd/" target="_blank" rel="noopener">What is systemd?</a>  </li>
@@ -716,6 +814,9 @@
 <li><a href="https://www.wikiwand.com/zh-hk/%E9%96%8B%E9%97%9C%E6%A8%A1%E5%BC%8F%E9%9B%BB%E6%BA%90" target="_blank" rel="noopener">開關模式電源 - Wikiwand</a></li>
 <li><a href="https://www.lifewire.com/what-is-a-master-boot-record-mbr-2625936" target="_blank" rel="noopener">Master Boot Record Definition (MBR, Sector Zero)</a></li>
 <li><a href="http://www.invoke-ir.com/2015/05/ontheforensictrail-part2.html" target="_blank" rel="noopener">Invoke-IR | PowerShell Digital Forensics and Incident Response</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/54108702]" target="_blank" rel="noopener">电脑基础知识普及：bios、efi与uefi详解！ - 福兴坚哥的文章 - 知乎</a>  </li>
+<li><a href="https://www.tutorialspoint.com/what-is-grub-in-linux" target="_blank" rel="noopener">What is GRUB in Linux?</a></li>
+<li><a href="https://wizardforcel.gitbooks.io/vbird-linux-basic-4e/content/168.html" target="_blank" rel="noopener">19.3 Boot Loader: Grub2 | 鸟哥的 Linux 私房菜：基础学习篇 第四版</a></li>
 </ul>
 
       
@@ -991,7 +1092,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统启动框架"><span class="nav-number">2.2.</span> <span class="nav-text">系统启动框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMPS-switched-mode-power-supply"><span class="nav-number">3.1.1.</span> <span class="nav-text">SMPS (switched-mode power supply)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST-Power-On-Self-Test"><span class="nav-number">3.1.2.</span> <span class="nav-text">POST (Power On Self Test)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap"><span class="nav-number">3.1.3.</span> <span class="nav-text">bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR"><span class="nav-number">3.2.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">MBR简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR信息查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">MBR信息查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简要解析"><span class="nav-number">3.2.3.</span> <span class="nav-text">MBR简要解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB"><span class="nav-number">3.3.</span> <span class="nav-text">GRUB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB简介"><span class="nav-number">3.3.1.</span> <span class="nav-text">GRUB简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB三个阶段"><span class="nav-number">3.3.2.</span> <span class="nav-text">GRUB三个阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件信息"><span class="nav-number">3.3.3.</span> <span class="nav-text">GRUB文件信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件内容"><span class="nav-number">3.3.4.</span> <span class="nav-text">GRUB文件内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel"><span class="nav-number">3.4.</span> <span class="nav-text">Kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs简介"><span class="nav-number">3.4.1.</span> <span class="nav-text">Initramfs简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs文件"><span class="nav-number">3.4.2.</span> <span class="nav-text">Initramfs文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.4.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Systemd"><span class="nav-number">3.5.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd简介"><span class="nav-number">3.5.1.</span> <span class="nav-text">systemd简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sbin-init-启动"><span class="nav-number">3.5.2.</span> <span class="nav-text">/sbin/init 启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-1"><span class="nav-number">3.5.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#target"><span class="nav-number">3.6.</span> <span class="nav-text">target</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#target简介"><span class="nav-number">3.6.1.</span> <span class="nav-text">target简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd-启动target"><span class="nav-number">3.6.2.</span> <span class="nav-text">systemd 启动target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mulit-user-target讲解"><span class="nav-number">3.6.3.</span> <span class="nav-text">mulit-user.target讲解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-2"><span class="nav-number">3.6.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动-device-drvier-vs-固件-firmware"><span class="nav-number">4.1.</span> <span class="nav-text">驱动(device drvier) vs 固件(firmware)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lilo-vs-grub-vs-grub2"><span class="nav-number">4.2.</span> <span class="nav-text">lilo vs grub vs grub2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initrd-vs-initramfs"><span class="nav-number">4.3.</span> <span class="nav-text">initrd vs initramfs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统启动框架"><span class="nav-number">2.2.</span> <span class="nav-text">系统启动框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMPS-switched-mode-power-supply"><span class="nav-number">3.1.1.</span> <span class="nav-text">SMPS (switched-mode power supply)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST-Power-On-Self-Test"><span class="nav-number">3.1.2.</span> <span class="nav-text">POST (Power On Self Test)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap"><span class="nav-number">3.1.3.</span> <span class="nav-text">bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR"><span class="nav-number">3.2.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">MBR简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR信息查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">MBR信息查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简要解析"><span class="nav-number">3.2.3.</span> <span class="nav-text">MBR简要解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB"><span class="nav-number">3.3.</span> <span class="nav-text">GRUB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB简介"><span class="nav-number">3.3.1.</span> <span class="nav-text">GRUB简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB三个阶段"><span class="nav-number">3.3.2.</span> <span class="nav-text">GRUB三个阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件信息介绍"><span class="nav-number">3.3.3.</span> <span class="nav-text">GRUB文件信息介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub-cfg文件解析"><span class="nav-number">3.3.4.</span> <span class="nav-text">grub.cfg文件解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub配置文件-etc-default-grub-与-etc-grub-d"><span class="nav-number">3.3.5.</span> <span class="nav-text">grub配置文件 /etc/default/grub 与 /etc/grub.d</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境配置文件-etc-default-grub"><span class="nav-number">3.3.5.1.</span> <span class="nav-text">环境配置文件 /etc/default/grub</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#菜单创建的脚本-etc-grub-d"><span class="nav-number">3.3.5.2.</span> <span class="nav-text">菜单创建的脚本 /etc/grub.d</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel"><span class="nav-number">3.4.</span> <span class="nav-text">Kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs简介"><span class="nav-number">3.4.1.</span> <span class="nav-text">Initramfs简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs文件"><span class="nav-number">3.4.2.</span> <span class="nav-text">Initramfs文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.4.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Systemd"><span class="nav-number">3.5.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd简介"><span class="nav-number">3.5.1.</span> <span class="nav-text">systemd简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sbin-init-启动"><span class="nav-number">3.5.2.</span> <span class="nav-text">/sbin/init 启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-1"><span class="nav-number">3.5.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#target"><span class="nav-number">3.6.</span> <span class="nav-text">target</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#target简介"><span class="nav-number">3.6.1.</span> <span class="nav-text">target简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd-启动target"><span class="nav-number">3.6.2.</span> <span class="nav-text">systemd 启动target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mulit-user-target讲解"><span class="nav-number">3.6.3.</span> <span class="nav-text">mulit-user.target讲解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-2"><span class="nav-number">3.6.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动-device-drvier-vs-固件-firmware"><span class="nav-number">4.1.</span> <span class="nav-text">驱动(device drvier) vs 固件(firmware)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lilo-vs-grub-vs-grub2"><span class="nav-number">4.2.</span> <span class="nav-text">lilo vs grub vs grub2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initrd-vs-initramfs"><span class="nav-number">4.3.</span> <span class="nav-text">initrd vs initramfs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -1024,7 +1125,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">41k</span>
+    <span title="站点总字数">45k</span>
   
 
   
@@ -1033,7 +1134,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:08</span>
+    <span title="站点阅读时长">1:14</span>
   
 </div>
 
