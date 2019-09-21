@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言:  这, 是一切的开始.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-18T13:15:51.676Z">
+<meta property="og:updated_time" content="2019-09-21T04:13:21.118Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux系统启动攻略 (centOS7)">
 <meta name="twitter:description" content="引言:  这, 是一切的开始.">
@@ -409,7 +409,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-18 21:15:51" itemprop="dateModified" datetime="2019-09-18T21:15:51+08:00">2019-09-18</time>
+                <time title="修改时间：2019-09-21 12:13:21" itemprop="dateModified" datetime="2019-09-21T12:13:21+08:00">2019-09-21</time>
               </span>
             
           
@@ -430,14 +430,14 @@
                   ，
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/therory/" itemprop="url" rel="index"><span itemprop="name">therory</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/theory/" itemprop="url" rel="index"><span itemprop="name">theory</span></a></span>
 
                 
                 
                   ，
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/therory/comprehensive/" itemprop="url" rel="index"><span itemprop="name">comprehensive</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/theory/comprehensive/" itemprop="url" rel="index"><span itemprop="name">comprehensive</span></a></span>
 
                 
                 
@@ -466,7 +466,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">8k</span>
+              <span title="本文字数">16k</span>
             </span>
           
 
@@ -478,7 +478,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">13 分钟</span>
+              <span title="阅读时长">26 分钟</span>
             </span>
           
 
@@ -701,7 +701,7 @@
 <li>引导程序: 引导系统启动的软件, 如<code>GRUB</code>(本文例子), <code>lilo</code></li>
 </ul>
 </li>
-<li><code>GRUB</code>选择菜单出现, 提供用户选择</li>
+<li><code>GRUB</code>选择菜单出现</li>
 </ul>
 <h3 id="GRUB简介"><a href="#GRUB简介" class="headerlink" title="GRUB简介"></a>GRUB简介</h3><ul>
 <li>什么是GRUB<ul>
@@ -744,7 +744,359 @@
 </ul>
 </li>
 </ul>
-<h3 id="GRUB文件信息介绍"><a href="#GRUB文件信息介绍" class="headerlink" title="GRUB文件信息介绍"></a>GRUB文件信息介绍</h3><ul>
+<h2 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h2><ul>
+<li>用户选择系统</li>
+<li>GRBU转移控制权给<code>内核</code></li>
+<li>加载<code>内核</code><ul>
+<li>挂载<code>initramfs</code>, 载入<code>适当</code>的驱动<ul>
+<li>适当: 开机过程中所最需要的核心模块 如USB, RAID, LVM, SCSI 等驱动程序</li>
+</ul>
+</li>
+<li>释放<code>initramfs</code>, 挂载实际<code>root</code>目录</li>
+</ul>
+</li>
+<li>内核挂载<code>相关驱动</code>进行<code>硬件检测</code></li>
+</ul>
+<h3 id="Initramfs简介"><a href="#Initramfs简介" class="headerlink" title="Initramfs简介"></a>Initramfs简介</h3><ul>
+<li>基本信息:<ul>
+<li>全称: Initial RAM Disk 或 Initial RAM Filesystem</li>
+<li>文件名: <code>/boot/initrd</code> 或 <code>/boot/initramfs</code></li>
+<li>特性: 可被<code>bootloader</code>加载到内存中</li>
+</ul>
+</li>
+<li>功能: 提供一个可执行的程序， 通过该程序载入开机过程中所最需要的<code>核心模块</code><ul>
+<li>核心模块:  <code>USB</code>, <code>RAID</code>, <code>LVM</code>, <code>SCSI</code>等文件系统与磁盘接口的驱动程序</li>
+</ul>
+</li>
+</ul>
+<h2 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h2><ul>
+<li>内核启动第一个程序<code>systemd</code></li>
+</ul>
+<h3 id="init引入"><a href="#init引入" class="headerlink" title="init引入"></a>init引入</h3><ul>
+<li>背景:<ul>
+<li>仅仅将内核运行起来是毫无实际用途的, 必须由<code>init</code>将系统代入可操作状态</li>
+<li>如启动<code>shell</code>后, 便有了人机交互, 计算机可执行一些预订程序完成有实际意义任务</li>
+<li>或启动<code>X</code>图形系统以便提供更佳的人机界面, 更加高效的完成任务</li>
+</ul>
+</li>
+<li>关系:<ul>
+<li><code>systemd</code>,<code>sysvinit</code>和<code>UpStart</code>相类似,是系统的第一个进程</li>
+<li>同属于<code>init</code>系统, 负责产生其他所有的用户进程</li>
+<li><code>systemd</code>是目前较为流行且先进的<code>init</code>工具</li>
+</ul>
+</li>
+</ul>
+<h3 id="Systemd-1"><a href="#Systemd-1" class="headerlink" title="Systemd"></a>Systemd</h3><ul>
+<li><p>简介和特点</p>
+<ul>
+<li>设计目标是克服<code>sysvinit</code>固有的缺点, 提高系统的启动速度</li>
+<li>Systemd 的很多概念来源于苹果<code>Mac OS</code>操作系统上</li>
+<li>重要特性<ul>
+<li>同<code>SysVinit</code>和<code>LSB init scripts</code>兼容<ul>
+<li>系统中已经存在的服务和进程无需修改</li>
+<li>降低系统向<code>systemd</code>迁移成本, 使<code>systemd</code>替换现有<code>init</code>成为可能</li>
+</ul>
+</li>
+<li>更快的<code>启动速度</code><ul>
+<li>尽可能启动更少的进程</li>
+<li>尽可能将更多进程并行启动</li>
+</ul>
+</li>
+<li><code>systemd</code>提供按需启动能力<ul>
+<li>只有在某个服务被真正请求的时候才启动它</li>
+<li>当该服务结束<code>systemd</code>可以关闭它, 等待下次需要时再次启动它</li>
+</ul>
+</li>
+<li>采用<code>Cgroup</code>特性跟踪和管理进程的生命周期<ul>
+<li>当停止服务时, 通过查询<code>CGroup</code>, <code>systemd</code>可以确保找到所有的相关进程，干净地停止服务</li>
+<li><code>CGroup</code>已经出现了很久，它主要用来实现系统资源配额管理</li>
+</ul>
+</li>
+<li>启动挂载点和自动挂载的管理<ul>
+<li>Systemd兼容<code>/etc/fstab</code>文件, 可以继续使用该文件管理挂载点</li>
+<li>Systemd 内建了自动挂载服务，无需另外安装<code>autofs</code>服务以实现动态挂载点</li>
+</ul>
+</li>
+<li>实现事务性依赖关系管理<ul>
+<li>挂载<code>NFS</code>和<code>启动网络</code>的工作存在天生的先后依赖关系，无法并发执行</li>
+<li>对于这些任务, <code>systemd</code>维护一个”事务一致性”的概念，</li>
+<li>保证所有相关的服务都可以正常启动而不会出现<code>互相依赖</code>, 不至于死锁的情况</li>
+</ul>
+</li>
+<li>对系统进行快照和恢复<ul>
+<li><code>Systemd</code>快照提供了一种将当前系统运行状态保存并恢复的能力</li>
+</ul>
+</li>
+<li>日志服务<ul>
+<li><code>systemd</code>自带日志服务<code>journald</code></li>
+<li>用<code>二进制</code>格式保存所有日志信息, 用户使用<code>journalctl</code>命令来查看日志信息</li>
+<li>日志是除错和监控系统的核心功能，因此它自己不能再产生问题</li>
+<li>添加和浏览 日志 非常<code>快</code></li>
+<li>日志数据文件需要较<code>小</code></li>
+<li>让无法检测的修改不再可能 </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>基本概念</p>
+<ul>
+<li><p>单元的概念</p>
+<ul>
+<li>系统初始化个过程中的每一步都被<code>systemd</code>抽象为一个配置单元(unit)</li>
+<li>一个服务是一个配置单元</li>
+<li>一个挂载点是一个配置单元</li>
+<li>一个交换分区的配置是一个配置单元</li>
+<li>表格<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="center">代表</th>
+<th>典型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">service</td>
+<td align="center">后台服务进程</td>
+<td>mysqld</td>
+</tr>
+<tr>
+<td align="left">socket</td>
+<td align="center">系统和互联网中的一个套接字</td>
+<td>nscd.socket</td>
+</tr>
+<tr>
+<td align="left">device</td>
+<td align="center">存在于Linux中的设备</td>
+<td>-</td>
+</tr>
+<tr>
+<td align="left">mount/automount</td>
+<td align="center">文件系统挂载相关的服务</td>
+<td>网络的自动挂载</td>
+</tr>
+<tr>
+<td align="left">path</td>
+<td align="center">侦测特定文件或目录类型</td>
+<td>打印服务</td>
+</tr>
+<tr>
+<td align="left">timer</td>
+<td align="center">定时器配置单元</td>
+<td>取代了atd、crond等传统的定时服务</td>
+</tr>
+<tr>
+<td align="left">target</td>
+<td align="center">执行环境类型</td>
+<td>一群unit的集合</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+<li><p>依赖关系</p>
+<ul>
+<li>存在有些任务, 它们之间存在天生的依赖</li>
+<li>配置单元定义文件中的<code>关键字</code>来描述配置单元之间的依赖关系<ul>
+<li>如<code>unit-A</code>依赖<code>unit-B</code></li>
+<li>在<code>unit-B</code>的定义中用<code>&quot;require A&quot;</code>来表示</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>事务</p>
+<ul>
+<li>存在循环依赖, 那么<code>systemd</code>将无法启动任意一个服务</li>
+<li><code>systemd</code>将会尝试解决这个问题<ul>
+<li><code>required</code>是强依赖</li>
+<li><code>want</code>是弱依赖</li>
+<li><code>systemd</code>将去掉<code>wants</code>指定的依赖尝试打破循环</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Target 和运行级别</p>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>systemd target</th>
+<th>note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>runlevel0.target, poweroff.target</td>
+<td>关闭系统</td>
+</tr>
+<tr>
+<td>1, s, single</td>
+<td>runlevel1.target, rescue.target</td>
+<td>单用户模式</td>
+</tr>
+<tr>
+<td>2, 4</td>
+<td>runlevel2.target, runlevel4.target, multi-user.target</td>
+<td>用户定义/域特定运行级别。默认等同于 3。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>runlevel3.target, multi-user.target</td>
+<td>多用户，非图形化。用户可以通过多个控制台或网络登录。</td>
+</tr>
+<tr>
+<td>5</td>
+<td>runlevel5.target, graphical.target</td>
+<td>多用户，图形化。通常为所有运行级别 3 的服务外加图形化登录。</td>
+</tr>
+<tr>
+<td>6</td>
+<td>runlevel6.target, reboot.target</td>
+<td>重启</td>
+</tr>
+<tr>
+<td>emergency</td>
+<td>emergency.target</td>
+<td>紧急 Shell</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="default-target"><a href="#default-target" class="headerlink" title="default.target"></a>default.target</h2><h3 id="启动过程"><a href="#启动过程" class="headerlink" title="启动过程"></a>启动过程</h3><ul>
+<li><code>systemd</code>调用<code>default.target</code>启动</li>
+<li>systemd 执行 sysinit.target <ul>
+<li>初始化系统及 <code>basic.target</code> 准备操作系统</li>
+</ul>
+</li>
+<li>启动<code>multi-user.target</code>下的本机与服务器服务</li>
+<li>执行<code>multi-user.target</code>下的 <code>/etc/rc.d/rc.local</code>文件；</li>
+<li>执行<code>multi-user.target</code>下的<code>getty.target</code>及登陆服务</li>
+</ul>
+<h3 id="配置文件相关目录简介-优先级从低到高排列"><a href="#配置文件相关目录简介-优先级从低到高排列" class="headerlink" title="配置文件相关目录简介 (优先级从低到高排列)"></a>配置文件相关目录简介 (优先级从低到高排列)</h3><ul>
+<li><p><code>/usr/lib/systemd/system/</code></p>
+<ul>
+<li>默认的启动脚本配置文件存放, <code>尽量不要修改</code>该目录下数据<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /usr/lib/systemd/system</span><br><span class="line">&gt;&gt; auditd.service</span><br><span class="line">&gt;&gt; autovt@.service</span><br><span class="line">&gt;&gt; basic.target</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>/run/systemd/system/</code></p>
+<ul>
+<li>系统执行过程中所产生的服务脚本<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /run/systemd/system/</span><br><span class="line">&gt;&gt; session-1.scope</span><br><span class="line">&gt;&gt; session-1.scope.d</span><br><span class="line">&gt;&gt; session-2.scope</span><br><span class="line">&gt;&gt; session-2.scope.d</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>/etc/systemd/system/</code></p>
+<ul>
+<li>管理员依据主机系统的需求所创建的执行脚本, <code>功能修改目录</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /etc/systemd/system</span><br><span class="line">&gt;&gt; basic.target.wants</span><br><span class="line">&gt;&gt; default.target</span><br><span class="line">&gt;&gt; getty.target.wants</span><br><span class="line">&gt;&gt; multi-user.target.wants</span><br><span class="line">&gt;&gt; system-update.target.wants</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>/etc/sysconfig/*</code></p>
+<ul>
+<li>几乎所有的服务都会将初始化的一些选项设置写入到这个目录下<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /etc/sysconfig/*</span><br><span class="line">&gt;&gt; /etc/sysconfig/authconfig</span><br><span class="line">&gt;&gt; /etc/sysconfig/cpupower</span><br><span class="line">&gt;&gt; /etc/sysconfig/crond</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看default-target"><a href="#查看default-target" class="headerlink" title="查看default.target"></a>查看default.target</h3><ul>
+<li><p>default.target 查看系统默认在什么模式下启动</p>
+</li>
+<li><p>命令查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl get-default </span><br><span class="line">&gt;&gt; multi-user.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>文件查看 </p>
+<ul>
+<li><code>Mulit-User.target</code> 强依赖于 <code>basic.target</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/systemd/system/default.target  | sed <span class="string">'/^$/d'</span> | sed <span class="string">'/^#/'</span>d</span><br><span class="line">&gt;&gt; [Unit]</span><br><span class="line">&gt;&gt; Description=Multi-User System</span><br><span class="line">&gt;&gt; Documentation=man:systemd.special(7)</span><br><span class="line">&gt;&gt; Requires=basic.target  --&gt; 必须先启动 basic.target</span><br><span class="line">&gt;&gt; Conflicts=rescue.service rescue.target --&gt; 与这些模式对抗(不支持)</span><br><span class="line">&gt;&gt; After=basic.target rescue.service rescue.target</span><br><span class="line">&gt;&gt; AllowIsolate=yes</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>查看<code>multi-user</code>详细依赖</p>
+<ul>
+<li><p>可视化查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl list-dependencies multi-user.target </span><br><span class="line">&gt;&gt; multi-user.target</span><br><span class="line">&gt;&gt; ● ├─auditd.service</span><br><span class="line">&gt;&gt; ● ├─brandbot.path</span><br><span class="line">&gt;&gt; ● ├─crond.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>文本<code>unit</code>查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /usr/lib/systemd/system/multi-user.target.wants</span><br><span class="line">&gt;&gt; brandbot.path</span><br><span class="line">&gt;&gt; dbus.service</span><br><span class="line">&gt;&gt; getty.target</span><br><span class="line">&gt;&gt; plymouth-quit.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看basic-target文件信息"><a href="#查看basic-target文件信息" class="headerlink" title="查看basic.target文件信息"></a>查看basic.target文件信息</h3><ul>
+<li><p><code>basic.target</code> 强依赖于 <code>sysinit.target</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /usr/lib/systemd/system/basic.target | sed <span class="string">'/^$/d'</span> | sed <span class="string">'/^#/'</span>d</span><br><span class="line">&gt;&gt; [Unit]</span><br><span class="line">&gt;&gt; Description=Basic System</span><br><span class="line">&gt;&gt; Documentation=man:systemd.special(7)</span><br><span class="line">&gt;&gt; Requires=sysinit.target --&gt; 必须sysinit.target 先启动</span><br><span class="line">&gt;&gt; After=sysinit.target  </span><br><span class="line">&gt;&gt; Wants=sockets.target timers.target paths.target slices.target</span><br><span class="line">&gt;&gt; After=sockets.target paths.target slices.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看<code>basic</code>详细依赖</p>
+<ul>
+<li><p>可视化查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl list-dependencies basic.target </span><br><span class="line">&gt;&gt; basic.target</span><br><span class="line">&gt;&gt; ● ├─firewalld.service</span><br><span class="line">&gt;&gt; ● ├─microcode.service</span><br><span class="line">&gt;&gt; ● ├─rhel-autorelabel-mark.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>文本<code>unit</code>查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /usr/lib/systemd/system/basic.target.wants</span><br><span class="line">&gt;&gt; rhel-autorelabel-mark.service</span><br><span class="line">&gt;&gt; rhel-autorelabel.service</span><br><span class="line">&gt;&gt; rhel-configure.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="sysinit-target文件信息"><a href="#sysinit-target文件信息" class="headerlink" title="sysinit.target文件信息"></a>sysinit.target文件信息</h3><ul>
+<li><p><code>sysinit.target</code> 弱依赖于 <code>local-fs.target</code>和<code>swap.target</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ cat /usr/lib/systemd/system/sysinit.target | sed <span class="string">'/^$/d'</span> | sed <span class="string">'/^#/'</span>d</span><br><span class="line">&gt;&gt; [Unit]</span><br><span class="line">&gt;&gt; Description=System Initialization</span><br><span class="line">&gt;&gt; Documentation=man:systemd.special(7)</span><br><span class="line">&gt;&gt; Conflicts=emergency.service emergency.target</span><br><span class="line">&gt;&gt; Wants=<span class="built_in">local</span>-fs.target swap.target</span><br><span class="line">&gt;&gt; After=<span class="built_in">local</span>-fs.target swap.target emergency.service emergency.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看<code>sysinit</code>详细依赖</p>
+<ul>
+<li><p>可视化查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl list-dependencies sysinit.target </span><br><span class="line">&gt;&gt; sysinit.target</span><br><span class="line">&gt;&gt; ● ├─dev-hugepages.mount</span><br><span class="line">&gt;&gt; ● ├─dev-mqueue.mount</span><br><span class="line">&gt;&gt; ● ├─kmod-static-nodes.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>文本<code>unit</code>查看</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /usr/lib/systemd/system/sysinit.target.wants</span><br><span class="line">&gt;&gt; cryptsetup.target</span><br><span class="line">&gt;&gt; dev-hugepages.mount</span><br><span class="line">&gt;&gt; dev-mqueue.mount</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="用户自定义unit查看"><a href="#用户自定义unit查看" class="headerlink" title="用户自定义unit查看"></a>用户自定义unit查看</h3><ul>
+<li>multi-user模式下用户自定义<code>unit</code>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /etc/systemd/system/multi-user.target.wants</span><br><span class="line">&gt;&gt; auditd.service</span><br><span class="line">&gt;&gt; crond.service</span><br><span class="line">&gt;&gt; irqbalance.service</span><br><span class="line">&gt;&gt; kdump.service</span><br><span class="line">&gt;&gt; NetworkManager.service</span><br><span class="line">&gt;&gt; postfix.service</span><br><span class="line">&gt;&gt; sshd.service</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ol>
+<li><code>local-fs.target</code>, <code>swap.target</code>: 挂载本机<code>/etc/fstab</code>里面所规范的文件系统和<code>swap</code></li>
+<li><code>sysinit.target</code>:侦测硬, 载入所需要的核心模块等动作</li>
+<li><code>basic.target</code>: 载入主要的周边硬件驱动程序与防火墙相关任务</li>
+<li><code>multi-user.target</code>: 其它一般系统或网络服务的载入</li>
+</ol>
+<h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="固件-firmware-vs-驱动-device-drvier"><a href="#固件-firmware-vs-驱动-device-drvier" class="headerlink" title="固件(firmware) vs 驱动(device drvier)"></a>固件(firmware) vs 驱动(device drvier)</h2><h3 id="固件"><a href="#固件" class="headerlink" title="固件"></a>固件</h3><ul>
+<li>固件是软件的一种</li>
+<li>固件在设计上面向硬件</li>
+<li>固件是硬件的一部分, 运行在硬件板载的嵌入式芯片上</li>
+<li>开发背景是, 硬件厂家为提高硬件的使用便利性</li>
+<li>开发出固件出来, 让硬件和软件的交换变得简化</li>
+<li>示例:<ul>
+<li>洗衣机内置电脑程序</li>
+<li>计算器里面的操作系统</li>
+</ul>
+</li>
+</ul>
+<h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><ul>
+<li>驱动是软件的一种</li>
+<li>驱动的设计面向操作系统</li>
+<li>驱动从属于操作系统, 运行在CPU上</li>
+<li>开发背景是, 世界上存在这各种个样的操作系统(内核), 各自有不同硬件操作方式</li>
+<li>为操作系统开发特定的启动, 让操作系统识别硬件发挥功能</li>
+<li>示例<ul>
+<li>oracle database, .net driver<h3 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h3></li>
+</ul>
+</li>
+<li>固件较为固定和操作系统无关, 较少升级</li>
+<li>驱动和操作系统相关, 升级频率较高</li>
+<li>固件是基础, 驱动是不同操作系统对硬件功能的延伸</li>
+<li>仅当某硬件只适配单一操作系统时, 且该操作系统永不修改, 固件和驱动就基本融为一体</li>
+</ul>
+<h2 id="GRUB-延伸知识"><a href="#GRUB-延伸知识" class="headerlink" title="GRUB 延伸知识"></a>GRUB 延伸知识</h2><h3 id="GRUB文件信息介绍"><a href="#GRUB文件信息介绍" class="headerlink" title="GRUB文件信息介绍"></a>GRUB文件信息介绍</h3><ul>
 <li><p>查看配置相关文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls -1 /boot/grub2</span><br><span class="line">&gt;&gt; device.map   <span class="comment"># grub2 的设备对应档</span></span><br><span class="line">&gt;&gt; fonts        <span class="comment"># 开机过程中的画面会使用到的字体数据</span></span><br><span class="line">&gt;&gt; grub.cfg     <span class="comment"># grub2 的主配置文件 (核心)</span></span><br><span class="line">&gt;&gt; grubenv      <span class="comment"># 一些环境区块的符号</span></span><br><span class="line">&gt;&gt; i386-pc      <span class="comment"># 针对一般 x86 PC 所需要的 grub2 的相关模块</span></span><br><span class="line">&gt;&gt; locale       <span class="comment"># 语系相关的数据啰</span></span><br><span class="line">&gt;&gt; themes       <span class="comment"># 开机主题数据</span></span><br></pre></td></tr></table></figure>
 </li>
@@ -771,11 +1123,11 @@
 <li>特定文件: <code>/etc/default/grub</code>, <code>/etc/grub.d</code></li>
 </ul>
 </li>
-<li>查看文件内容<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment"># !!核心信息!!</span></span><br><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment">### BEGIN /etc/grub.d/10_linux ###</span></span><br><span class="line"><span class="comment"># 普通模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux (3.10.0-514.el7.x86_64) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-3.10.0-514.el7.x86_64-advanced-52193f20-fb04-497c-b603-9ab093866e04'</span> &#123;</span><br><span class="line">	load_video</span><br><span class="line">	<span class="built_in">set</span> gfxpayload=keep</span><br><span class="line">    <span class="comment"># insmod --&gt; 在linux系统中插入模块</span></span><br><span class="line">	insmod gzio</span><br><span class="line">	insmod part_msdos</span><br><span class="line">	insmod ext2</span><br><span class="line">    <span class="comment"># 指定grub2配置文件在哪个设备上</span></span><br><span class="line">	<span class="built_in">set</span> root=<span class="string">'hd0,msdos1'</span></span><br><span class="line">	<span class="keyword">if</span> [ x<span class="variable">$feature_platform_search_hint</span> = xy ]; <span class="keyword">then</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root --hint=<span class="string">'hd0,msdos1'</span>  598becc1-655d-42f0-b66c-6be1fa8a2642</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root 598becc1-655d-42f0-b66c-6be1fa8a2642</span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line">    <span class="comment"># vmlinuz --&gt; 内核文件</span></span><br><span class="line">    <span class="comment"># ro --&gt; read only</span></span><br><span class="line">    <span class="comment"># crashkernel --&gt; kdump相关</span></span><br><span class="line">    <span class="comment"># initrd16 --&gt; initramfs文件</span></span><br><span class="line">	linux16 /vmlinuz-3.10.0-514.el7.x86_64 root=UUID=52193f20-fb04-497c-b603-9ab093866e04 ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8</span><br><span class="line">	initrd16 /initramfs-3.10.0-514.el7.x86_64.img</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 救援模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux (0-rescue-a256efa9202c4c0084d138735ee6b14b) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-0-rescue-a256efa9202c4c0084d138735ee6b14b-advanced-52193f20-fb04-497c-b603-9ab093866e04'</span> &#123;</span><br><span class="line">...</span><br><span class="line"><span class="comment">### END /etc/grub.d/10_linux ###</span></span><br></pre></td></tr></table></figure>
+<li>查看文件内容<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment"># !!核心信息!!</span></span><br><span class="line"><span class="comment"># ===========</span></span><br><span class="line"><span class="comment">### BEGIN /etc/grub.d/10_linux ###</span></span><br><span class="line"><span class="comment"># 普通模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux 7 (Core)'</span> --class os <span class="string">'gnulinux-X.X.x86_64-ad...'</span> &#123;</span><br><span class="line">	load_video</span><br><span class="line">	<span class="built_in">set</span> gfxpayload=keep</span><br><span class="line">    <span class="comment"># insmod --&gt; 在linux系统中插入模块</span></span><br><span class="line">	insmod gzio</span><br><span class="line">	insmod part_msdos</span><br><span class="line">	insmod ext2</span><br><span class="line">    <span class="comment"># 指定grub2配置文件在哪个设备上</span></span><br><span class="line">	<span class="built_in">set</span> root=<span class="string">'hd0,msdos1'</span></span><br><span class="line">	<span class="keyword">if</span> [ x<span class="variable">$feature_platform_search_hint</span> = xy ]; <span class="keyword">then</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root --hint=<span class="string">'hd0,msdos1'</span>  598b..</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	  search --no-floppy --fs-uuid --<span class="built_in">set</span>=root 598becc1...</span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line">    <span class="comment"># vmlinuz --&gt; 内核文件</span></span><br><span class="line">    <span class="comment"># ro --&gt; read only</span></span><br><span class="line">    <span class="comment"># crashkernel --&gt; kdump相关</span></span><br><span class="line">    <span class="comment"># initrd16 --&gt; initramfs文件</span></span><br><span class="line">	linux16 /vmlinuz-3.10.0-514.el7.x86_64 root=UUID=52193f...</span><br><span class="line">	initrd16 /initramfs-3.10.0-514.el7.x86_64.img</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 救援模式</span></span><br><span class="line">menuentry <span class="string">'CentOS Linux (0-rescue-a..'</span> --class<span class="string">'gnulinux-0-rescue-a...'</span> &#123;</span><br><span class="line">...</span><br><span class="line"><span class="comment">### END /etc/grub.d/10_linux ###</span></span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
-<h3 id="grub配置文件-etc-default-grub-与-etc-grub-d"><a href="#grub配置文件-etc-default-grub-与-etc-grub-d" class="headerlink" title="grub配置文件 /etc/default/grub 与 /etc/grub.d"></a>grub配置文件 /etc/default/grub 与 /etc/grub.d</h3><h4 id="环境配置文件-etc-default-grub"><a href="#环境配置文件-etc-default-grub" class="headerlink" title="环境配置文件 /etc/default/grub"></a>环境配置文件 /etc/default/grub</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/default/grub </span><br><span class="line">&gt;&gt; GRUB_TIMEOUT=5      <span class="comment"># 指定倒数秒数</span></span><br><span class="line">&gt;&gt; GRUB_DISTRIBUTOR=<span class="string">"<span class="variable">$(sed 's, release .*$,,g' /etc/system-release)</span>"</span> <span class="comment"># 发行版信息</span></span><br><span class="line">&gt;&gt; GRUB_DEFAULT=saved  <span class="comment"># 指定默认由哪一个菜单来开机，默认开机菜单之意</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_SUBMENU=<span class="literal">true</span> <span class="comment"># 是否要隐藏次菜单</span></span><br><span class="line">&gt;&gt; GRUB_TERMINAL_OUTPUT=<span class="string">"console"</span> <span class="comment"># 定数据输出的终端机格式，默认是通过文字终端机</span></span><br><span class="line">&gt;&gt; GRUB_CMDLINE_LINUX=<span class="string">"crashkernel=auto rhgb quiet"</span> <span class="comment"># menuentry 括号内的 linux16后续参数</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_RECOVERY=<span class="string">"true"</span> <span class="comment"># 取消救援菜单的制作</span></span><br></pre></td></tr></table></figure>
+<h3 id="grub配置文件"><a href="#grub配置文件" class="headerlink" title="grub配置文件"></a>grub配置文件</h3><h4 id="环境配置文件-etc-default-grub"><a href="#环境配置文件-etc-default-grub" class="headerlink" title="环境配置文件 /etc/default/grub"></a>环境配置文件 /etc/default/grub</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/default/grub </span><br><span class="line">&gt;&gt; GRUB_TIMEOUT=5      <span class="comment"># 指定倒数秒数</span></span><br><span class="line">&gt;&gt; GRUB_DISTRIBUTOR=<span class="string">"<span class="variable">$(sed 's, release .*$,,g' /etc/system-release)</span>"</span> <span class="comment"># 发行版信息</span></span><br><span class="line">&gt;&gt; GRUB_DEFAULT=saved  <span class="comment"># 指定默认由哪一个菜单来开机，默认开机菜单之意</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_SUBMENU=<span class="literal">true</span> <span class="comment"># 是否要隐藏次菜单</span></span><br><span class="line">&gt;&gt; GRUB_TERMINAL_OUTPUT=<span class="string">"console"</span> <span class="comment"># 定数据输出的终端机格式，默认是通过文字终端机</span></span><br><span class="line">&gt;&gt; GRUB_CMDLINE_LINUX=<span class="string">"crashkernel=auto rhgb quiet"</span> <span class="comment"># menuentry 括号内的 linux16后续参数</span></span><br><span class="line">&gt;&gt; GRUB_DISABLE_RECOVERY=<span class="string">"true"</span> <span class="comment"># 取消救援菜单的制作</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>倒数时间参数: <code>GRUB_TIMEOUT</code><ul>
@@ -804,7 +1156,116 @@
 
 </li>
 </ul>
-<h2 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h2><h3 id="Initramfs简介"><a href="#Initramfs简介" class="headerlink" title="Initramfs简介"></a>Initramfs简介</h3><h3 id="Initramfs文件"><a href="#Initramfs文件" class="headerlink" title="Initramfs文件"></a>Initramfs文件</h3><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h2 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h2><h3 id="systemd简介"><a href="#systemd简介" class="headerlink" title="systemd简介"></a>systemd简介</h3><h3 id="sbin-init-启动"><a href="#sbin-init-启动" class="headerlink" title="/sbin/init 启动"></a>/sbin/init 启动</h3><h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><h2 id="target"><a href="#target" class="headerlink" title="target"></a>target</h2><h3 id="target简介"><a href="#target简介" class="headerlink" title="target简介"></a>target简介</h3><h3 id="systemd-启动target"><a href="#systemd-启动target" class="headerlink" title="systemd 启动target"></a>systemd 启动target</h3><h3 id="mulit-user-target讲解"><a href="#mulit-user-target讲解" class="headerlink" title="mulit-user.target讲解"></a>mulit-user.target讲解</h3><h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="驱动-device-drvier-vs-固件-firmware"><a href="#驱动-device-drvier-vs-固件-firmware" class="headerlink" title="驱动(device drvier) vs 固件(firmware)"></a>驱动(device drvier) vs 固件(firmware)</h2><h2 id="lilo-vs-grub-vs-grub2"><a href="#lilo-vs-grub-vs-grub2" class="headerlink" title="lilo vs grub vs grub2"></a>lilo vs grub vs grub2</h2><h2 id="initrd-vs-initramfs"><a href="#initrd-vs-initramfs" class="headerlink" title="initrd vs initramfs"></a>initrd vs initramfs</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<h2 id="sysvinit-vs-UpStart"><a href="#sysvinit-vs-UpStart" class="headerlink" title="sysvinit vs UpStart"></a>sysvinit vs UpStart</h2><h3 id="sysvinit"><a href="#sysvinit" class="headerlink" title="sysvinit"></a>sysvinit</h3><ul>
+<li>历史现状<ul>
+<li><code>sysvinit</code>是<code>system V</code>风格的<code>init</code>系统, 源于<code>System V</code>系列<code>UNIX</code></li>
+<li>大多数Linux发行版的<code>启动服务管理</code>是和<code>System V</code>相兼容的, 被称为<code>sysvinit</code></li>
+<li>Linux 主要应用于<code>服务器</code>和<code>PC</code>机的时代，<code>SysVinit</code>运行非常良好，概念简单清晰</li>
+<li>配置主要依赖于<code>Shell</code>脚本</li>
+<li>致命缺点是<code>启动太慢</code></li>
+</ul>
+</li>
+<li>概况<ul>
+<li>运行级别: 通常在<code>/etc/inittab</code>文件中定义了各种运行模式的工作范围</li>
+<li>运行顺序: <ul>
+<li><code>sysvinit</code>需要读取<code>/etc/inittab</code>文件</li>
+<li>获得以下信息<ul>
+<li>系统需要进入的<code>runlevel</code></li>
+<li>捕获组合键的定义</li>
+<li>定义电源<code>fail/restore</code>脚本</li>
+<li>启动<code>getty</code>和虚拟控制台</li>
+</ul>
+</li>
+<li>顺序执行文件<ul>
+<li><code>/etc/rc.d/rc.sysinit</code></li>
+<li><code>/etc/rc.d/rc</code>和<code>/etc/rc.d/rcX.d/</code>(X 代表运行级别 0-6)</li>
+<li><code>/etc/rc.d/rc.local</code></li>
+<li><code>X Display Manager</code>(如需要)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>小结<ul>
+<li>优点:<ul>
+<li><code>概念简单</code><ul>
+<li>开发人员只需编写启动和停止脚本</li>
+<li>将<code>service</code>添加/删除到某个<code>runlevel</code>时, 只需要执行创建/删除软连接文件即可</li>
+</ul>
+</li>
+<li><code>确定的执行顺序</code><ul>
+<li>脚本严格按照启动<code>数字的大小</code>顺序执行, 一个执行完毕再执行下一个</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缺点:<ul>
+<li><code>启动速度过慢</code><ul>
+<li>串行执行脚本, 无法适应新型复杂的<code>IT</code>环境</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Upstart"><a href="#Upstart" class="headerlink" title="Upstart"></a>Upstart</h3><ul>
+<li>简介<ul>
+<li><code>UpStart</code>源自于<code>Ubuntu</code>发行版</li>
+<li>在linux越发流行后, 将linux用作桌面版本的<code>ubuntu</code>发现<code>sysvint</code>不适合笔记本环境</li>
+<li><code>UpStart</code>基于事件机制, 如U盘插入USB接口后,<code>udev</code>得到内核通知发现设备, 这就是一个新的事件</li>
+<li>由于事件机制, 加快了系统启动时间</li>
+</ul>
+</li>
+<li>特点<ul>
+<li>采用<code>事件驱动</code>模型<ul>
+<li>更快地启动系统</li>
+<li>当新硬件被发现时动态启动服务</li>
+<li>硬件被拔除时动态停止服务</li>
+</ul>
+</li>
+<li><code>UpStart</code>可以很好地应用在桌面或者便携式系统中, 处理这些系统中的动态硬件插拔特性</li>
+</ul>
+</li>
+<li><code>Upstart</code>概念和术语<ul>
+<li>job<ul>
+<li>一个工作单元, 用来完成一件工作</li>
+<li>如启动一个后台服务, 或者运行一个配置命令</li>
+<li>可以理解为<code>sysvinit</code>中的一个服务脚本</li>
+<li>分类<ul>
+<li>task job –&gt; 一定时间内会执行完毕的任务, 比如删除一个文件</li>
+<li>service job –&gt; 后台服务进程, 比如<code>apache httpd</code></li>
+<li>abstract job –&gt; <code>UpStart</code>内部使用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>event<ul>
+<li>是一个事件</li>
+<li>以通知消息的形式具体存在</li>
+<li>一旦某个事件发生了<code>Upstart</code>就向整个系统发送一个消息</li>
+<li>分类<ul>
+<li>Signals –&gt; 事件是非阻塞的，异步的</li>
+<li>Methods –&gt; 事件是阻塞的，同步的</li>
+<li>Hooks –&gt; 事件是阻塞的，同步的 (介于Signals与Methods之间)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>job和event协同<ul>
+<li>系统初始化时<code>init</code>进程开始运行, <code>init</code>进程自身会发出不同的<code>事件</code></li>
+<li>这些最初的<code>事件</code>会触发一些<code>工作</code>运行</li>
+<li>每个<code>工作</code>运行过程中会释放不同的<code>事件</code>，这些<code>事件</code>又将触发新的<code>工作</code>运行</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://arkit.co.in/linux-boot-process-millionaire-guide/" target="_blank" rel="noopener">Linux Boot Process The Millionaire Guide to understand deeply</a></li>
+<li><a href="https://www.linuxnix.com/linux-booting-process-explained/" target="_blank" rel="noopener">Linux Booting process explained - The Linux Juggernaut</a></li>
+<li><a href="https://www.thegeekstuff.com/2011/02/linux-boot-process" target="_blank" rel="noopener">6 Stages of Linux Boot Process (Startup Sequence)</a></li>
 <li><a href="https://www.datarecovery.co.nz/faq/bios/" target="_blank" rel="noopener">Why Do Computer Devices Need a BIOS? | Computer Forensics NZ</a></li>
 <li><a href="https://computer.howstuffworks.com/bios3.htm" target="_blank" rel="noopener">Configuring BIOS - How BIOS Works | HowStuffWorks</a></li>
 <li><a href="https://www.linode.com/docs/quick-answers/linux-essentials/what-is-systemd/" target="_blank" rel="noopener">What is systemd?</a>  </li>
@@ -816,7 +1277,11 @@
 <li><a href="http://www.invoke-ir.com/2015/05/ontheforensictrail-part2.html" target="_blank" rel="noopener">Invoke-IR | PowerShell Digital Forensics and Incident Response</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/54108702]" target="_blank" rel="noopener">电脑基础知识普及：bios、efi与uefi详解！ - 福兴坚哥的文章 - 知乎</a>  </li>
 <li><a href="https://www.tutorialspoint.com/what-is-grub-in-linux" target="_blank" rel="noopener">What is GRUB in Linux?</a></li>
+<li><a href="https://wizardforcel.gitbooks.io/vbird-linux-basic-4e/content/166.html" target="_blank" rel="noopener">19.1 Linux 的开机流程分析 | 鸟哥的 Linux 私房菜：基础学习篇 第四版</a></li>
 <li><a href="https://wizardforcel.gitbooks.io/vbird-linux-basic-4e/content/168.html" target="_blank" rel="noopener">19.3 Boot Loader: Grub2 | 鸟哥的 Linux 私房菜：基础学习篇 第四版</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/linux/1407_liuming_init1/index.html" target="_blank" rel="noopener">浅析 Linux 初始化 init 系统，第 1 部分: sysvinit</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/linux/1407_liuming_init2/index.html" target="_blank" rel="noopener">浅析 Linux 初始化 init 系统，第 2 部分: UpStart</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/linux/1407_liuming_init3/index.html" target="_blank" rel="noopener">浅析 Linux 初始化 init 系统，第 3 部分: Systemd</a></li>
 </ul>
 
       
@@ -1092,7 +1557,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统启动框架"><span class="nav-number">2.2.</span> <span class="nav-text">系统启动框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMPS-switched-mode-power-supply"><span class="nav-number">3.1.1.</span> <span class="nav-text">SMPS (switched-mode power supply)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST-Power-On-Self-Test"><span class="nav-number">3.1.2.</span> <span class="nav-text">POST (Power On Self Test)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap"><span class="nav-number">3.1.3.</span> <span class="nav-text">bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR"><span class="nav-number">3.2.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">MBR简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR信息查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">MBR信息查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简要解析"><span class="nav-number">3.2.3.</span> <span class="nav-text">MBR简要解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB"><span class="nav-number">3.3.</span> <span class="nav-text">GRUB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB简介"><span class="nav-number">3.3.1.</span> <span class="nav-text">GRUB简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB三个阶段"><span class="nav-number">3.3.2.</span> <span class="nav-text">GRUB三个阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件信息介绍"><span class="nav-number">3.3.3.</span> <span class="nav-text">GRUB文件信息介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub-cfg文件解析"><span class="nav-number">3.3.4.</span> <span class="nav-text">grub.cfg文件解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub配置文件-etc-default-grub-与-etc-grub-d"><span class="nav-number">3.3.5.</span> <span class="nav-text">grub配置文件 /etc/default/grub 与 /etc/grub.d</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境配置文件-etc-default-grub"><span class="nav-number">3.3.5.1.</span> <span class="nav-text">环境配置文件 /etc/default/grub</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#菜单创建的脚本-etc-grub-d"><span class="nav-number">3.3.5.2.</span> <span class="nav-text">菜单创建的脚本 /etc/grub.d</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel"><span class="nav-number">3.4.</span> <span class="nav-text">Kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs简介"><span class="nav-number">3.4.1.</span> <span class="nav-text">Initramfs简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs文件"><span class="nav-number">3.4.2.</span> <span class="nav-text">Initramfs文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.4.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Systemd"><span class="nav-number">3.5.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd简介"><span class="nav-number">3.5.1.</span> <span class="nav-text">systemd简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sbin-init-启动"><span class="nav-number">3.5.2.</span> <span class="nav-text">/sbin/init 启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-1"><span class="nav-number">3.5.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#target"><span class="nav-number">3.6.</span> <span class="nav-text">target</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#target简介"><span class="nav-number">3.6.1.</span> <span class="nav-text">target简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#systemd-启动target"><span class="nav-number">3.6.2.</span> <span class="nav-text">systemd 启动target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mulit-user-target讲解"><span class="nav-number">3.6.3.</span> <span class="nav-text">mulit-user.target讲解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-2"><span class="nav-number">3.6.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动-device-drvier-vs-固件-firmware"><span class="nav-number">4.1.</span> <span class="nav-text">驱动(device drvier) vs 固件(firmware)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lilo-vs-grub-vs-grub2"><span class="nav-number">4.2.</span> <span class="nav-text">lilo vs grub vs grub2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initrd-vs-initramfs"><span class="nav-number">4.3.</span> <span class="nav-text">initrd vs initramfs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统启动框架"><span class="nav-number">2.2.</span> <span class="nav-text">系统启动框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMPS-switched-mode-power-supply"><span class="nav-number">3.1.1.</span> <span class="nav-text">SMPS (switched-mode power supply)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST-Power-On-Self-Test"><span class="nav-number">3.1.2.</span> <span class="nav-text">POST (Power On Self Test)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap"><span class="nav-number">3.1.3.</span> <span class="nav-text">bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR"><span class="nav-number">3.2.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">MBR简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR信息查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">MBR信息查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR简要解析"><span class="nav-number">3.2.3.</span> <span class="nav-text">MBR简要解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB"><span class="nav-number">3.3.</span> <span class="nav-text">GRUB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB简介"><span class="nav-number">3.3.1.</span> <span class="nav-text">GRUB简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB三个阶段"><span class="nav-number">3.3.2.</span> <span class="nav-text">GRUB三个阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel"><span class="nav-number">3.4.</span> <span class="nav-text">Kernel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initramfs简介"><span class="nav-number">3.4.1.</span> <span class="nav-text">Initramfs简介</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Systemd"><span class="nav-number">3.5.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#init引入"><span class="nav-number">3.5.1.</span> <span class="nav-text">init引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Systemd-1"><span class="nav-number">3.5.2.</span> <span class="nav-text">Systemd</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#default-target"><span class="nav-number">3.6.</span> <span class="nav-text">default.target</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动过程"><span class="nav-number">3.6.1.</span> <span class="nav-text">启动过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置文件相关目录简介-优先级从低到高排列"><span class="nav-number">3.6.2.</span> <span class="nav-text">配置文件相关目录简介 (优先级从低到高排列)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看default-target"><span class="nav-number">3.6.3.</span> <span class="nav-text">查看default.target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看basic-target文件信息"><span class="nav-number">3.6.4.</span> <span class="nav-text">查看basic.target文件信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sysinit-target文件信息"><span class="nav-number">3.6.5.</span> <span class="nav-text">sysinit.target文件信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户自定义unit查看"><span class="nav-number">3.6.6.</span> <span class="nav-text">用户自定义unit查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.6.7.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#固件-firmware-vs-驱动-device-drvier"><span class="nav-number">4.1.</span> <span class="nav-text">固件(firmware) vs 驱动(device drvier)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#固件"><span class="nav-number">4.1.1.</span> <span class="nav-text">固件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#驱动"><span class="nav-number">4.1.2.</span> <span class="nav-text">驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关联"><span class="nav-number">4.1.3.</span> <span class="nav-text">关联</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUB-延伸知识"><span class="nav-number">4.2.</span> <span class="nav-text">GRUB 延伸知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB文件信息介绍"><span class="nav-number">4.2.1.</span> <span class="nav-text">GRUB文件信息介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub-cfg文件解析"><span class="nav-number">4.2.2.</span> <span class="nav-text">grub.cfg文件解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub配置文件"><span class="nav-number">4.2.3.</span> <span class="nav-text">grub配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境配置文件-etc-default-grub"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">环境配置文件 /etc/default/grub</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#菜单创建的脚本-etc-grub-d"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">菜单创建的脚本 /etc/grub.d</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysvinit-vs-UpStart"><span class="nav-number">4.3.</span> <span class="nav-text">sysvinit vs UpStart</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sysvinit"><span class="nav-number">4.3.1.</span> <span class="nav-text">sysvinit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Upstart"><span class="nav-number">4.3.2.</span> <span class="nav-text">Upstart</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -1125,7 +1590,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">45k</span>
+    <span title="站点总字数">52k</span>
   
 
   
@@ -1134,7 +1599,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:14</span>
+    <span title="站点阅读时长">1:27</span>
   
 </div>
 
