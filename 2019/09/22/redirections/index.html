@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: 让我引导你, 抵达无人之境, 到广阔无垠的戈壁上起舞, 到瑰丽迷人的海底里歌唱">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-22T04:16:38.289Z">
+<meta property="og:updated_time" content="2019-09-22T10:35:17.349Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重定向应用宝典">
 <meta name="twitter:description" content="引言: 让我引导你, 抵达无人之境, 到广阔无垠的戈壁上起舞, 到瑰丽迷人的海底里歌唱">
@@ -394,7 +394,7 @@
                 
               
 
-              <time title="创建时间：2019-09-22 09:18:50 / 修改时间：12:16:38" itemprop="dateCreated datePublished" datetime="2019-09-22T09:18:50+08:00">2019-09-22</time>
+              <time title="创建时间：2019-09-22 09:18:50 / 修改时间：18:35:17" itemprop="dateCreated datePublished" datetime="2019-09-22T09:18:50+08:00">2019-09-22</time>
             </span>
           
 
@@ -456,7 +456,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">2.2k</span>
+              <span title="本文字数">9.3k</span>
             </span>
           
 
@@ -468,7 +468,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">4 分钟</span>
+              <span title="阅读时长">16 分钟</span>
             </span>
           
 
@@ -515,7 +515,7 @@
 <li>也被应用于<code>windows</code>上, 被称为<code>file handle</code>句柄</li>
 <li>文件描述符用一个<code>非负的整数</code>表述, 如 0, 1, 2, 255</li>
 <li>每个系统进程, 都将默认分配0, 1, 2, 三个文件描述符<ul>
-<li>具体分配如下 <table>
+<li>具体分配<table>
 <thead>
 <tr>
 <th>fd</th>
@@ -530,7 +530,7 @@
 <td>Standard input</td>
 <td>stdin</td>
 <td>默认标准输入</td>
-<td>pipline(</td>
+<td>pipline(|), 键盘输入</td>
 </tr>
 <tr>
 <td>1</td>
@@ -560,24 +560,338 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l /proc/$$/fd</span><br><span class="line">&gt;&gt; total 0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 21 22:08 0 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 21 22:54 1 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 21 22:54 2 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 21 22:54 255 -&gt; /dev/pts/0</span><br><span class="line"><span class="comment"># 表示`bash`拥有了4个文件描述符, 均指向`/dev/pts/0`这个文件(设备)上</span></span><br><span class="line"><span class="comment"># 关于pts:</span></span><br><span class="line">    <span class="comment"># tty --&gt; terminal / teletypewriter</span></span><br><span class="line">    <span class="comment"># pty --&gt; pseudo terminal / teletypewriter (利用软件模拟的terminal)</span></span><br><span class="line">        <span class="comment"># 一个是master，另一个是slave，它们通过双向通道连接. </span></span><br><span class="line">        <span class="comment"># slave侧写入的所有数据都将转发到master侧的输出, 反之亦然</span></span><br><span class="line">        <span class="comment"># master (ptm): 将命令传给slave或者将slave的数据显示出来</span></span><br><span class="line">        <span class="comment"># slave (pts) :类似于terminal, pts需要通过一些软件连接到主机上</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>255 文件描述符号</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重定向时, 保存一份副本</span></span><br><span class="line">$ <span class="built_in">echo</span> foo 1&gt;/dev/null 2&gt;/dev/null &gt;/proc/$$/fd/255</span><br><span class="line">&gt;&gt; foo</span><br></pre></td></tr></table></figure>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重定向时, 保存一份副本</span></span><br><span class="line">$ <span class="built_in">echo</span> foo 1&gt;/dev/null 2&gt;/dev/null &gt;/proc/$$/fd/255</span><br><span class="line">&gt;&gt; foo</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
 <h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="输入重定向"><a href="#输入重定向" class="headerlink" title="输入重定向"></a>输入重定向</h2><ul>
 <li><code>&lt;</code> 是输出重定向的标志</li>
-<li>输出重定向, 将需要从<code>键盘</code>获得的信息通过重定向由文件提供</li>
-<li>应用场景: 发送邮件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># centos 发送邮件</span></span><br><span class="line"><span class="comment"># 安装 sendmail, mail</span></span><br><span class="line"><span class="comment"># 启动sendmail</span></span><br><span class="line"><span class="comment"># mail -s "主题"  收件地址 &lt; 文件(邮件正文.txt)</span></span><br><span class="line">$ yum -y install sendmail mail</span><br><span class="line">$ /etc/init.d/sendmail start</span><br><span class="line">$ mail -s <span class="string">"Passwd file"</span> you-mail@mail-server.com &lt; /etc/passwd</span><br></pre></td></tr></table></figure>
+<li>输入重定向, 将需要从<code>键盘</code>获得的信息通过重定向由文件提供</li>
+<li>应用场景: 发送邮件  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># centos 发送邮件</span></span><br><span class="line"><span class="comment"># 安装 sendmail, mail</span></span><br><span class="line"><span class="comment"># 启动sendmail</span></span><br><span class="line"><span class="comment"># mail -s "主题"  收件地址 &lt; 文件(邮件正文.txt)</span></span><br><span class="line">$ yum -y install sendmail mail</span><br><span class="line">$ /etc/init.d/sendmail start</span><br><span class="line">$ mail -s <span class="string">"Passwd file"</span> you-mail@mail-server.com &lt; /etc/passwd</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
-<h2 id="输出重定向"><a href="#输出重定向" class="headerlink" title="输出重定向"></a>输出重定向</h2><h2 id="追加重定向"><a href="#追加重定向" class="headerlink" title="追加重定向"></a>追加重定向</h2><h2 id="stdin-stderr-重定向"><a href="#stdin-stderr-重定向" class="headerlink" title="stdin/stderr 重定向"></a>stdin/stderr 重定向</h2><h2 id="Here"><a href="#Here" class="headerlink" title="Here"></a>Here</h2><h3 id="Here-doc"><a href="#Here-doc" class="headerlink" title="Here doc"></a>Here doc</h3><h3 id="Here-string"><a href="#Here-string" class="headerlink" title="Here string"></a>Here string</h3><h2 id="文件描述符-fd"><a href="#文件描述符-fd" class="headerlink" title="文件描述符(fd)"></a>文件描述符(fd)</h2><h3 id="复制-Duplicating"><a href="#复制-Duplicating" class="headerlink" title="复制(Duplicating)"></a>复制(Duplicating)</h3><h3 id="转移-Move"><a href="#转移-Move" class="headerlink" title="转移(Move)"></a>转移(Move)</h3><h3 id="开启-Open"><a href="#开启-Open" class="headerlink" title="开启(Open)"></a>开启(Open)</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="tty-vs-pts"><a href="#tty-vs-pts" class="headerlink" title="tty vs pts"></a>tty vs pts</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<h2 id="输出重定向"><a href="#输出重定向" class="headerlink" title="输出重定向"></a>输出重定向</h2><ul>
+<li><p><code>&gt;</code> 是输出重定向的标志</p>
+</li>
+<li><p>输出重定向, 将<code>应用/程序</code>运行的结果重定向到<code>文件/资源</code>上</p>
+</li>
+<li><p>应用场景: 过滤有效信息, 保存到文件中</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ grep <span class="string">'root'</span> /etc/passwd &gt; root.txt</span><br><span class="line">$ cat root.txt</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>应用场景: 过滤有效信息, 显示在屏幕同时保存到文件中 (<code>tee</code>)</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ grep <span class="string">'root'</span> /etc/passwd | tee  root.txt</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br><span class="line">$ cat root.txt</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="输出追加重定向"><a href="#输出追加重定向" class="headerlink" title="输出追加重定向"></a>输出追加重定向</h2><ul>
+<li><code>&gt;&gt;</code> 是输出追加重定向的标志</li>
+<li>输出重定向<code>&gt;</code>, 会覆盖文件内容, 重定向的文件保存<code>上一次</code>输出内容</li>
+<li>输出追加重定向<code>&gt;&gt;</code>, 将会在原有文件内容尾部添加内容,  重定向文件保存<code>每一次</code>输出内容</li>
+<li>应用场景: 过滤多个文件有效信息, 保存到文件中  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ grep -w <span class="string">'root'</span> /etc/passwd &gt; root.txt</span><br><span class="line">$ grep -w <span class="string">'root'</span> /etc/shadow &gt;&gt; root.txt</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br><span class="line">&gt;&gt; root:<span class="variable">$6</span><span class="variable">$3wKmOj9Y</span><span class="variable">$pKO</span>...IZm1:18126:0:99999:7:::</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="标准输出-错误输出"><a href="#标准输出-错误输出" class="headerlink" title="标准输出/错误输出"></a>标准输出/错误输出</h2><ul>
+<li><p>系统默认规定, <code>1</code>为标准输出, <code>2</code>为标准错误输出</p>
+</li>
+<li><p>是否是错误输出的标准, 可在命令执行后, 通过<code>$?</code>进行判断</p>
+<ul>
+<li><code>$?</code> –&gt;  0  –&gt; 正常运行</li>
+<li><code>$?</code> –&gt; 非0 –&gt; 错误运行<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ls / &gt; /dev/null ; <span class="built_in">echo</span> $?</span><br><span class="line">&gt;&gt; 0</span><br><span class="line">$ ls + 2&gt; /dev/null; <span class="built_in">echo</span> $?</span><br><span class="line">&gt;&gt; 2</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>标准输出, 使用<code>&gt;</code>或<code>1&gt;</code>进行输出重定向 (1可省略)</p>
+</li>
+<li><p>标准错误输出, 使用<code>2&gt;</code>进行输出重定向 (2不可省略)</p>
+</li>
+<li><p>当运行脚本时, 非脚本提示信息, 运行中的<code>标准输出</code>/<code>错误输出</code>应被屏蔽掉</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试某IP是否通信正常</span></span><br><span class="line">ip=<span class="string">'8.8.8.8'</span></span><br><span class="line">ping -c 1 <span class="variable">$ip</span> ____</span><br><span class="line"><span class="keyword">if</span> [ $? == 0 ]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>____</code> 需要填写重定向信息</li>
+<li>是否通信正常是无法确认的, 输出可能是<code>标准输出</code>或<code>标准错误输出</code></li>
+<li>但这两种输出信息我们都不希望打印出来, 需要对其均定向为空(<code>/dev/null</code>)</li>
+</ul>
+</li>
+<li><p>方法一: (分离重定向)</p>
+<ul>
+<li>将<code>标准输出</code>和<code>标准错误</code>分别重定向<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c 1 <span class="variable">$ip</span> 1&gt; /dev/null 2&gt; /dev/null</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>方法二: (同时重定向)</p>
+<ul>
+<li>通过 <code>&amp;&gt;</code> 或 <code>&gt;&amp;</code> 重定向<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ping -c 1 <span class="variable">$ip</span> &amp;&gt; /dev/null</span><br><span class="line"><span class="comment"># or</span></span><br><span class="line">ping -c 1 <span class="variable">$ip</span> &gt;&amp; /dev/null</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>方法三: (文件标识符转移)</p>
+<ul>
+<li><p>将<code>标准输出</code>定向到空, 后将<code>标准错误</code>定向到<code>标准输出</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c 1 <span class="variable">$ip</span> 1&gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>需要注意这个命令有顺序之分, 切勿写成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">! Error: ping -c 2&gt;&amp;1 1&gt; /dev/null</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这样只有<code>标准输出</code>会被重定向到空中, <code>标准错误</code>将在屏幕上显示</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Here"><a href="#Here" class="headerlink" title="Here"></a>Here</h2><h3 id="Here-Documents"><a href="#Here-Documents" class="headerlink" title="Here Documents"></a>Here Documents</h3><ul>
+<li><p><code>Here Doc</code>是<code>bash</code>中的小技巧</p>
+</li>
+<li><p><code>Here Doc</code>通过重定向的特性, 使<code>shell</code>从当前源中读取输入, 直到遇见指定<code>结束符</code></p>
+</li>
+<li><p>应用场景: 创建文件并写入内容</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat 1&gt; new.txt &lt;&lt;EOF</span><br><span class="line">&gt; This is a new line.</span><br><span class="line">&gt; EOF</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>固定格式 COMMAND &lt;&lt;[−]WORD</li>
+<li><code>1&gt;</code> 标准输出</li>
+<li><code>new.txt</code> 内容输出文件名</li>
+<li><code>EOF</code> 自定义结束符</li>
+<li>cat 将读取<code>标准输出</code>内容, 保存到<code>new.txt</code>文件中(非追加)</li>
+</ul>
+</li>
+<li><p>应用场景: 当脚本需要嵌入大段的文本内容时</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#file.sh</span></span><br><span class="line">cat &lt;&lt;EOF</span><br><span class="line">Hello world</span><br><span class="line">How<span class="string">'s it going?</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>应用场景: 删除标准输出的<code>http</code>字段</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sed <span class="string">'s|http://||'</span> &lt;&lt;EOF</span><br><span class="line">&gt; http://url1.com</span><br><span class="line">&gt; http://url2.com</span><br><span class="line">&gt; http://url3.com</span><br><span class="line">&gt; EOF</span><br><span class="line">url1.com</span><br><span class="line">url2.com</span><br><span class="line">url3.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>迷惑操作对比</p>
+<ul>
+<li><p>结束符(冒号)存在与否的比较</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不使用""</span></span><br><span class="line">cat &lt;&lt; EOF</span><br><span class="line">&gt; Your path: <span class="variable">$PWD</span></span><br><span class="line">&gt; EOF</span><br><span class="line">Your current path: /tmp/T</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用""</span></span><br><span class="line">cat &lt;&lt; <span class="string">"EOF"</span></span><br><span class="line">&gt; Your path: <span class="variable">$PWD</span></span><br><span class="line">&gt; EOF</span><br><span class="line">Your current path: <span class="variable">$PWD</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>[-]的作用</p>
+<ul>
+<li>当脚本使用<code>Tab</code>进行对齐时</li>
+<li>使用[-]可自动修剪<code>Tab</code>进行对齐</li>
+<li><code>Tab</code>制表符, 在cat -A 中显示为<code>^I</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ cat -A here.sh</span><br><span class="line">&gt;&gt; <span class="comment">#!/bin/bash$</span></span><br><span class="line">&gt;&gt; <span class="built_in">echo</span> <span class="string">'With -  with tabs suppressed '</span>$</span><br><span class="line">&gt;&gt; cat &lt;&lt;-EOF$</span><br><span class="line">&gt;&gt; ^IThis is line 1 of the message.$</span><br><span class="line">&gt;&gt; ^IThis is the last line of the message.$</span><br><span class="line">&gt;&gt; EOF$</span><br><span class="line">&gt;&gt; <span class="built_in">echo</span> $</span><br><span class="line">&gt;&gt; <span class="built_in">echo</span> <span class="string">'Without -  with tabs suppressed '</span>$</span><br><span class="line">&gt;&gt; cat &lt;&lt;EOF$</span><br><span class="line">&gt;&gt; ^IThis is line 1 of the message.$</span><br><span class="line">&gt;&gt; ^IThis is the last line of the message.$</span><br><span class="line">&gt;&gt; EOF$</span><br><span class="line"></span><br><span class="line">$ bash here.sh</span><br><span class="line">&gt;&gt; With -  with tabs suppressed </span><br><span class="line">&gt;&gt; This is line 1 of the message.</span><br><span class="line">&gt;&gt; This is the last line of the message.</span><br><span class="line">&gt;&gt; </span><br><span class="line">&gt;&gt; Without -  with tabs suppressed </span><br><span class="line">&gt;&gt;         This is line 1 of the message.</span><br><span class="line">&gt;&gt;         This is the last line of the message.</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Here-String"><a href="#Here-String" class="headerlink" title="Here String"></a>Here String</h3><ul>
+<li><p>格式类型: COMMAND &lt;&lt;&lt; WORD</p>
+</li>
+<li><p>应用场景: echo-grep结构</p>
+<ul>
+<li><p>非here-str结构</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ var=<span class="string">'hello_my_friend'</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$var</span> | grep hello</span><br><span class="line">&gt;&gt; hello_my_friend</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>here-str结构</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ var=<span class="string">'hello_my_friend'</span></span><br><span class="line">$ grep hello &lt;&lt;&lt; <span class="built_in">echo</span> <span class="variable">$var</span></span><br><span class="line">&gt;&gt; hello_my_friend</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="文件描述符-fd"><a href="#文件描述符-fd" class="headerlink" title="文件描述符(fd)"></a>文件描述符(fd)</h2><h3 id="fork-amp-exec"><a href="#fork-amp-exec" class="headerlink" title="fork &amp; exec"></a>fork &amp; exec</h3><ul>
+<li>fork<ul>
+<li>用来产生一个新进程</li>
+<li>这个进程默认会复制自身</li>
+</ul>
+</li>
+<li>exec<ul>
+<li>启动参数指定的程序</li>
+<li>代替自身进程</li>
+<li>不配合<code>fork</code>时:<ul>
+<li>结束当前进程, 执行指定进程</li>
+</ul>
+</li>
+<li>配合<code>fork</code>时:<ul>
+<li>在当前进程启动另一个进程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="复制-Duplicating"><a href="#复制-Duplicating" class="headerlink" title="复制(Duplicating)"></a>复制(Duplicating)</h3><h3 id="转移-Move"><a href="#转移-Move" class="headerlink" title="转移(Move)"></a>转移(Move)</h3><h3 id="开启-Open"><a href="#开启-Open" class="headerlink" title="开启(Open)"></a>开启(Open)</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="tty-vs-pts"><a href="#tty-vs-pts" class="headerlink" title="tty vs pts"></a>tty vs pts</h2><h2 id="cheat-sheet"><a href="#cheat-sheet" class="headerlink" title="cheat sheet"></a>cheat sheet</h2><table>
+<thead>
+<tr>
+<th>Redirection</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cmd &gt; file</td>
+<td>Redirect the standard output (stdout) of cmd to a file.</td>
+</tr>
+<tr>
+<td>cmd 1&gt; file</td>
+<td>Same as cmd &gt; file. 1 is the default file descriptor (fd) for stdout.</td>
+</tr>
+<tr>
+<td>cmd 2&gt; file</td>
+<td>Redirect the standard error (stderr) of cmd to a file. <br>2 is the default fd for stderr.</td>
+</tr>
+<tr>
+<td>cmd &gt;&gt; file</td>
+<td>Append stdout of cmd to a file.</td>
+</tr>
+<tr>
+<td>cmd 2&gt;&gt; file</td>
+<td>Append stderr of cmd to a file.</td>
+</tr>
+<tr>
+<td>cmd &amp;&gt; file</td>
+<td>Redirect stdout and stderr of cmd to a file.</td>
+</tr>
+<tr>
+<td>cmd &gt; file 2&gt;&amp;1</td>
+<td>Another way to redirect both stdout and stderr of <br>cmd to a file. This is not the same</td>
+</tr>
+<tr>
+<td>as cmd 2&gt;&amp;1 &gt; file.</td>
+<td>Redirection order matters!</td>
+</tr>
+<tr>
+<td>cmd &gt; /dev/null</td>
+<td>Discard stdout of cmd.</td>
+</tr>
+<tr>
+<td>cmd 2&gt; /dev/null</td>
+<td>Discard stderr of cmd.</td>
+</tr>
+<tr>
+<td>cmd &amp;&gt; /dev/null</td>
+<td>Discard stdout and stderr of cmd.</td>
+</tr>
+<tr>
+<td>cmd &lt; file</td>
+<td>Redirect the contents of the file to the standard input (stdin) of cmd</td>
+</tr>
+<tr>
+<td>cmd &lt;&lt; EOL <br> line1 <br> line2<br> EOL</td>
+<td>Redirect a bunch of lines <br>to the stdin. If ‘EOL’ is quoted, text is treated literally. This is called a here-document</td>
+</tr>
+<tr>
+<td>cmd &lt;&lt;- EOL <br> <tab>foo <br> <tab><tab>bar <br> EOL</tab></tab></tab></td>
+<td>Redirect a bunch of lines to the stdin and strip the leading tabs.</td>
+</tr>
+<tr>
+<td>cmd &lt;&lt;&lt;  “string”</td>
+<td>Redirect a single line of text to the stdin of cmd. <br>This is called a here-string.</td>
+</tr>
+<tr>
+<td>exec 2&gt; file</td>
+<td>Redirect stderr of all commands to a file forever.</td>
+</tr>
+<tr>
+<td>exec 3&lt; file</td>
+<td>Open a file for reading using a custom file descriptor.</td>
+</tr>
+<tr>
+<td>exec 3&gt; file</td>
+<td>Open a file for writing using a custom file descriptor.</td>
+</tr>
+<tr>
+<td>exec 3&lt;&gt; file</td>
+<td>Open a file for reading and writing using a custom file descriptor.</td>
+</tr>
+<tr>
+<td>exec 3&gt;&amp;-</td>
+<td>Close a file descriptor.</td>
+</tr>
+<tr>
+<td>exec 4&gt;&amp;3</td>
+<td>Make file descriptor 4 to be a copy of file descriptor 3. (Copy fd 3 to 4.)</td>
+</tr>
+<tr>
+<td>exec 4&gt;&amp;3-</td>
+<td>Copy file descriptor 3 to 4 and close file descriptor 3.</td>
+</tr>
+<tr>
+<td>echo “foo” &gt;&amp;3</td>
+<td>Write to a custom file descriptor.</td>
+</tr>
+<tr>
+<td>cat &lt;&amp;3</td>
+<td>Read from a custom file descriptor.</td>
+</tr>
+<tr>
+<td>(cmd1; cmd2) &gt; file</td>
+<td>Redirect stdout from multiple commands to a file <br>(using a sub-shell).</td>
+</tr>
+<tr>
+<td>{ cmd1; cmd2; } &gt; file</td>
+<td>Redirect stdout from multiple commands to a file <br>(faster; not using a sub-shell).</td>
+</tr>
+<tr>
+<td>exec 3&lt;&gt; /dev/tcp/host/port</td>
+<td>Open a TCP connection to host:port. <br>(This is a bash feature, not Linux feature).</td>
+</tr>
+<tr>
+<td>exec 3&lt;&gt; /dev/udp/host/port</td>
+<td>Open a UDP connection to host:port. <br>(This is a bash feature, not Linux feature).</td>
+</tr>
+<tr>
+<td>cmd &lt;(cmd1)</td>
+<td>Redirect stdout of cmd1 to an anonymous fifo, <br>then pass the fifo to cmd as an argument. Useful when cmd doesn’t read from stdin directly.</td>
+</tr>
+<tr>
+<td>cmd &lt; &lt;(cmd1)</td>
+<td>Redirect stdout of cmd1 to an anonymous fifo, <br>then redirect the fifo to stdin of cmd. Best example: diff &lt;(find /path1</td>
+</tr>
+<tr>
+<td>cmd &lt;(cmd1) &lt;(cmd2)</td>
+<td>Redirect stdout of cmd1 and cmd2 to <br>two anonymous fifos, then pass both fifos as arguments to cmd.</td>
+</tr>
+<tr>
+<td>cmd1 &gt;(cmd2)</td>
+<td>Run cmd2 with its stdin connected to an anonymous fifo, <br>and pass the filename of the pipe as an argument to cmd1.</td>
+</tr>
+<tr>
+<td>cmd1 &gt; &gt;(cmd2)</td>
+<td>Run cmd2 with its stdin connected to an anonymous fifo, <br>then redirect stdout of cmd to this anonymous pipe.</td>
+</tr>
+<tr>
+<td>cmd1 | cmd2</td>
+<td>Redirect stdout of cmd1 to stdin of cmd2. Pro-tip: <br>This is the same as cmd1 &gt; &gt;(cmd2),same as cmd2 &lt; &lt;(cmd1), <br>same as &gt; &gt;(cmd2) cmd1, same as &lt; &lt;(cmd1) cmd2.</td>
+</tr>
+<tr>
+<td>cmd1 |&amp; cmd2</td>
+<td>Redirect stdout and stderr of cmd1 to stdin of cmd2 (bash 4.0+ only)<br> Use cmd1 2&gt;&amp;1</td>
+</tr>
+<tr>
+<td>cmd | tee file</td>
+<td>Redirect stdout of cmd to a file and print it to screen.</td>
+</tr>
+<tr>
+<td>exec {filew}&gt; file</td>
+<td>Open a file for writing using a named file descriptor <br> called {filew} (bash 4.1+).</td>
+</tr>
+<tr>
+<td>cmd 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3</td>
+<td>Swap stdout and stderr of cmd.</td>
+</tr>
+<tr>
+<td>cmd &gt; &gt;(cmd1) 2&gt; &gt;(cmd2)</td>
+<td>Send stdout of cmd to cmd1 and stderr of cmd to cmd2.</td>
+</tr>
+<tr>
+<td>cmd1 | cmd2 | cmd3 | cmd4 <br> echo ${PIPESTATUS[@]}</td>
+<td>Find out the exit codes of all piped commands.</td>
+</tr>
+</tbody></table>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://www.golinuxcloud.com/difference-between-pty-vs-tty-vs-pts-linux/" target="_blank" rel="noopener">Difference between /dev/tty and /dev/pts (tty vs pts) in Linux | GoLinuxCloud</a> </li>
 <li><a href="https://unix.stackexchange.com/questions/21280/difference-between-pts-and-tty" target="_blank" rel="noopener">linux - Difference between pts and tty - Unix &amp; Linux Stack Exchange</a></li>
 <li><a href="https://www.computerhope.com/jargon/f/file-descriptor.htm" target="_blank" rel="noopener">What is a File Descriptor?</a></li>
 <li><a href="http://rachid.koucha.free.fr/tech_corner/pty_pdip.html" target="_blank" rel="noopener">Using pseudo-terminals to control interactive programs, pty, pdip</a></li>
 <li><a href="https://stackoverflow.com/questions/29729906/what-is-the-use-of-file-descriptor-255-in-bash-process" target="_blank" rel="noopener">linux - What is the use of file descriptor 255 in bash process - Stack Overflow</a></li>
 <li><a href="https://blog.51cto.com/ityunwei2017/1713425" target="_blank" rel="noopener">Linux下使用mail命令发送邮件-我本不是菜鸟-51CTO博客</a></li>
+<li><a href="http://www.tldp.org/LDP/abs/html/here-docs.html" target="_blank" rel="noopener">Here Documents</a></li>
+<li><a href="http://kodango.com/bash-one-liners-explained-part-three#more-2849" target="_blank" rel="noopener">bash one-liners explained 译文（三）</a></li>
+<li><a href="https://catonmat.net/ftp/bash-redirections-cheat-sheet.pdf" target="_blank" rel="noopener">bash-redirections-cheat-sheet</a>  </li>
 </ul>
 
       
@@ -859,7 +1173,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-file-descriptor"><span class="nav-number">2.2.</span> <span class="nav-text">文件描述符(file-descriptor)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proc-上的文件描述符"><span class="nav-number">2.3.</span> <span class="nav-text">/proc/上的文件描述符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入重定向"><span class="nav-number">3.1.</span> <span class="nav-text">输入重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出重定向"><span class="nav-number">3.2.</span> <span class="nav-text">输出重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#追加重定向"><span class="nav-number">3.3.</span> <span class="nav-text">追加重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stdin-stderr-重定向"><span class="nav-number">3.4.</span> <span class="nav-text">stdin/stderr 重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Here"><span class="nav-number">3.5.</span> <span class="nav-text">Here</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-doc"><span class="nav-number">3.5.1.</span> <span class="nav-text">Here doc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-string"><span class="nav-number">3.5.2.</span> <span class="nav-text">Here string</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-fd"><span class="nav-number">3.6.</span> <span class="nav-text">文件描述符(fd)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#复制-Duplicating"><span class="nav-number">3.6.1.</span> <span class="nav-text">复制(Duplicating)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转移-Move"><span class="nav-number">3.6.2.</span> <span class="nav-text">转移(Move)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开启-Open"><span class="nav-number">3.6.3.</span> <span class="nav-text">开启(Open)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tty-vs-pts"><span class="nav-number">4.1.</span> <span class="nav-text">tty vs pts</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-file-descriptor"><span class="nav-number">2.2.</span> <span class="nav-text">文件描述符(file-descriptor)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proc-上的文件描述符"><span class="nav-number">2.3.</span> <span class="nav-text">/proc/上的文件描述符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入重定向"><span class="nav-number">3.1.</span> <span class="nav-text">输入重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出重定向"><span class="nav-number">3.2.</span> <span class="nav-text">输出重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出追加重定向"><span class="nav-number">3.3.</span> <span class="nav-text">输出追加重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准输出-错误输出"><span class="nav-number">3.4.</span> <span class="nav-text">标准输出/错误输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Here"><span class="nav-number">3.5.</span> <span class="nav-text">Here</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-Documents"><span class="nav-number">3.5.1.</span> <span class="nav-text">Here Documents</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-String"><span class="nav-number">3.5.2.</span> <span class="nav-text">Here String</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-fd"><span class="nav-number">3.6.</span> <span class="nav-text">文件描述符(fd)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork-amp-exec"><span class="nav-number">3.6.1.</span> <span class="nav-text">fork &amp; exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制-Duplicating"><span class="nav-number">3.6.2.</span> <span class="nav-text">复制(Duplicating)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转移-Move"><span class="nav-number">3.6.3.</span> <span class="nav-text">转移(Move)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开启-Open"><span class="nav-number">3.6.4.</span> <span class="nav-text">开启(Open)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tty-vs-pts"><span class="nav-number">4.1.</span> <span class="nav-text">tty vs pts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cheat-sheet"><span class="nav-number">4.2.</span> <span class="nav-text">cheat sheet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -892,7 +1206,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">54k</span>
+    <span title="站点总字数">61k</span>
   
 
   
@@ -901,7 +1215,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:30</span>
+    <span title="站点阅读时长">1:42</span>
   
 </div>
 
