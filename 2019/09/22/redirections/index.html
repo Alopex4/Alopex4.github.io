@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: 让我引导你, 抵达无人之境, 到广阔无垠的戈壁上起舞, 到瑰丽迷人的海底里歌唱">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-22T10:35:17.349Z">
+<meta property="og:updated_time" content="2019-09-23T07:59:05.180Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重定向应用宝典">
 <meta name="twitter:description" content="引言: 让我引导你, 抵达无人之境, 到广阔无垠的戈壁上起舞, 到瑰丽迷人的海底里歌唱">
@@ -394,13 +394,23 @@
                 
               
 
-              <time title="创建时间：2019-09-22 09:18:50 / 修改时间：18:35:17" itemprop="dateCreated datePublished" datetime="2019-09-22T09:18:50+08:00">2019-09-22</time>
+              <time title="创建时间：2019-09-22 09:18:50" itemprop="dateCreated datePublished" datetime="2019-09-22T09:18:50+08:00">2019-09-22</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-23 15:59:05" itemprop="dateModified" datetime="2019-09-23T15:59:05+08:00">2019-09-23</time>
+              </span>
             
           
 
@@ -456,7 +466,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">9.3k</span>
+              <span title="本文字数">11k</span>
             </span>
           
 
@@ -468,7 +478,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">16 分钟</span>
+              <span title="阅读时长">19 分钟</span>
             </span>
           
 
@@ -694,7 +704,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="文件描述符-fd"><a href="#文件描述符-fd" class="headerlink" title="文件描述符(fd)"></a>文件描述符(fd)</h2><h3 id="fork-amp-exec"><a href="#fork-amp-exec" class="headerlink" title="fork &amp; exec"></a>fork &amp; exec</h3><ul>
+<h2 id="文件描述符操作-fd"><a href="#文件描述符操作-fd" class="headerlink" title="文件描述符操作(fd)"></a>文件描述符操作(fd)</h2><h3 id="fork-amp-exec"><a href="#fork-amp-exec" class="headerlink" title="fork &amp; exec"></a>fork &amp; exec</h3><ul>
 <li>fork<ul>
 <li>用来产生一个新进程</li>
 <li>这个进程默认会复制自身</li>
@@ -713,8 +723,50 @@
 </li>
 </ul>
 </li>
+<li><a href="https://wwww.alopex.cc" target="_blank" rel="noopener">了解更多 | fork &amp; exec 的故事</a></li>
 </ul>
-<h3 id="复制-Duplicating"><a href="#复制-Duplicating" class="headerlink" title="复制(Duplicating)"></a>复制(Duplicating)</h3><h3 id="转移-Move"><a href="#转移-Move" class="headerlink" title="转移(Move)"></a>转移(Move)</h3><h3 id="开启-Open"><a href="#开启-Open" class="headerlink" title="开启(Open)"></a>开启(Open)</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="tty-vs-pts"><a href="#tty-vs-pts" class="headerlink" title="tty vs pts"></a>tty vs pts</h2><h2 id="cheat-sheet"><a href="#cheat-sheet" class="headerlink" title="cheat sheet"></a>cheat sheet</h2><table>
+<h3 id="只读打开文件描述符"><a href="#只读打开文件描述符" class="headerlink" title="只读打开文件描述符"></a>只读打开文件描述符</h3><ul>
+<li>exec <code>[n]&lt;</code>filename<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /tmp/T; cp /etc/passwd .</span><br><span class="line"><span class="comment"># 在当前目录下, 创建fd3, 读取文件passwd</span></span><br><span class="line">$ <span class="built_in">exec</span> 3&lt;passwd</span><br><span class="line"><span class="comment"># 查看当前bash的fd3的信息</span></span><br><span class="line">$ ls -l /proc/$$/fd/3</span><br><span class="line">&gt;&gt; lr-x------. 1 root root 64 Sep 23 02:28 3 -&gt; /tmp/T/passwd</span><br><span class="line"><span class="comment"># 读取操作1 (匹配'root')</span></span><br><span class="line">$ grep <span class="string">'root'</span> &lt;&amp;3</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line"><span class="comment"># 读取操作2 (读取一行)</span></span><br><span class="line">$ <span class="built_in">read</span> -u 3 line</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$line</span></span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line"><span class="comment"># 关闭文件描述符</span></span><br><span class="line">$ <span class="built_in">exec</span> 3&lt;&amp;-</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="只写打开文件描述符"><a href="#只写打开文件描述符" class="headerlink" title="只写打开文件描述符"></a>只写打开文件描述符</h3><ul>
+<li>exec <code>[n]&gt;</code>filename<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在当前目录下, 创建fd4, 写入文件file</span></span><br><span class="line">$ <span class="built_in">cd</span> /tmp/T; <span class="built_in">exec</span> 4&gt;file</span><br><span class="line"><span class="comment"># 查看当前bash的fd4的信息</span></span><br><span class="line">$ ls -l /proc/$$/fd/4</span><br><span class="line">&gt;&gt; l-wx------. 1 root root 64 Sep 23 02:34 /proc/1731/fd/4 -&gt; /tmp/T/file</span><br><span class="line"><span class="comment"># 写入操作</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'hello this is a new line'</span> &gt;&amp; 4 </span><br><span class="line">$ cat /tmp/T/file </span><br><span class="line">&gt;&gt; hello this is a new line</span><br><span class="line"><span class="comment"># 关闭文件描述符</span></span><br><span class="line">$ <span class="built_in">exec</span> 4&gt;&amp;-</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="读-写打开文件描述符"><a href="#读-写打开文件描述符" class="headerlink" title="读/写打开文件描述符"></a>读/写打开文件描述符</h3><ul>
+<li>exec N<code>&lt;&gt;</code>filename</li>
+<li>注意<code>N</code>和<code>&lt;&gt;</code>之间不能有空格<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'hello this is a new line'</span> &gt; file</span><br><span class="line">$ <span class="built_in">cd</span> /tmp/T; <span class="built_in">exec</span> 5&lt;&gt;file</span><br><span class="line"><span class="comment"># 查看当前bash的fd5的信息</span></span><br><span class="line">$ ls -l /proc/$$/fd/5</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 23 02:47 /proc/1731/fd/5 -&gt; /tmp/T/file</span><br><span class="line"><span class="comment"># 读取操作</span></span><br><span class="line">$ grep -w <span class="string">'hello'</span> &lt;&amp;5</span><br><span class="line">&gt;&gt; hello this is a new line</span><br><span class="line"><span class="comment"># 写入操作</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'This is another line'</span> &gt;&amp;5</span><br><span class="line">$ cat file </span><br><span class="line">&gt;&gt; hello this is a new line</span><br><span class="line">&gt;&gt; This is another line</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li>和打开文件读取有所不同</li>
+<li><code>文件描述符</code>在执行<code>读</code>操作时, 文件指针下移</li>
+<li>当文件读取完到末尾, 文件指针指向为空</li>
+<li>此时再进行读操作, 返回为空<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 两行文件</span></span><br><span class="line">$ cat file </span><br><span class="line">&gt;&gt; hello this is a new line</span><br><span class="line">&gt;&gt; This is another line</span><br><span class="line"><span class="comment"># fd3 读写文件</span></span><br><span class="line">$ <span class="built_in">exec</span> 3&lt;&gt; file </span><br><span class="line"><span class="comment"># 读取首行</span></span><br><span class="line">$ head -n 1 &lt;&amp;3</span><br><span class="line">&gt;&gt; hello this is a new line</span><br><span class="line"><span class="comment"># 读取首行</span></span><br><span class="line">$ head -n 1 &lt;&amp;3</span><br><span class="line">&gt;&gt; This is another line</span><br><span class="line"><span class="comment"># 读取首行 为空</span></span><br><span class="line">$ head -n 1 &lt;&amp;3</span><br><span class="line">&gt;&gt; (空)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="重定向的应用"><a href="#重定向的应用" class="headerlink" title="重定向的应用"></a>重定向的应用</h2><h3 id="重定向顺序"><a href="#重定向顺序" class="headerlink" title="重定向顺序"></a>重定向顺序</h3><ul>
+<li>以下三种方式都是一样的效果<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> hello &gt;/tmp/T/example; cat /tmp/T/example</span><br><span class="line">&gt;&gt; hello</span><br><span class="line">$ <span class="built_in">echo</span> &gt;/tmp/T/example hello; cat /tmp/T/example</span><br><span class="line">&gt;&gt; hello</span><br><span class="line">$ &gt;/tmp/T/example <span class="built_in">echo</span> hello; cat /tmp/T/example</span><br><span class="line">&gt;&gt; hello</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="重定向一组命令的标准输出到文件中"><a href="#重定向一组命令的标准输出到文件中" class="headerlink" title="重定向一组命令的标准输出到文件中"></a>重定向一组命令的标准输出到文件中</h3><ul>
+<li><code>/dev/tcp/host/port</code>是特殊文件, 并不需要现实存在于系统中</li>
+<li>这种类型的特殊文件是给<code>Bash</code>建立<code>tcp</code>连接用的</li>
+<li>首先以读写的方式打开<code>fd3</code>, 把它指向<code>/dev/tcp/www.google.com/80</code></li>
+<li>往<code>fd3</code>写<code>GET / HTTP/1.1\n\n</code></li>
+<li>使用<code>cat</code>命令从同样的地方读取返回内容<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">exec</span> 3&lt;&gt;/dev/tcp/www.google.com/80</span><br><span class="line">$ <span class="built_in">echo</span> -e <span class="string">"GET / HTTP/1.1\n\n"</span> &gt;&amp;3</span><br><span class="line">$ cat &lt;&amp;3</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="通过Bash访问Web站点"><a href="#通过Bash访问Web站点" class="headerlink" title="通过Bash访问Web站点"></a>通过Bash访问Web站点</h3><h3 id="重定向输出时防止覆盖已有的文件"><a href="#重定向输出时防止覆盖已有的文件" class="headerlink" title="重定向输出时防止覆盖已有的文件"></a>重定向输出时防止覆盖已有的文件</h3><ul>
+<li>set -o noclobber<h3 id="交换标准输出与标准错误输出"><a href="#交换标准输出与标准错误输出" class="headerlink" title="交换标准输出与标准错误输出"></a>交换标准输出与标准错误输出</h3><h3 id="重定向进程的输出-错误到另一进程"><a href="#重定向进程的输出-错误到另一进程" class="headerlink" title="重定向进程的输出/错误到另一进程"></a>重定向进程的输出/错误到另一进程</h3><h3 id="重定向输出和错误输出给不同进程"><a href="#重定向输出和错误输出给不同进程" class="headerlink" title="重定向输出和错误输出给不同进程"></a>重定向输出和错误输出给不同进程</h3><h3 id="重定向标准输入到文件，同时打印到标准输出"><a href="#重定向标准输入到文件，同时打印到标准输出" class="headerlink" title="重定向标准输入到文件，同时打印到标准输出"></a>重定向标准输入到文件，同时打印到标准输出</h3><h3 id="管道符原理"><a href="#管道符原理" class="headerlink" title="管道符原理"></a>管道符原理</h3><h3 id="获取管道流中的所有命令执行退出码"><a href="#获取管道流中的所有命令执行退出码" class="headerlink" title="获取管道流中的所有命令执行退出码"></a>获取管道流中的所有命令执行退出码</h3></li>
+</ul>
+<h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="cheat-sheet"><a href="#cheat-sheet" class="headerlink" title="cheat sheet"></a>cheat sheet</h2><table>
 <thead>
 <tr>
 <th>Redirection</th>
@@ -1173,7 +1225,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-file-descriptor"><span class="nav-number">2.2.</span> <span class="nav-text">文件描述符(file-descriptor)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proc-上的文件描述符"><span class="nav-number">2.3.</span> <span class="nav-text">/proc/上的文件描述符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入重定向"><span class="nav-number">3.1.</span> <span class="nav-text">输入重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出重定向"><span class="nav-number">3.2.</span> <span class="nav-text">输出重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出追加重定向"><span class="nav-number">3.3.</span> <span class="nav-text">输出追加重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准输出-错误输出"><span class="nav-number">3.4.</span> <span class="nav-text">标准输出/错误输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Here"><span class="nav-number">3.5.</span> <span class="nav-text">Here</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-Documents"><span class="nav-number">3.5.1.</span> <span class="nav-text">Here Documents</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-String"><span class="nav-number">3.5.2.</span> <span class="nav-text">Here String</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-fd"><span class="nav-number">3.6.</span> <span class="nav-text">文件描述符(fd)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork-amp-exec"><span class="nav-number">3.6.1.</span> <span class="nav-text">fork &amp; exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制-Duplicating"><span class="nav-number">3.6.2.</span> <span class="nav-text">复制(Duplicating)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转移-Move"><span class="nav-number">3.6.3.</span> <span class="nav-text">转移(Move)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开启-Open"><span class="nav-number">3.6.4.</span> <span class="nav-text">开启(Open)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tty-vs-pts"><span class="nav-number">4.1.</span> <span class="nav-text">tty vs pts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cheat-sheet"><span class="nav-number">4.2.</span> <span class="nav-text">cheat sheet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符-file-descriptor"><span class="nav-number">2.2.</span> <span class="nav-text">文件描述符(file-descriptor)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proc-上的文件描述符"><span class="nav-number">2.3.</span> <span class="nav-text">/proc/上的文件描述符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入重定向"><span class="nav-number">3.1.</span> <span class="nav-text">输入重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出重定向"><span class="nav-number">3.2.</span> <span class="nav-text">输出重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出追加重定向"><span class="nav-number">3.3.</span> <span class="nav-text">输出追加重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准输出-错误输出"><span class="nav-number">3.4.</span> <span class="nav-text">标准输出/错误输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Here"><span class="nav-number">3.5.</span> <span class="nav-text">Here</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-Documents"><span class="nav-number">3.5.1.</span> <span class="nav-text">Here Documents</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Here-String"><span class="nav-number">3.5.2.</span> <span class="nav-text">Here String</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符操作-fd"><span class="nav-number">3.6.</span> <span class="nav-text">文件描述符操作(fd)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork-amp-exec"><span class="nav-number">3.6.1.</span> <span class="nav-text">fork &amp; exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只读打开文件描述符"><span class="nav-number">3.6.2.</span> <span class="nav-text">只读打开文件描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只写打开文件描述符"><span class="nav-number">3.6.3.</span> <span class="nav-text">只写打开文件描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读-写打开文件描述符"><span class="nav-number">3.6.4.</span> <span class="nav-text">读/写打开文件描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意事项"><span class="nav-number">3.6.5.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重定向的应用"><span class="nav-number">3.7.</span> <span class="nav-text">重定向的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向顺序"><span class="nav-number">3.7.1.</span> <span class="nav-text">重定向顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向一组命令的标准输出到文件中"><span class="nav-number">3.7.2.</span> <span class="nav-text">重定向一组命令的标准输出到文件中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过Bash访问Web站点"><span class="nav-number">3.7.3.</span> <span class="nav-text">通过Bash访问Web站点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向输出时防止覆盖已有的文件"><span class="nav-number">3.7.4.</span> <span class="nav-text">重定向输出时防止覆盖已有的文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交换标准输出与标准错误输出"><span class="nav-number">3.7.5.</span> <span class="nav-text">交换标准输出与标准错误输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向进程的输出-错误到另一进程"><span class="nav-number">3.7.6.</span> <span class="nav-text">重定向进程的输出/错误到另一进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向输出和错误输出给不同进程"><span class="nav-number">3.7.7.</span> <span class="nav-text">重定向输出和错误输出给不同进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向标准输入到文件，同时打印到标准输出"><span class="nav-number">3.7.8.</span> <span class="nav-text">重定向标准输入到文件，同时打印到标准输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#管道符原理"><span class="nav-number">3.7.9.</span> <span class="nav-text">管道符原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取管道流中的所有命令执行退出码"><span class="nav-number">3.7.10.</span> <span class="nav-text">获取管道流中的所有命令执行退出码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cheat-sheet"><span class="nav-number">4.1.</span> <span class="nav-text">cheat sheet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -1206,7 +1258,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">61k</span>
+    <span title="站点总字数">63k</span>
   
 
   
@@ -1215,7 +1267,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:42</span>
+    <span title="站点阅读时长">1:46</span>
   
 </div>
 
