@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: Give me a fork, give you the world.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fork &amp; exec--必知必会">
+<meta property="og:url" content="http://alopex.cc/2019/09/24/fork-and-exec/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: Give me a fork, give you the world.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-25T10:47:54.346Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fork &amp; exec--必知必会">
+<meta name="twitter:description" content="引言: Give me a fork, give you the world.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/09/24/fork-and-exec/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>fork & exec--必知必会 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/09/24/fork-and-exec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">fork & exec--必知必会
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-24 12:22:14" itemprop="dateCreated datePublished" datetime="2019-09-24T12:22:14+08:00">2019-09-24</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-25 18:47:54" itemprop="dateModified" datetime="2019-09-25T18:47:54+08:00">2019-09-25</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">3.5k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">6 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>Give me a fork, give you the world.</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="fork-amp-exec-初认识"><a href="#fork-amp-exec-初认识" class="headerlink" title="fork &amp; exec 初认识"></a>fork &amp; exec 初认识</h2><h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><ul>
+<li>极简解析:<ul>
+<li>复制当前进程</li>
+</ul>
+</li>
+<li>工作流程<ul>
+<li>建立<code>进程控制块</code>(PCB)并赋初值<ul>
+<li>把父进程的<code>PCB</code>复制到子进程<code>PCB</code>中</li>
+<li>为子进程分配唯一的的<code>PID</code></li>
+</ul>
+</li>
+<li>为<code>子进程</code>的执行设置跟踪进程<ul>
+<li>将<code>子进程</code>加入到进程链中</li>
+<li>拷贝<code>父进程</code>上下文</li>
+</ul>
+</li>
+<li>启动<code>调度程序</code>, 使<code>子进程</code>获得运行的机会<ul>
+<li>设置新的<code>就绪队列</code>状态</li>
+<li>将<code>子进程</code>挂到新的就绪队列中</li>
+<li>重新启动<code>调度程序</code></li>
+<li>父进程 fork()返回<code>子进程PID</code></li>
+<li>子进程 fork()返回<code>0</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="exec"><a href="#exec" class="headerlink" title="exec"></a>exec</h3><ul>
+<li>极简解析:<ul>
+<li>以新的进程替换现有进程</li>
+</ul>
+</li>
+<li>工作流程<ul>
+<li><code>执行</code>传入应用/参数/脚本等</li>
+<li>执行结束, 退让现有进程</li>
+</ul>
+</li>
+</ul>
+<h3 id="二者关联"><a href="#二者关联" class="headerlink" title="二者关联"></a>二者关联</h3><ul>
+<li><code>exec</code> 和 <code>fork</code>一般协同工作, 当然也有分开的时候</li>
+<li>在<code>bash</code>中, <code>fork</code>使用<code>man 2 fork</code>查看, 得到的是<code>fork</code>函数的信息</li>
+<li><code>exec</code>是bash<code>builtin</code>的工具, 但<code>exec</code>在linux中同时是系统调用代表一个系列的函数</li>
+<li>形象对比:<ul>
+<li>以建造一座桥梁作为背景<ul>
+<li><code>fork</code>的角色是一个承包商, 目的是将建桥这个项目承包下来, 并为其提供必要的资源协助</li>
+<li><code>exec</code>的角色是施工人员, 利用<code>fork</code>提供的资源建造桥梁, 目的是把建桥工作完成</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="bash观察"><a href="#bash观察" class="headerlink" title="bash观察"></a>bash观察</h3><h4 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h4><ul>
+<li>在<code>terminal-1</code>中运行脚本<code>sleep.sh</code></li>
+<li>在<code>terminal-2</code>中查看脚本的运行</li>
+<li>对比<code>/proc</code>对应进程文件夹的区别</li>
+</ul>
+<h4 id="脚本启动"><a href="#脚本启动" class="headerlink" title="脚本启动"></a>脚本启动</h4><ul>
+<li><p><code>sleep.sh</code>脚本内容 (<code>/tmp/T/sleep.sh</code>)</p>
+<ul>
+<li>打开文件<code>/tmp/T/number</code></li>
+<li>对文件进行读取</li>
+<li>每读取一行睡眠10s<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">file_name=<span class="string">'/tmp/T/number.txt'</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'start'</span></span><br><span class="line"><span class="keyword">while</span> IFS= <span class="built_in">read</span> -r line</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    sleep 10</span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$line</span></span><br><span class="line"><span class="keyword">done</span> &lt; <span class="string">"<span class="variable">$file_name</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'end'</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>terminal-1</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ sh a.sh</span><br><span class="line">&gt;&gt; start</span><br><span class="line">&gt;&gt; 1</span><br><span class="line">&gt;&gt; 2</span><br><span class="line">&gt;&gt; ...</span><br><span class="line">&gt;&gt; end</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="proc观察"><a href="#proc观察" class="headerlink" title="/proc观察"></a>/proc观察</h4><ul>
+<li><code>terminal-2</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获得`termianl-1` 父进程(1971) / 子进程(1972)</span></span><br><span class="line">$ pstree -p | grep <span class="string">'bash'</span></span><br><span class="line">&gt;&gt;        |-sshd(1219)-+-sshd(1802)---bash(1805)---sh(1971)---sleep(1972)</span><br><span class="line">&gt;&gt;        |            `-sshd(1866)---bash(1869)-+-grep(1982)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看父进程(1971)文件描述符信息</span></span><br><span class="line">$ ll /proc/1971/fd/</span><br><span class="line">&gt;&gt; total 0</span><br><span class="line">&gt;&gt; lr-x------. 1 root root 64 Sep 25 05:35 0 -&gt; /tmp/T/number.txt</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 25 05:35 1 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 25 05:35 10 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 25 05:35 2 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lr-x------. 1 root root 64 Sep 25 05:35 255 -&gt; /tmp/T/sleep.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看子进程(1972)文件描述符信息</span></span><br><span class="line">$ ll /proc/1972/fd/</span><br><span class="line">&gt;&gt; total 0</span><br><span class="line">&gt;&gt; lr-x------. 1 root root 64 Sep 25 05:36 0 -&gt; /tmp/T/number.txt</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 25 05:36 1 -&gt; /dev/pts/0</span><br><span class="line">&gt;&gt; lrwx------. 1 root root 64 Sep 25 05:36 2 -&gt; /dev/pts/0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用diff 比较两个进程目录间的区别</span></span><br><span class="line">$ file /proc/1971/* | grep -v <span class="string">'empty'</span></span><br><span class="line">&gt;&gt; /proc/2077/attr:            directory</span><br><span class="line">&gt;&gt; /proc/2077/cwd:             symbolic link to `/tmp/T`</span><br><span class="line">&gt;&gt; /proc/2077/exe:             symbolic link to `/bin/bash`</span><br><span class="line">&gt;&gt; /proc/2077/fd:              directory</span><br><span class="line">&gt;&gt; /proc/2077/fdinfo:          directory</span><br><span class="line">&gt;&gt; /proc/2077/net:             directory</span><br><span class="line">&gt;&gt; /proc/2077/ns:              directory</span><br><span class="line">&gt;&gt; /proc/2077/root:            symbolic link to `/`</span><br><span class="line">&gt;&gt; /proc/2077/task:            directory</span><br><span class="line"></span><br><span class="line">$ diff -r /proc/&#123;1971,1972&#125;/attr</span><br><span class="line">&gt;&gt; Binary files /proc/1971/exe and /proc/1972/exe differ</span><br><span class="line">$ diff -r /proc/&#123;1971,1972&#125;/fd</span><br><span class="line">&gt;&gt; Only <span class="keyword">in</span> /proc/1971/fd: 10</span><br><span class="line">&gt;&gt; Only <span class="keyword">in</span> /proc/1971/fd: 255</span><br><span class="line">$ diff -r /proc/&#123;1971,1972&#125;/fdinfo</span><br><span class="line">&gt;&gt; Only <span class="keyword">in</span> /proc/1971/fdinfo: 10</span><br><span class="line">&gt;&gt; Only <span class="keyword">in</span> /proc/1971/fdinfo: 255</span><br><span class="line">$ diff -r /proc/&#123;1971,1972&#125;/net</span><br><span class="line">$ diff -r /proc/&#123;1971,1972&#125;/ns</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><ul>
+<li><code>sh</code>是父进程</li>
+<li><code>sleep</code>是子进程</li>
+<li><code>sleep</code>进程是通过<code>sh</code>fork出来的</li>
+<li>通过<code>diff</code>比较可发现两个进程均打开了<code>number.txt</code>文件</li>
+</ul>
+<h2 id="fork-运行"><a href="#fork-运行" class="headerlink" title="fork 运行"></a>fork 运行</h2><h3 id="c-fork伪代码"><a href="#c-fork伪代码" class="headerlink" title="c++ fork伪代码"></a>c++ fork伪代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">count &lt;&lt; <span class="string">"Forking...\n"</span>;</span><br><span class="line"><span class="keyword">int</span> pid = fork();</span><br><span class="line">count &lt;&lt; <span class="string">"Forked!\n"</span>;</span><br><span class="line">count &lt;&lt; <span class="string">"pid = "</span> &lt;&lt; pid &lt;&lt; <span class="string">".\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line">Forking...</span><br><span class="line">Forked!</span><br><span class="line">Forked!</span><br><span class="line">pid = <span class="number">124</span></span><br><span class="line">pid = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="执行步骤"><a href="#执行步骤" class="headerlink" title="执行步骤"></a>执行步骤</h3><ol>
+<li>打印出<code>Forking...</code></li>
+<li>父进程(123)通过<code>fork()</code>函数, 申请资源生成子进程(124)</li>
+<li>父进程/子进程根据系统调度顺序(随机),打印出<code>Forked!</code></li>
+<li>父进程/子进程根据系统调度顺序(随机),父进程打印出<code>pid = 124</code>, 子进程打印出<code>pid=0</code></li>
+</ol>
+<h2 id="fork-amp-exec-协同运行"><a href="#fork-amp-exec-协同运行" class="headerlink" title="fork &amp; exec 协同运行"></a>fork &amp; exec 协同运行</h2><h3 id="c-fork-exec-伪代码"><a href="#c-fork-exec-伪代码" class="headerlink" title="c++ fork+exec 伪代码"></a>c++ fork+exec 伪代码</h3><pre><code class="c++"></code></pre>
+<h2 id="fork-amp-exec-优势"><a href="#fork-amp-exec-优势" class="headerlink" title="fork &amp; exec 优势"></a>fork &amp; exec 优势</h2><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="exec函数组"><a href="#exec函数组" class="headerlink" title="exec函数组"></a>exec函数组</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.youtube.com/watch?v=nwm7rJG90i8&t=5s" target="_blank" rel="noopener">Fork and Exec in Linux - YouTube</a>  </li>
+<li><a href="https://blog.csdn.net/hao707822882/article/details/40375295" target="_blank" rel="noopener">linux中的fork函数到底做了什么事 - 西红柿炒土豆 - CSDN博客</a>  </li>
+<li><a href="https://blog.csdn.net/baidu20008/article/details/9764765" target="_blank" rel="noopener">使用exec函数组调用执行shell脚本 - baidu20008的专栏 - CSDN博客</a>  </li>
+<li><a href="https://www.cyberciti.biz/faq/unix-howto-read-line-by-line-from-file/" target="_blank" rel="noopener">Linux/UNIX: Bash Read a File Line By Line - nixCraft</a>  </li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/22/redirections/" rel="next" title="重定向应用宝典">
+                <i class="fa fa-chevron-left"></i> 重定向应用宝典
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-初认识"><span class="nav-number">3.1.</span> <span class="nav-text">fork &amp; exec 初认识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">3.1.1.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exec"><span class="nav-number">3.1.2.</span> <span class="nav-text">exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二者关联"><span class="nav-number">3.1.3.</span> <span class="nav-text">二者关联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bash观察"><span class="nav-number">3.1.4.</span> <span class="nav-text">bash观察</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作流程"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">操作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本启动"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">脚本启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc观察"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">/proc观察</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">3.1.4.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-运行"><span class="nav-number">3.2.</span> <span class="nav-text">fork 运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork伪代码"><span class="nav-number">3.2.1.</span> <span class="nav-text">c++ fork伪代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行步骤"><span class="nav-number">3.2.2.</span> <span class="nav-text">执行步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-协同运行"><span class="nav-number">3.3.</span> <span class="nav-text">fork &amp; exec 协同运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork-exec-伪代码"><span class="nav-number">3.3.1.</span> <span class="nav-text">c++ fork+exec 伪代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-优势"><span class="nav-number">3.4.</span> <span class="nav-text">fork &amp; exec 优势</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#exec函数组"><span class="nav-number">4.1.</span> <span class="nav-text">exec函数组</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">69k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">1:56</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
