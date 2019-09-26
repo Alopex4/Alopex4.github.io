@@ -133,7 +133,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: Give me a fork, give you the world.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-25T10:47:54.346Z">
+<meta property="og:updated_time" content="2019-09-26T09:03:27.858Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="fork &amp; exec--必知必会">
 <meta name="twitter:description" content="引言: Give me a fork, give you the world.">
@@ -408,7 +408,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-25 18:47:54" itemprop="dateModified" datetime="2019-09-25T18:47:54+08:00">2019-09-25</time>
+                <time title="修改时间：2019-09-26 17:03:27" itemprop="dateModified" datetime="2019-09-26T17:03:27+08:00">2019-09-26</time>
               </span>
             
           
@@ -436,7 +436,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">3.5k</span>
+              <span title="本文字数">4.1k</span>
             </span>
           
 
@@ -448,7 +448,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">6 分钟</span>
+              <span title="阅读时长">7 分钟</span>
             </span>
           
 
@@ -566,8 +566,47 @@
 <li>父进程/子进程根据系统调度顺序(随机),打印出<code>Forked!</code></li>
 <li>父进程/子进程根据系统调度顺序(随机),父进程打印出<code>pid = 124</code>, 子进程打印出<code>pid=0</code></li>
 </ol>
-<h2 id="fork-amp-exec-协同运行"><a href="#fork-amp-exec-协同运行" class="headerlink" title="fork &amp; exec 协同运行"></a>fork &amp; exec 协同运行</h2><h3 id="c-fork-exec-伪代码"><a href="#c-fork-exec-伪代码" class="headerlink" title="c++ fork+exec 伪代码"></a>c++ fork+exec 伪代码</h3><pre><code class="c++"></code></pre>
-<h2 id="fork-amp-exec-优势"><a href="#fork-amp-exec-优势" class="headerlink" title="fork &amp; exec 优势"></a>fork &amp; exec 优势</h2><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h2 id="exec函数组"><a href="#exec函数组" class="headerlink" title="exec函数组"></a>exec函数组</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<h2 id="fork-amp-exec-协同运行"><a href="#fork-amp-exec-协同运行" class="headerlink" title="fork &amp; exec 协同运行"></a>fork &amp; exec 协同运行</h2><h3 id="c-fork-exec-伪代码"><a href="#c-fork-exec-伪代码" class="headerlink" title="c++ fork+exec 伪代码"></a>c++ fork+exec 伪代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    execlp(<span class="string">"ps"</span>, <span class="string">"ps"</span>, <span class="literal">nullptr</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    waitpid(pid, <span class="literal">nullptr</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行步骤-1"><a href="#执行步骤-1" class="headerlink" title="执行步骤"></a>执行步骤</h3><ol>
+<li>父进程执行<code>fork</code>函数, 产生子进程(拥有相同的代码)</li>
+<li>父进程<code>pid</code>返回子进程号(123), 子进程<code>pid</code>返回0</li>
+<li>父进程进入判断语句, 执行<code>waitpid</code>, 等待…</li>
+<li>子进程进入判断语句, 执行<code>execlp</code></li>
+<li>子进程执行<code>ps</code>命令</li>
+<li><code>ps</code>命令打印结果执行完毕</li>
+<li>子进程结束, 父进程跳出<code>waitpid</code>, 执行后续代码</li>
+</ol>
+<h2 id="fork-amp-exec-优势"><a href="#fork-amp-exec-优势" class="headerlink" title="fork &amp; exec 优势"></a>fork &amp; exec 优势</h2><ul>
+<li><p>Falt tolerance(容错):</p>
+<ul>
+<li>当子进程崩溃的时候, 父进程不受影响</li>
+<li>常被运用在网站服务器, 数据库等以提高应用弹性</li>
+<li>比喻: 复制一份合同副本, 该副本出现任何问题, 均不影响母体合同</li>
+</ul>
+</li>
+<li><p>Security (安全性):</p>
+<ul>
+<li>父进程和子进程拥有不同的安全设置(被运行于不同的用户)便于审计</li>
+</ul>
+</li>
+<li><p>Low latency (低时延):</p>
+<ul>
+<li>内存与I/O流都是相同的, 启动开销最小化</li>
+</ul>
+</li>
+<li><p>Concurrency &amp; Performance (并发性和高性能):</p>
+<ul>
+<li>父子进程相互协作,提供不同的控制操作提高性能</li>
+</ul>
+</li>
+<li><p>Resource utilization(资源利用率):</p>
+<ul>
+<li>进程可以活得全部得资源, 提高计算平台的使用</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://www.youtube.com/watch?v=nwm7rJG90i8&t=5s" target="_blank" rel="noopener">Fork and Exec in Linux - YouTube</a>  </li>
 <li><a href="https://blog.csdn.net/hao707822882/article/details/40375295" target="_blank" rel="noopener">linux中的fork函数到底做了什么事 - 西红柿炒土豆 - CSDN博客</a>  </li>
 <li><a href="https://blog.csdn.net/baidu20008/article/details/9764765" target="_blank" rel="noopener">使用exec函数组调用执行shell脚本 - baidu20008的专栏 - CSDN博客</a>  </li>
@@ -838,7 +877,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-初认识"><span class="nav-number">3.1.</span> <span class="nav-text">fork &amp; exec 初认识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">3.1.1.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exec"><span class="nav-number">3.1.2.</span> <span class="nav-text">exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二者关联"><span class="nav-number">3.1.3.</span> <span class="nav-text">二者关联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bash观察"><span class="nav-number">3.1.4.</span> <span class="nav-text">bash观察</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作流程"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">操作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本启动"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">脚本启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc观察"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">/proc观察</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">3.1.4.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-运行"><span class="nav-number">3.2.</span> <span class="nav-text">fork 运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork伪代码"><span class="nav-number">3.2.1.</span> <span class="nav-text">c++ fork伪代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行步骤"><span class="nav-number">3.2.2.</span> <span class="nav-text">执行步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-协同运行"><span class="nav-number">3.3.</span> <span class="nav-text">fork &amp; exec 协同运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork-exec-伪代码"><span class="nav-number">3.3.1.</span> <span class="nav-text">c++ fork+exec 伪代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-优势"><span class="nav-number">3.4.</span> <span class="nav-text">fork &amp; exec 优势</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#exec函数组"><span class="nav-number">4.1.</span> <span class="nav-text">exec函数组</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-初认识"><span class="nav-number">3.1.</span> <span class="nav-text">fork &amp; exec 初认识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">3.1.1.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exec"><span class="nav-number">3.1.2.</span> <span class="nav-text">exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二者关联"><span class="nav-number">3.1.3.</span> <span class="nav-text">二者关联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bash观察"><span class="nav-number">3.1.4.</span> <span class="nav-text">bash观察</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作流程"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">操作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本启动"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">脚本启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc观察"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">/proc观察</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">3.1.4.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-运行"><span class="nav-number">3.2.</span> <span class="nav-text">fork 运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork伪代码"><span class="nav-number">3.2.1.</span> <span class="nav-text">c++ fork伪代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行步骤"><span class="nav-number">3.2.2.</span> <span class="nav-text">执行步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-协同运行"><span class="nav-number">3.3.</span> <span class="nav-text">fork &amp; exec 协同运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c-fork-exec-伪代码"><span class="nav-number">3.3.1.</span> <span class="nav-text">c++ fork+exec 伪代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行步骤-1"><span class="nav-number">3.3.2.</span> <span class="nav-text">执行步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-amp-exec-优势"><span class="nav-number">3.4.</span> <span class="nav-text">fork &amp; exec 优势</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -871,7 +910,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">69k</span>
+    <span title="站点总字数">70k</span>
   
 
   
@@ -880,7 +919,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:56</span>
+    <span title="站点阅读时长">1:57</span>
   
 </div>
 
