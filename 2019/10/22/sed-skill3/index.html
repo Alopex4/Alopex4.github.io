@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: sed - - 字符串处理的手术刀 | (本文整理自 Sed &amp;amp; awk 101hacks)">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-22T04:37:50.542Z">
+<meta property="og:updated_time" content="2019-10-23T03:35:40.165Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="失传的sed秘籍 -- 下">
 <meta name="twitter:description" content="引言: sed - - 字符串处理的手术刀 | (本文整理自 Sed &amp;amp; awk 101hacks)">
@@ -394,13 +394,23 @@
                 
               
 
-              <time title="创建时间：2019-10-22 10:43:50 / 修改时间：12:37:50" itemprop="dateCreated datePublished" datetime="2019-10-22T10:43:50+08:00">2019-10-22</time>
+              <time title="创建时间：2019-10-22 10:43:50" itemprop="dateCreated datePublished" datetime="2019-10-22T10:43:50+08:00">2019-10-22</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-23 11:35:40" itemprop="dateModified" datetime="2019-10-23T11:35:40+08:00">2019-10-23</time>
+              </span>
             
           
 
@@ -456,7 +466,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">2.3k</span>
+              <span title="本文字数">7.1k</span>
             </span>
           
 
@@ -468,7 +478,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">4 分钟</span>
+              <span title="阅读时长">12 分钟</span>
             </span>
           
 
@@ -528,7 +538,7 @@
 <li>表格演示<table>
 <thead>
 <tr>
-<th align="center">status</th>
+<th align="center"><strong>status</strong></th>
 <th align="center"><code>pattern space</code></th>
 <th align="center"><code>hold space</code></th>
 </tr>
@@ -550,7 +560,7 @@
 </tr>
 </tbody></table>
 </li>
-<li>示例代码<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件解构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求将Manager职称的雇员名称输出</span></span><br><span class="line">$ sed -n -e <span class="string">'x;n'</span> -e <span class="string">'/Manager/&#123;x;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; Jane Miller</span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line"><span class="comment"># 'x;n': 将读取到pattern-space的内容与hold-space交换</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># 交换完成后 pattern-space: - </span></span><br><span class="line">    <span class="comment"># 交换完成后 hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># n</span></span><br><span class="line">    <span class="comment"># 读取下一行内容到pattern-space中</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串的内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># 交换完成后 pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># 交换完成后 hold-space: 雇员职称</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求将Manager职称的雇员名称输出</span></span><br><span class="line">$ sed -n -e <span class="string">'x;n'</span> -e <span class="string">'/Manager/&#123;x;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; Jane Miller</span><br><span class="line"></span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: -</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># pattern-space: - </span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># n</span></span><br><span class="line">    <span class="comment"># 读取下一行内容到pattern-space中</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员职称</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
@@ -561,7 +571,7 @@
 <li>表格演示<table>
 <thead>
 <tr>
-<th align="center">status</th>
+<th align="center"><strong>status</strong></th>
 <th align="center"><code>pattern space</code></th>
 <th align="center"><code>hold space</code></th>
 </tr>
@@ -583,12 +593,18 @@
 </tr>
 </tbody></table>
 </li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求将Manager职称的雇员名称输出</span></span><br><span class="line">$ sed -n -e <span class="string">'/Manager/!h'</span> -e <span class="string">'/Manager/&#123;x;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; Jane Miller</span><br><span class="line"></span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line"><span class="comment"># /Manager/!: 当pattern-space匹配不包含Manager字符串内容时, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: -</span></span><br><span class="line">  <span class="comment"># h</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员职称(含Manager)</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 <h3 id="保持空间追加-H"><a href="#保持空间追加-H" class="headerlink" title="保持空间追加 (H)"></a>保持空间追加 (H)</h3><ul>
+<li>将<code>pattern-space</code>的内容追加到<code>hold-space</code>之后</li>
+<li><code>pattern-space</code>的换行符, 在追加后依然那保留</li>
+<li>常用于进行多行合并时, 作为预操作指令</li>
 <li>表格演示<table>
 <thead>
 <tr>
-<th align="center">status</th>
+<th align="center"><strong>status</strong></th>
 <th align="center"><code>pattern space</code></th>
 <th align="center"><code>hold space</code></th>
 </tr>
@@ -610,12 +626,16 @@
 </tr>
 </tbody></table>
 </li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求在一行中输出Manager相关行, 显示格式为 雇员名称:雇员职称(Manager)</span></span><br><span class="line">$ sed -n -e <span class="string">'/Manager/!&#123;h&#125;'</span> -e <span class="string">'/Manager/&#123;H;x;s/\n/:/;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith:IT Manager</span><br><span class="line">&gt;&gt; Jane Miller:Sales Manager</span><br><span class="line"></span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line"><span class="comment"># /Manager/!: 当pattern-space匹配不包含Manager字符串内容时, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: -</span></span><br><span class="line">  <span class="comment"># h</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># H</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称</span></span><br><span class="line">    <span class="comment"># hodld-space: 雇员名称\n雇员职称(含Manager)</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称\n雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员职称</span></span><br><span class="line">  <span class="comment"># s/\n/:/</span></span><br><span class="line">    <span class="comment"># 将换行符(\n)替换为冒号(:)</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称:雇员职称(含Manager)</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 <h3 id="模式空间获取-g"><a href="#模式空间获取-g" class="headerlink" title="模式空间获取 (g)"></a>模式空间获取 (g)</h3><ul>
+<li>清空<code>pattern-space</code>内容, 从<code>hold-space</code>中获取内容副本(<code>hold-space</code>没被清空)</li>
 <li>表格演示<table>
 <thead>
 <tr>
-<th align="center">status</th>
+<th align="center"><strong>status</strong></th>
 <th align="center"><code>pattern space</code></th>
 <th align="center"><code>hold space</code></th>
 </tr>
@@ -637,12 +657,17 @@
 </tr>
 </tbody></table>
 </li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求将Manager职称的雇员名称输出</span></span><br><span class="line">$ sed -n -e <span class="string">'/Manager/!&#123;h&#125;'</span> -e <span class="string">'/Manager/&#123;g;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; Jane Miller</span><br><span class="line"></span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line"><span class="comment"># /Manager/!: 当pattern-space匹配不包含Manager字符串内容时, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: -</span></span><br><span class="line">  <span class="comment"># h</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># g</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 <h3 id="模式空间追加-G"><a href="#模式空间追加-G" class="headerlink" title="模式空间追加 (G)"></a>模式空间追加 (G)</h3><ul>
+<li>不清空<code>pattern-space</code>内容, 从<code>hold-space</code>中获取内容副本(<code>hold-space</code>没被清空)</li>
+<li><code>hold-space</code>的换行符, 在追加后依然那保留</li>
 <li>表格演示<table>
 <thead>
 <tr>
-<th align="center">status</th>
+<th align="center"><strong>status</strong></th>
 <th align="center"><code>pattern space</code></th>
 <th align="center"><code>hold space</code></th>
 </tr>
@@ -660,12 +685,59 @@
 <tr>
 <td align="center">after</td>
 <td align="center"><code>line-1</code><br><code>line-2</code></td>
-<td align="center">line-1</td>
+<td align="center">line-2</td>
 </tr>
 </tbody></table>
 </li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 要求在一行中输出Manager相关行, 显示格式为 雇员名称:雇员职称(Manager)</span></span><br><span class="line">$ sed -n -e <span class="string">'/Manager/!h'</span> -e <span class="string">'/Manager/&#123;x;G;s/\n/:/;p&#125;'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith:IT Manager</span><br><span class="line">&gt;&gt; Jane Miller:Sales Manager</span><br><span class="line"></span><br><span class="line"><span class="comment"># -n: 取消默认打印pattern-space内容</span></span><br><span class="line"><span class="comment"># -e: 多个命令使用</span></span><br><span class="line"><span class="comment"># /Manager/!: 当pattern-space匹配不包含Manager字符串内容时, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: -</span></span><br><span class="line">  <span class="comment"># h</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line"><span class="comment"># /Manager/: 当pattern-space匹配包含Manager字符串内容, 执行后续操作</span></span><br><span class="line">  <span class="comment"># begin</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员职称(含Manager)</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员名称</span></span><br><span class="line">  <span class="comment"># x</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员职称(含Manager)</span></span><br><span class="line">  <span class="comment"># G</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称\n雇员职称</span></span><br><span class="line">    <span class="comment"># hold-space: 雇员职称</span></span><br><span class="line">  <span class="comment"># s/\n/:/</span></span><br><span class="line">    <span class="comment"># 将换行符(\n)替换为冒号(:)</span></span><br><span class="line">    <span class="comment"># pattern-space: 雇员名称:雇员职称(含有Manager)</span></span><br><span class="line">  <span class="comment"># p</span></span><br><span class="line">    <span class="comment"># 打印当前pattern-space内容</span></span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
-<h2 id="多行处理"><a href="#多行处理" class="headerlink" title="多行处理"></a>多行处理</h2><h3 id="合并多行-N"><a href="#合并多行-N" class="headerlink" title="合并多行 (N)"></a>合并多行 (N)</h3><h3 id="打印多行内容的首行-P"><a href="#打印多行内容的首行-P" class="headerlink" title="打印多行内容的首行 (P)"></a>打印多行内容的首行 (P)</h3><h3 id="删除多行内容的首行-D"><a href="#删除多行内容的首行-D" class="headerlink" title="删除多行内容的首行 (D)"></a>删除多行内容的首行 (D)</h3><h2 id="标签循环"><a href="#标签循环" class="headerlink" title="标签循环"></a>标签循环</h2><h3 id="标签使用-b-label"><a href="#标签使用-b-label" class="headerlink" title="标签使用 (b, :label)"></a>标签使用 (b, :label)</h3><h3 id="循环使用-t"><a href="#循环使用-t" class="headerlink" title="循环使用 (t)"></a>循环使用 (t)</h3>
+<h2 id="多行处理"><a href="#多行处理" class="headerlink" title="多行处理"></a>多行处理</h2><ul>
+<li>默认情况下, sed每次只读取一行文件进行处理</li>
+<li>当我们需要一次处理多行时, 则需要使用命令指明</li>
+</ul>
+<h3 id="合并多行-N"><a href="#合并多行-N" class="headerlink" title="合并多行 (N)"></a>合并多行 (N)</h3><ul>
+<li><code>n</code>可以读取文件下一行内容到<code>pattern-space</code></li>
+<li><code>N</code>可以读取文件下一行内容, 将其追加到<code>pattern-space</code></li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将两行文件进行合并</span></span><br><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line">$ sed -n <span class="string">'N;s/\n/:/;p'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; John Doe:CEO</span><br><span class="line">&gt;&gt; Jason Smith:IT Manager</span><br><span class="line">&gt;&gt; Raj Reddy:Sysadmin</span><br><span class="line">&gt;&gt; Anand Ram:Developer</span><br><span class="line">&gt;&gt; Jane Miller:Sales Manager</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="打印多行内容的首行-P"><a href="#打印多行内容的首行-P" class="headerlink" title="打印多行内容的首行 (P)"></a>打印多行内容的首行 (P)</h3><ul>
+<li><code>p</code>可以打印出<code>pattern-space</code>所有的内容</li>
+<li><code>P</code>可以打印出<code>pattern-space</code>第一行的内容 (遇到的第一个<code>\n</code>前的内容)</li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示Manager雇员的名称</span></span><br><span class="line"><span class="comment"># 使用p输出时</span></span><br><span class="line">$  sed -n -e <span class="string">'N'</span> -e <span class="string">'/Manager/p'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; IT Manager</span><br><span class="line">&gt;&gt; Jane Miller</span><br><span class="line">&gt;&gt; Sales Manager</span><br><span class="line"><span class="comment"># 使用P输出时</span></span><br><span class="line">$ sed -n -e <span class="string">'N'</span> -e <span class="string">'/Manager/P'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Jason Smith</span><br><span class="line">&gt;&gt; Jane Miller</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="删除多行内容的首行-D"><a href="#删除多行内容的首行-D" class="headerlink" title="删除多行内容的首行 (D)"></a>删除多行内容的首行 (D)</h3><ul>
+<li><code>d</code>可以删除<code>pattern-space</code>所有的内容</li>
+<li><code>D</code>可以删除<code>pattern-space</code>第一行内容 (遇到的第一个<code>\n</code>前的内容)</li>
+<li>并取消后续需要执行的<code>sed</code>命令, 对剩余在<code>pattern-space</code>的内容, 重新开始执行<code>sed</code>命令</li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文件的最后一行</span></span><br><span class="line"><span class="comment"># 读取第一行</span></span><br><span class="line">  <span class="comment"># N</span></span><br><span class="line">    <span class="comment"># pattern-space: 第一行\n第二行</span></span><br><span class="line">  <span class="comment"># D</span></span><br><span class="line">    <span class="comment"># pattern-space: 第二行</span></span><br><span class="line">  <span class="comment"># loop...</span></span><br><span class="line">$ sed <span class="string">'N;D'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; Sales Manager</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="标签跳转"><a href="#标签跳转" class="headerlink" title="标签跳转"></a>标签跳转</h2><h3 id="无条件标签跳转-b-label"><a href="#无条件标签跳转-b-label" class="headerlink" title="无条件标签跳转 (b, :label)"></a>无条件标签跳转 (b, :label)</h3><ul>
+<li>使用标签可以改变<code>sed</code>的执行流程</li>
+<li>定义标签: <code>:label</code></li>
+<li>使用表标签: <code>b label</code>跳转到标签分支中</li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 将两行文件进行合并, 格式 雇员名称:雇员职称</span></span><br><span class="line"><span class="comment"># 对于有/Manager/职称的雇员, 需要在行前加上(* ), 其他雇员直接打印</span></span><br><span class="line">$ sed -n -e <span class="string">'N;s/\n/:/'</span> -e <span class="string">'/Manager/!b end'</span> -e <span class="string">'s/^/* /; :end p'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; John Doe:CEO</span><br><span class="line">&gt;&gt; * Jason Smith:IT Manager</span><br><span class="line">&gt;&gt; Raj Reddy:Sysadmin</span><br><span class="line">&gt;&gt; Anand Ram:Developer</span><br><span class="line">&gt;&gt; * Jane Miller:Sales Manager</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="条件标签跳转-t"><a href="#条件标签跳转-t" class="headerlink" title="条件标签跳转 (t)"></a>条件标签跳转 (t)</h3><ul>
+<li><code>t</code>也是分支跳转命令</li>
+<li><code>t</code>必须在<code>s///</code>命令匹配时, 才会执行分支跳转</li>
+<li>示例命令<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件结构, 雇员名称\n雇员职称\n雇员名称..</span></span><br><span class="line"><span class="comment"># 将两行文件进行合并, 格式 雇员名称:雇员职称</span></span><br><span class="line"><span class="comment"># 对于有/Manager/职称的雇员, 需要在行前加上(* * * )</span></span><br><span class="line"><span class="comment"># 只有当 /\* /\* /\* / 这个匹配条件达成后, 才会跳出repeat, 最后进行打印</span></span><br><span class="line">$ sed -n -e <span class="string">'N;s/\n/:/'</span> -e <span class="string">':repeat /Manager/&#123;s/^/* /&#125;; /\* \* \* /!t repeat p'</span> empnametitle.txt</span><br><span class="line">&gt;&gt; John Doe:CEO</span><br><span class="line">&gt;&gt; * * * Jason Smith:IT Manager</span><br><span class="line">&gt;&gt; Raj Reddy:Sysadmin</span><br><span class="line">&gt;&gt; Anand Ram:Developer</span><br><span class="line">&gt;&gt; * * * Jane Miller:Sales Manager</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.gnu.org/software/sed/manual/html_node/Branching-and-flow-control.html" target="_blank" rel="noopener">Branching and Flow Control</a>  </li>
+</ul>
+
       
     </div>
 
@@ -945,7 +1017,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#处理文件"><span class="nav-number">3.1.</span> <span class="nav-text">处理文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sed两大空间"><span class="nav-number">3.2.</span> <span class="nav-text">sed两大空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pattern-space-模式空间"><span class="nav-number">3.2.1.</span> <span class="nav-text">pattern-space(模式空间)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hodl-space-保持空间"><span class="nav-number">3.2.2.</span> <span class="nav-text">hodl-space(保持空间)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空间转移"><span class="nav-number">3.3.</span> <span class="nav-text">空间转移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间交换-x"><span class="nav-number">3.3.1.</span> <span class="nav-text">空间交换 (x)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保持空间备份-h"><span class="nav-number">3.3.2.</span> <span class="nav-text">保持空间备份 (h)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保持空间追加-H"><span class="nav-number">3.3.3.</span> <span class="nav-text">保持空间追加 (H)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式空间获取-g"><span class="nav-number">3.3.4.</span> <span class="nav-text">模式空间获取 (g)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式空间追加-G"><span class="nav-number">3.3.5.</span> <span class="nav-text">模式空间追加 (G)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多行处理"><span class="nav-number">3.4.</span> <span class="nav-text">多行处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#合并多行-N"><span class="nav-number">3.4.1.</span> <span class="nav-text">合并多行 (N)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打印多行内容的首行-P"><span class="nav-number">3.4.2.</span> <span class="nav-text">打印多行内容的首行 (P)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除多行内容的首行-D"><span class="nav-number">3.4.3.</span> <span class="nav-text">删除多行内容的首行 (D)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签循环"><span class="nav-number">3.5.</span> <span class="nav-text">标签循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标签使用-b-label"><span class="nav-number">3.5.1.</span> <span class="nav-text">标签使用 (b, :label)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#循环使用-t"><span class="nav-number">3.5.2.</span> <span class="nav-text">循环使用 (t)</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#处理文件"><span class="nav-number">3.1.</span> <span class="nav-text">处理文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sed两大空间"><span class="nav-number">3.2.</span> <span class="nav-text">sed两大空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pattern-space-模式空间"><span class="nav-number">3.2.1.</span> <span class="nav-text">pattern-space(模式空间)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hodl-space-保持空间"><span class="nav-number">3.2.2.</span> <span class="nav-text">hodl-space(保持空间)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空间转移"><span class="nav-number">3.3.</span> <span class="nav-text">空间转移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间交换-x"><span class="nav-number">3.3.1.</span> <span class="nav-text">空间交换 (x)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保持空间备份-h"><span class="nav-number">3.3.2.</span> <span class="nav-text">保持空间备份 (h)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保持空间追加-H"><span class="nav-number">3.3.3.</span> <span class="nav-text">保持空间追加 (H)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式空间获取-g"><span class="nav-number">3.3.4.</span> <span class="nav-text">模式空间获取 (g)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式空间追加-G"><span class="nav-number">3.3.5.</span> <span class="nav-text">模式空间追加 (G)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多行处理"><span class="nav-number">3.4.</span> <span class="nav-text">多行处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#合并多行-N"><span class="nav-number">3.4.1.</span> <span class="nav-text">合并多行 (N)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打印多行内容的首行-P"><span class="nav-number">3.4.2.</span> <span class="nav-text">打印多行内容的首行 (P)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除多行内容的首行-D"><span class="nav-number">3.4.3.</span> <span class="nav-text">删除多行内容的首行 (D)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签跳转"><span class="nav-number">3.5.</span> <span class="nav-text">标签跳转</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无条件标签跳转-b-label"><span class="nav-number">3.5.1.</span> <span class="nav-text">无条件标签跳转 (b, :label)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件标签跳转-t"><span class="nav-number">3.5.2.</span> <span class="nav-text">条件标签跳转 (t)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -978,7 +1050,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">86k</span>
+    <span title="站点总字数">91k</span>
   
 
   
@@ -987,7 +1059,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">2:23</span>
+    <span title="站点阅读时长">2:32</span>
   
 </div>
 
