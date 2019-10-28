@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: awk基本语法面面看 | (本文整理自 sed &amp;amp; awk 101 hacks)">
+<meta name="keywords" content="awk,text-process">
+<meta property="og:type" content="article">
+<meta property="og:title" content="难得的awk秘籍 -- 上">
+<meta property="og:url" content="http://alopex.cc/2019/10/27/awk-skill/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: awk基本语法面面看 | (本文整理自 sed &amp;amp; awk 101 hacks)">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-28T11:44:09.863Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="难得的awk秘籍 -- 上">
+<meta name="twitter:description" content="引言: awk基本语法面面看 | (本文整理自 sed &amp;amp; awk 101 hacks)">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/10/27/awk-skill/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>难得的awk秘籍 -- 上 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/10/27/awk-skill/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">难得的awk秘籍 -- 上
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-27 19:50:54" itemprop="dateCreated datePublished" datetime="2019-10-27T19:50:54+08:00">2019-10-27</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-28 19:44:09" itemprop="dateModified" datetime="2019-10-28T19:44:09+08:00">2019-10-28</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/utility/" itemprop="url" rel="index"><span itemprop="name">utility</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/utility/application/" itemprop="url" rel="index"><span itemprop="name">application</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">6.7k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">11 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>awk基本语法面面看 | (本文整理自 sed &amp; awk 101 hacks)</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="awk版本"><a href="#awk版本" class="headerlink" title="awk版本"></a>awk版本</h2><ul>
+<li><p><code>awk</code>是一门用作文字处理的特定语言, 常用于数据提取和报告生成</p>
+</li>
+<li><p><code>awk</code>是最原始的<code>awk</code>实现版本</p>
+</li>
+<li><p><code>gawk</code>是<code>GNU awk</code>的简称, 是<code>awk</code>的<code>GPL</code>版本</p>
+</li>
+<li><p>由于<code>awk</code>为人所熟知, 因此<code>linux</code>下<code>awk</code>命令实际上是<code>gawk</code>的软链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file `whereis awk | cut -d <span class="string">' '</span> -f2`</span><br><span class="line">&gt;&gt; /bin/awk: symbolic link to `gawk<span class="string">'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>awk</code>还有其他分支版本<code>nawk</code>, <code>mawk</code></p>
+<ul>
+<li>nawk: 对<code>awk</code>语言进行了更新</li>
+<li>mawk: <code>awk</code>编程语言的解释器</li>
+</ul>
+</li>
+</ul>
+<h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>OS: CentOS 6.7 (Final)</li>
+<li>Kernel: i686 Linux 2.6.32-573.el6.i686</li>
+<li>Shell: bash 4.1.2</li>
+<li>awk version: GNU Awk 3.1.7</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="基础名词"><a href="#基础名词" class="headerlink" title="基础名词"></a>基础名词</h2><ul>
+<li>默认情况下, <code>\n</code>换行符分割为一行</li>
+<li>一行内容, 在<code>awk</code>中被称为一条记录(record)</li>
+<li>默认情况下, <code>\t和空格</code>是一个字段的分隔</li>
+<li>一个分割, 在<code>awk</code>中被称为一个域(field)</li>
+<li>行和域的标号, 均从<code>1</code>开始</li>
+</ul>
+<h2 id="示例文件"><a href="#示例文件" class="headerlink" title="示例文件"></a>示例文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; employee.txt &lt;&lt;EOF</span><br><span class="line">&gt;101,John Doe,CEO</span><br><span class="line">&gt;102,Jason Smith,IT Manager</span><br><span class="line">&gt;103,Raj Reddy,Sysadmin</span><br><span class="line">&gt;104,Anand Ram,Developer</span><br><span class="line">&gt;105,Jane Miller,Sales Manager</span><br><span class="line">&gt;EOF</span><br><span class="line"></span><br><span class="line">$ cat &gt; employee-multiple-fs.txt &lt;&lt;EOF</span><br><span class="line">&gt;101,John Doe:CEO%10000</span><br><span class="line">&gt;102,Jason Smith:IT Manager%5000</span><br><span class="line">&gt;103,Raj Reddy:Sysadmin%4500</span><br><span class="line">&gt;104,Anand Ram:Developer%4500</span><br><span class="line">&gt;105,Jane Miller:Sales Manager%3000</span><br><span class="line">&gt;EOF</span><br><span class="line"></span><br><span class="line">$ cat &gt; employee-one-line.txt &lt;&lt;EOF</span><br><span class="line">&gt;101,John Doe:102,Jason Smith:103,Raj Reddy:104,Anand RAM:105,Jane Miller</span><br><span class="line">&gt;EOF</span><br></pre></td></tr></table></figure>
+
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><ul>
+<li><p>常规模式</p>
+<ol>
+<li>从文件从读取一行 –&gt; Read</li>
+<li>查看是否与模式匹配 –&gt; /pattern/</li>
+<li>执行awk命令操作代码 –&gt; Execute</li>
+<li>重复1-3步骤, 如读取到文件末尾, 终止退出 –&gt; Repeat</li>
+</ol>
+</li>
+<li><p>代码块模式</p>
+<ol>
+<li>执行<code>BEGIN</code>代码块命令</li>
+<li>从文件从读取一行</li>
+<li>执行awk<code>body</code>代码块操作</li>
+<li>重复2步骤, 如读取到文件末尾, 结束操作</li>
+<li>执行<code>END</code>代码块命令</li>
+</ol>
+</li>
+</ul>
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><ul>
+<li><p>使用方式1</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ awk -Fs <span class="string">'/pattern/ &#123;action&#125;'</span> input-file</span><br><span class="line">   |  | |     |          |         |</span><br><span class="line">   |  | |     |          |         └─ 读取的文件</span><br><span class="line">   |  | |     |          └─ awk命令操作代码 (需要引号包裹)</span><br><span class="line">   |  | |     └─ 匹配模式 (可选)</span><br><span class="line">   |  | └─ 域分割符 (可选, 默认为空格)</span><br><span class="line">   |  └─ 指定域分割符 (可选)</span><br><span class="line">   └─ awk 程序</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用方式2</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ awk -Fs <span class="string">'&#123;action&#125;'</span> intput-file</span><br><span class="line">   |   | |      |          |</span><br><span class="line">   |   | |      |          └─ 读取的文件</span><br><span class="line">   |   | |      └─ awk命令操作代码 (需要使引号包裹)</span><br><span class="line">   |   | └─ 域分割符 (可选, 默认为空格)</span><br><span class="line">   |   └─ 指定域分割符 (可选)</span><br><span class="line">   └─ awk 程序</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用方式3</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ awk -Fs -f script.awk input-file</span><br><span class="line">   |  | | |     |          |</span><br><span class="line">   |  | | |     |          └─ 读取的文件</span><br><span class="line">   |  | | |     └─ 含有awk代码的文件</span><br><span class="line">   |  | | └─ 指定awk代码文件</span><br><span class="line">   |  | └─ 域分割符 (可选, 默认为空格)</span><br><span class="line">   |  └─ 指定域分割符 (可选)</span><br><span class="line">   └─ awk 程序</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>演示实例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以":"作为分割符, 打印出/etc/passwd文件第一个域的内容</span></span><br><span class="line"><span class="comment"># 其中 print 为打印命令(十分常用)</span></span><br><span class="line"><span class="comment"># $1 是指明只打印第一个域 ($0表明打印所有)</span></span><br><span class="line">$ awk -F<span class="string">':'</span> <span class="string">'&#123;print $1&#125;'</span> /etc/passwd</span><br><span class="line">&gt;&gt; root</span><br><span class="line">&gt;&gt; bin</span><br><span class="line">&gt;&gt; daemon</span><br><span class="line">&gt;&gt; adm</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意</p>
+<ul>
+<li><p>在<code>awk</code>命令中被<code>单引号</code>和<code>双引号</code>包裹有很大的差别</p>
+</li>
+<li><p>一般建议使用<code>单引号</code>对命令进行包裹</p>
+</li>
+<li><p>当使用<code>双引号</code>对命令进行包裹时, 里面的命令将先被<code>shell</code>解析再传递到<code>awk</code></p>
+</li>
+<li><p>例如上面的使用实例中, 当使用双引号时</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F<span class="string">':'</span> <span class="string">"&#123;print <span class="variable">$1</span>&#125;"</span> /etc/passwd</span><br><span class="line">&gt;&gt; root:x:0:0:root:/root:/bin/bash</span><br><span class="line">&gt;&gt; bin:x:1:1:bin:/bin:/sbin/nologin</span><br><span class="line">&gt;&gt; daemon:x:2:2:daemon:/sbin:/sbin/nologin</span><br><span class="line">&gt;&gt; adm:x:3:4:adm:/var/adm:/sbin/nologin</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这是因为默认情况下, <code>$1</code>为空, <code>&quot;{print $1}&quot;</code>变为<code>&quot;{print  }&quot;</code></p>
+</li>
+<li><p>只有<code>print</code>命令时, <code>awk</code>将打印该行整条记录</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="程序结构"><a href="#程序结构" class="headerlink" title="程序结构"></a>程序结构</h3><ul>
+<li><p>awk代码可被分为三个模块</p>
+</li>
+<li><p>BEGIN</p>
+<ul>
+<li>结构格式: <code>BEGIN { awk-command }</code></li>
+<li>介绍 <ul>
+<li>是可选内容</li>
+<li><code>BEGIN</code>必须大写</li>
+<li>可写入多条命令</li>
+<li>常用于打印报告头部信息, 初始化变量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>body</p>
+<ul>
+<li>结构格式: <code>/pattern/ {action}</code></li>
+<li>介绍<ul>
+<li>awk命令执行的主体</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>END</p>
+<ul>
+<li>结构格式: <code>END { awk-command }</code></li>
+<li>介绍<ul>
+<li>是可选内容</li>
+<li><code>END</code>必须大写</li>
+<li>可写入多条命令</li>
+<li>常用与打印脚注内容, 以及清空操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>演示实例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在打印内容之初, 打印"--- header ---"</span></span><br><span class="line"><span class="comment"># 以":"作为分割符, 打印出包含 mail的记录</span></span><br><span class="line"><span class="comment"># 在打印内容末尾, 打印"--- end ---"</span></span><br><span class="line">$ awk <span class="string">'BEGIN &#123;FS=":"; print "--- header ---"&#125; /mail/&#123;print $0&#125; END &#123;print "--- END ---"&#125;'</span> /etc/passwd</span><br><span class="line">&gt;&gt; --- header ---</span><br><span class="line">&gt;&gt; mail:x:8:12:mail:/var/spool/mail:/sbin/nologin</span><br><span class="line">&gt;&gt; --- END ---</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>仅使用<code>BEGIN</code>代码块</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># BEGIN 模块, 可以单独使用</span></span><br><span class="line">$ awk <span class="string">'BEGIN &#123;print "Hello, World!"&#125;'</span></span><br><span class="line">&gt;&gt; Hello, World!</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多个输入文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># awk 支持多个输入文件处理</span></span><br><span class="line">$ awk <span class="string">'BEGIN &#123;FS=":"; print "--- header ---"&#125; /mail/&#123;print $0&#125; END &#123;print "--- END ---"&#125;'</span> /etc/passwd /etc/shadow</span><br><span class="line">&gt;&gt; --- header ---</span><br><span class="line">&gt;&gt; mail:x:8:12:mail:/var/spool/mail:/sbin/nologin</span><br><span class="line">&gt;&gt; mail:*:15980:0:99999:7:::</span><br><span class="line">&gt;&gt; --- END ---</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="内建变量"><a href="#内建变量" class="headerlink" title="内建变量"></a>内建变量</h2><h3 id="域分割符-FS-OFS"><a href="#域分割符-FS-OFS" class="headerlink" title="域分割符 FS/OFS"></a>域分割符 FS/OFS</h3><h4 id="FS"><a href="#FS" class="headerlink" title="FS"></a>FS</h4><ul>
+<li><p><code>FS</code> (input Field Separator) 输入域分割符</p>
+</li>
+<li><p>默认情况下, <code>空格</code>被作为<code>FS</code></p>
+</li>
+<li><p>定义<code>FS</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式一: -F"," / -F,</span></span><br><span class="line">$ awk -F<span class="string">','</span> <span class="string">'&#123;print $1, $2&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; 101 John Doe</span><br><span class="line">&gt;&gt; 102 Jason Smith</span><br><span class="line">&gt;&gt; ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式二: BEGIN&#123;FS=","&#125;</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","&#125; &#123;print $1, $2&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; 101 John Doe</span><br><span class="line">&gt;&gt; 102 Jason Smith</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>存在不同的分割符时</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式一: -F"[..]" / -F[..]</span></span><br><span class="line">$ awk -F<span class="string">"[,:%]"</span> <span class="string">'&#123;print $1, $2&#125;'</span> employee-multiple-fs.txt</span><br><span class="line">&gt;&gt; 101 John Doe</span><br><span class="line">&gt;&gt; 102 Jason Smith</span><br><span class="line">..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式二: BEGIN&#123;FS="[,:%]"&#125;</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS="[,:%]"&#125; &#123;print $1, $2&#125;'</span> employee-multiple-fs.txt</span><br><span class="line">&gt;&gt; 101 John Doe</span><br><span class="line">&gt;&gt; 102 Jason Smith</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="OFS"><a href="#OFS" class="headerlink" title="OFS"></a>OFS</h4><ul>
+<li><p><code>OFS</code> (Output Field Separator) 输出域分割符</p>
+</li>
+<li><p>默认情况下, <code>空格</code>被作为<code>OFS</code></p>
+</li>
+<li><p>定义<code>OFS</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以":"作为输出分割域, 打印出域1和域3</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","; OFS=":"&#125; &#123;print $1, $3&#125;'</span> employee.txt</span><br><span class="line">101:CEO</span><br><span class="line">102:IT Manager</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 有逗号和无逗号的区别</span></span><br><span class="line"><span class="comment"># 有逗号 --&gt; 域间分割(使用OFS相连)</span></span><br><span class="line"><span class="comment"># 无逗号 --&gt; 域间无分割</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;OFS=":"; print "hello" "world"&#125;'</span></span><br><span class="line">&gt;&gt; helloworld</span><br><span class="line">$ awk <span class="string">'BEGIN&#123;OFS=":"; print "hello","world"&#125;'</span></span><br><span class="line">&gt;&gt; hello:world</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="记录分割符-RS-ORS"><a href="#记录分割符-RS-ORS" class="headerlink" title="记录分割符 RS/ORS"></a>记录分割符 RS/ORS</h3><h4 id="RS"><a href="#RS" class="headerlink" title="RS"></a>RS</h4><ul>
+<li><code>RS</code> (input Record Separator) 输入记录分割符</li>
+<li>默认情况下, <code>换行</code>被作为<code>RS</code></li>
+<li>定义<code>RS</code>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># employee-one-line.txt 使用了(:)作为记录分割</span></span><br><span class="line"><span class="comment"># 因此我们需要定义RS, 使其按照我们的预期进行操作</span></span><br><span class="line"><span class="comment"># 例如, 我们需要打印第二个域的记录</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;RS=":"&#125; &#123;print $2&#125;'</span> employee-one-line.txt</span><br><span class="line">Doe</span><br><span class="line">Smith</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="ORS"><a href="#ORS" class="headerlink" title="ORS"></a>ORS</h4><ul>
+<li><code>ORS</code> (Output Record Separator) 输出记录分割符</li>
+<li>默认情况下, <code>换行</code>被作为<code>ORS</code></li>
+<li>定义<code>ORS</code>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 我们需要打印出文件的第二, 第三个域</span></span><br><span class="line"><span class="comment"># 记录之间使用"\n---\n"进行分割</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","; ORS="\n---\n"&#125; &#123;print $2, $3&#125;'</span> employee.txt</span><br><span class="line">John Doe CEO</span><br><span class="line">---</span><br><span class="line">Jason Smith IT Manager</span><br><span class="line">---</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="编号-NF-NR-FNR"><a href="#编号-NF-NR-FNR" class="headerlink" title="编号 NF, NR/FNR"></a>编号 NF, NR/FNR</h3><h4 id="NF"><a href="#NF" class="headerlink" title="NF"></a>NF</h4><ul>
+<li><code>NF</code> (Number of Fiedl) 域编号</li>
+<li>计算出以分割符划分出的域数量</li>
+<li>常用<code>$NF</code> 打印出最后一个域  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印出每行域的数量</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","&#125; &#123;print $0,"--",NF&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; 101,John Doe,CEO -- 3</span><br><span class="line">&gt;&gt; 102,Jason Smith,IT Manager -- 3</span><br><span class="line">..</span><br><span class="line"><span class="comment"># 打印倒数两个域</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","&#125; &#123;print $(NF-1), $NF&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; John Doe CEO</span><br><span class="line">&gt;&gt; Jason Smith IT Manager</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="NR"><a href="#NR" class="headerlink" title="NR"></a>NR</h4><ul>
+<li><code>NR</code> (Number of Record) 记录编号</li>
+<li>在循环中十分有用, 我们可以在循环体中打印出行号</li>
+<li>在END代码块中使用时, 可以统计文件的行数  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印出文件的行号</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=","&#125; &#123;print "line --&gt;", NR, $0&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; line --&gt; 1 101,John Doe,CEO</span><br><span class="line">&gt;&gt; line --&gt; 2 102,Jason Smith,IT Manager</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="FNR"><a href="#FNR" class="headerlink" title="FNR"></a>FNR</h4><ul>
+<li><code>FNR</code> (File Number of Record) 文件记录编号</li>
+<li>对于不同的文件, 重新计算文件记录编号  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用NR处理多个文件时</span></span><br><span class="line">$ awk <span class="string">'BEGIN&#123;FS=":"&#125; &#123;print "line --&gt;", NR, $0&#125;'</span> /etc/passwd /etc/shadow</span><br><span class="line">&gt;&gt; line --&gt; 1 root:x:0:0:root:/root:/bin/bash</span><br><span class="line">&gt;&gt; line --&gt; 2 bin:x:1:1:bin:/bin:/sbin/nologin</span><br><span class="line">..</span><br><span class="line">&gt;&gt; line --&gt; 25 root:<span class="variable">$6</span><span class="variable">$UzY</span>..nd.Sa/:18170:0:99999:7:::</span><br><span class="line">&gt;&gt; line --&gt; 26 bin:*:15980:0:99999:7:::</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用FNR处理多个文件时</span></span><br><span class="line">$  awk <span class="string">'BEGIN&#123;FS=":"&#125; &#123;print "line --&gt;", FNR, $0&#125;'</span> /etc/passwd /etc/shadow</span><br><span class="line">&gt;&gt; line --&gt; 1 root:x:0:0:root:/root:/bin/bash</span><br><span class="line">&gt;&gt; line --&gt; 2 bin:x:1:1:bin:/bin:/sbin/nologin</span><br><span class="line">..</span><br><span class="line">&gt;&gt; line --&gt; 1 root:<span class="variable">$6</span><span class="variable">$UzY</span>..nd.Sa/:18170:0:99999:7:::</span><br><span class="line">&gt;&gt; line --&gt; 2 bin:*:15980:0:99999:7:::</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="文件名-FIRENAME"><a href="#文件名-FIRENAME" class="headerlink" title="文件名 FIRENAME"></a>文件名 FIRENAME</h3><ul>
+<li>文件名称</li>
+<li>常用于输出打印  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ awk <span class="string">'&#123;print &#125; END&#123;print FILENAME&#125;'</span> employee.txt</span><br><span class="line">&gt;&gt; 101,John Doe,CEO</span><br><span class="line">&gt;&gt; 102,Jason Smith,IT Manager</span><br><span class="line">&gt;&gt; ..</span><br><span class="line">&gt;&gt; employee.txt</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="变量和操作"><a href="#变量和操作" class="headerlink" title="变量和操作"></a>变量和操作</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><h3 id="一元操作"><a href="#一元操作" class="headerlink" title="一元操作"></a>一元操作</h3><h3 id="算数操作"><a href="#算数操作" class="headerlink" title="算数操作"></a>算数操作</h3><h3 id="字符串操作"><a href="#字符串操作" class="headerlink" title="字符串操作"></a>字符串操作</h3><h3 id="赋值操作"><a href="#赋值操作" class="headerlink" title="赋值操作"></a>赋值操作</h3><h3 id="比较操作"><a href="#比较操作" class="headerlink" title="比较操作"></a>比较操作</h3><h3 id="正则表达"><a href="#正则表达" class="headerlink" title="正则表达"></a>正则表达</h3><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="http://wiki.jikexueyuan.com/project/13-questions-of-shell/double-single.html" target="_blank" rel="noopener">“”(双引号) 与’’(单引号) 差在哪？</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/awk/" rel="tag"># awk</a>
+          
+            <a href="/tags/text-process/" rel="tag"># text-process</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/22/sed-skill3/" rel="next" title="失传的sed秘籍 -- 下">
+                <i class="fa fa-chevron-left"></i> 失传的sed秘籍 -- 下
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#awk版本"><span class="nav-number">2.1.</span> <span class="nav-text">awk版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.2.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础名词"><span class="nav-number">3.1.</span> <span class="nav-text">基础名词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例文件"><span class="nav-number">3.2.</span> <span class="nav-text">示例文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工作原理"><span class="nav-number">3.3.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用方式"><span class="nav-number">3.4.</span> <span class="nav-text">使用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序结构"><span class="nav-number">3.4.1.</span> <span class="nav-text">程序结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内建变量"><span class="nav-number">3.5.</span> <span class="nav-text">内建变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域分割符-FS-OFS"><span class="nav-number">3.5.1.</span> <span class="nav-text">域分割符 FS/OFS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FS"><span class="nav-number">3.5.1.1.</span> <span class="nav-text">FS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OFS"><span class="nav-number">3.5.1.2.</span> <span class="nav-text">OFS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#记录分割符-RS-ORS"><span class="nav-number">3.5.2.</span> <span class="nav-text">记录分割符 RS/ORS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RS"><span class="nav-number">3.5.2.1.</span> <span class="nav-text">RS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ORS"><span class="nav-number">3.5.2.2.</span> <span class="nav-text">ORS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编号-NF-NR-FNR"><span class="nav-number">3.5.3.</span> <span class="nav-text">编号 NF, NR/FNR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NF"><span class="nav-number">3.5.3.1.</span> <span class="nav-text">NF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NR"><span class="nav-number">3.5.3.2.</span> <span class="nav-text">NR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FNR"><span class="nav-number">3.5.3.3.</span> <span class="nav-text">FNR</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件名-FIRENAME"><span class="nav-number">3.5.4.</span> <span class="nav-text">文件名 FIRENAME</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量和操作"><span class="nav-number">3.6.</span> <span class="nav-text">变量和操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">3.6.1.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一元操作"><span class="nav-number">3.6.2.</span> <span class="nav-text">一元操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算数操作"><span class="nav-number">3.6.3.</span> <span class="nav-text">算数操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串操作"><span class="nav-number">3.6.4.</span> <span class="nav-text">字符串操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#赋值操作"><span class="nav-number">3.6.5.</span> <span class="nav-text">赋值操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#比较操作"><span class="nav-number">3.6.6.</span> <span class="nav-text">比较操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则表达"><span class="nav-number">3.6.7.</span> <span class="nav-text">正则表达</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">98k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">2:43</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
