@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
+<meta name="keywords" content="loadbalance,lvs,nat,direct-route">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lvs 必知必会(一)">
+<meta property="og:url" content="http://alopex.cc/2019/12/27/lvs-basic/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/nf-lvs.png">
+<meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/nat.png">
+<meta property="og:updated_time" content="2019-12-27T13:00:55.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lvs 必知必会(一)">
+<meta name="twitter:description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
+<meta name="twitter:image" content="http://alopex.cc/2019/12/27/lvs-basic/nf-lvs.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/12/27/lvs-basic/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>lvs 必知必会(一) | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/12/27/lvs-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">lvs 必知必会(一)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-27 15:36:26 / 修改时间：21:00:55" itemprop="dateCreated datePublished" datetime="2019-12-27T15:36:26+08:00">2019-12-27</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/service/" itemprop="url" rel="index"><span itemprop="name">service</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/service/comprehension/" itemprop="url" rel="index"><span itemprop="name">comprehension</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">2.9k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">5 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="分布式集群和负载均衡"><a href="#分布式集群和负载均衡" class="headerlink" title="分布式集群和负载均衡"></a>分布式集群和负载均衡</h2><h3 id="厨房的故事"><a href="#厨房的故事" class="headerlink" title="厨房的故事"></a>厨房的故事</h3><p>  小镇上开了一家老吴川菜馆，店铺刚开业之聘请了<code>一名厨师A</code>。该厨师从<code>备菜</code>、<code>洗菜</code>、<code>炒菜</code>样样熟悉。大半年过去了生意红红火火，老板为了提高上菜的速度，决定再聘请<code>一名厨师B</code>。<code>厨师B</code>是新手，在<code>厨师A</code>的教导下，很快就开始了<code>备菜</code>、<code>洗菜</code>、<code>炒菜</code>的活儿。又打半年过去了，菜馆开始扩展，为了使厨师们专心炒菜，老板升级了<code>厨师A和B</code>为主厨，负责<code>炒菜</code>。招来了<code>配菜师C</code>为副厨师，负责<code>备菜</code>和<code>洗菜</code>。现在,三位厨师分工合作，收到<code>套餐AA</code>订单后，<code>配菜师C</code>备好材料，递给<code>厨师A</code>，在<code>厨师A</code>炒菜期间，前台又掉下<code>套餐BB</code>订单，<code>配菜师C</code>将相应的材料交给了<code>厨师B</code>…</p>
+<ul>
+<li><code>厨师A</code>和<code>厨师B</code>能实现相同的职能, 二者互为备份, 二者同时工作便成为了<code>集群</code><ul>
+<li>集群(Cluster): 对于相同的业务, 在不同的个体上的实现, 其实现个体的集合便成为了群组</li>
+</ul>
+</li>
+<li><code>陪菜师C</code>实现<code>备菜</code>和<code>洗菜</code>职能, 后续<code>炒菜</code>职能被<code>厨师A或B</code>完成, C和(AB)的关系就是<code>分布式</code><ul>
+<li>分布式(Distributed): 将一个业务, 拆分为多个子业务, 不同个体执行不同子业务, 当子业务被逐一完成后, 业务也一应完成</li>
+</ul>
+</li>
+<li><code>陪菜师C</code>接到订单，依照<code>厨师</code>的繁忙程度(一定的规则)，递送材料的便是<code>负载均衡</code><ul>
+<li>负载均衡(Load Balancing): 将工作量进行平衡, 分摊到不同的个体上执行的方式</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>负载均衡的实现<ul>
+<li>硬件<ul>
+<li>F5 –&gt; Load Balancer / BIG-IP</li>
+<li>Kemp –&gt; LM-X{3,15,25,40}</li>
+<li>citrix –&gt; netscaler</li>
+</ul>
+</li>
+<li>软件<ul>
+<li>lvs –&gt; Linux Virtual Server</li>
+<li>Nginx –&gt; upstream backend</li>
+<li>httpd –&gt;     mod_proxy</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="lvs基本知识"><a href="#lvs基本知识" class="headerlink" title="lvs基本知识"></a>lvs基本知识</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li>lvs 是章文嵩发起的一个开源项目</li>
+<li>因其只进行服务的分配工作, 不处理真正的请求, 因此被称为虚拟服务器(virtual server)</li>
+<li>对应虚拟服务器, 后台真实响应用户请求的服务器被称作真实主机(Real Server)</li>
+<li>lvs同时是反向代理服务器的一种<ul>
+<li>反向代理是特指<code>服务器</code>的代理</li>
+<li>(正向)代理是指<code>客户端</code>的代理</li>
+</ul>
+</li>
+<li>由于lvs能实现将不同端口的服务转发至对应主机进行响应</li>
+<li>因此不少人称其为<code>l4</code>路由器/交换机</li>
+<li>lvs 术语<ul>
+<li>调度器: Director, Balancer –&gt; 用于接受用户请求</li>
+<li>真实主机: Real Server (RS) –&gt; 真正处理用户请求的主机</li>
+<li>相关IP<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------+       +----------+       +-------------+</span><br><span class="line">|client| -- -- |lvs server| -- -- | real server |</span><br><span class="line">+------+       +----------+       +-------------+</span><br><span class="line">       |       |          |       \ Real Server IP (RIP)</span><br><span class="line">       |       |          \ Director IP (DIP)</span><br><span class="line">       |       \ Virtual IP (VIP)</span><br><span class="line">       \ client IP (CIP)</span><br><span class="line"></span><br><span class="line"><span class="comment"># CIP: 客户端IP</span></span><br><span class="line"><span class="comment"># VIP: 调度器与客户端通信的IP</span></span><br><span class="line"><span class="comment"># DIP: 调度器与Real Server通信的IP</span></span><br><span class="line"><span class="comment"># RIP: 后端主机和用于调度通信的IP</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h3><ul>
+<li>LVS的组成结构<ul>
+<li>ipsadm (用户空间)<ul>
+<li>LVS的管理工具, 管理员通过它设置规则, 实现负载均衡</li>
+<li>一般情况下, 默认没有安装</li>
+</ul>
+</li>
+<li>ipvs (内核空间)<ul>
+<li>LVS根据制定好的规则进行工作</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="nf-lvs.png" alt="ipvs内核图"></p>
+<ul>
+<li>解释<ul>
+<li>当客户访问服务时, 数据包到达<code>PREROUTING</code>链, 通过<code>raw</code>, <code>mangle</code>, <code>nat</code>三个表的匹配后</li>
+<li>进入<code>INPUT</code>链, 此时当<code>IPVS</code>发现访问的报文地址和端口符合<code>LVS</code>集群规则匹配时</li>
+<li><code>ipvs</code>将根据定义好的规则和算法, 将保温发往<code>POSTROUTING</code>链中, 报文送出到达<code>Real Server</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="lvs工作模式"><a href="#lvs工作模式" class="headerlink" title="lvs工作模式"></a>lvs工作模式</h2><ul>
+<li>lvs有三种通用工作模式<ul>
+<li>NAT (地址转换)</li>
+<li>Direct-Route (DR)</li>
+<li>Tunnel (ip)</li>
+</ul>
+</li>
+</ul>
+<h3 id="NAT"><a href="#NAT" class="headerlink" title="NAT"></a>NAT</h3><ul>
+<li><p>lvs-nat (MASQUERADE)</p>
+<ul>
+<li>特点<ul>
+<li>请求报文与响应报文都经由director</li>
+<li>RIP和DIP必须在同一网段</li>
+</ul>
+</li>
+<li>多目标的DNAT (iptables)</li>
+<li>通过修改请求报文的目标IP地址(同时可能会修改目标端口)</li>
+<li>至挑选出某RS的RIP地址实现转发<ol>
+<li>RS和DIP应该使用私有地址, 且RS的网管要指向DIP</li>
+<li>请求和响应报文都要经由director转发, 极高的负载场景中, director将成为性能瓶颈</li>
+<li>支持端口映射</li>
+<li>RS可以使用任意操作系统</li>
+<li>RS的RIP和Director的DIP必须在同一IP网络</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>图解<br><img src="nat.png" alt="lvs-nat"></p>
+</li>
+</ul>
+<h3 id="DR-默认"><a href="#DR-默认" class="headerlink" title="DR (默认)"></a>DR (默认)</h3><ul>
+<li>lvs-dr (direct routing) (GATEWAY)<ul>
+<li>特点<ul>
+<li>请求报文经由direcotr, 响应报文由RS直接响应Client</li>
+<li>Direcotr 与 RS 必须要在同一物理网络中</li>
+</ul>
+</li>
+<li>必须保证前端路由器将目标IP为VIP的请求报文发送给director<ol>
+<li>静态绑定 </li>
+<li>arptables</li>
+<li>修改RS主机内核的参数</li>
+</ol>
+</li>
+<li>RS的RIP可以使用私有地址, 但也可以使用公网地址</li>
+<li>RS跟director必须在同一物理网络中</li>
+<li>请求报文经由direcotr调度, 响应报文一定不能经由direcotr</li>
+<li>不支持端口映射</li>
+<li>RS可以是大多数的OS</li>
+<li>RS的网关不能指向DIP</li>
+</ul>
+</li>
+</ul>
+<h3 id="Tunnel"><a href="#Tunnel" class="headerlink" title="Tunnel"></a>Tunnel</h3><ul>
+<li>lvs-tun (ip tunneling) (IPIP)<ul>
+<li>特点<ul>
+<li>不修改请求报文的IP首部, 通过在原有的IP首部(cip&lt;–&gt;vip)之外, 再封装一个IP首部(dip&lt;–&gt;rip)</li>
+</ul>
+</li>
+<li>必须保证RIP,DIP, VIP全为公网地址</li>
+<li>RS的网关不能指向DIP</li>
+<li>请求报文必须经由direcotr调度, 响应报文不能经由director</li>
+<li>不支持端口映射</li>
+<li>RS的OS必须支持隧道功能</li>
+</ul>
+</li>
+</ul>
+<h3 id="Full-NAT"><a href="#Full-NAT" class="headerlink" title="Full-NAT"></a>Full-NAT</h3><ul>
+<li>lvs-fullnat<ul>
+<li>特点<ul>
+<li>director通过同时修改请求报文的目标地址和源地址</li>
+<li>不是内核默认机制</li>
+</ul>
+</li>
+<li>VIP是公网地址, RIP,DIP是私网地址, 二者无需在同一网络中</li>
+<li>RS接收到的请求报文的源地址为DIP, 因此要响应给DIP</li>
+<li>请求报文和响应报文都必须经由Director</li>
+<li>支持端口映射机制</li>
+<li>RS可以使用任意OS</li>
+</ul>
+</li>
+</ul>
+<h2 id="lvs算法"><a href="#lvs算法" class="headerlink" title="lvs算法"></a>lvs算法</h2><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.zhihu.com/question/20004877" target="_blank" rel="noopener">分布式与集群的区别是什么？</a> </li>
+<li><a href="https://www.jianshu.com/p/8a61de3f8be9" target="_blank" rel="noopener">LVS原理介绍 - 简书</a>  </li>
+<li><a href="http://www.zsythink.net/archives/2134" target="_blank" rel="noopener">LVS详解系列：初识LVS</a>  </li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/loadbalance/" rel="tag"># loadbalance</a>
+          
+            <a href="/tags/lvs/" rel="tag"># lvs</a>
+          
+            <a href="/tags/nat/" rel="tag"># nat</a>
+          
+            <a href="/tags/direct-route/" rel="tag"># direct-route</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/19/bash-hack/" rel="next" title="bash集锦">
+                <i class="fa fa-chevron-left"></i> bash集锦
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式集群和负载均衡"><span class="nav-number">2.1.</span> <span class="nav-text">分布式集群和负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#厨房的故事"><span class="nav-number">2.1.1.</span> <span class="nav-text">厨房的故事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs基本知识"><span class="nav-number">2.2.</span> <span class="nav-text">lvs基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">2.2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行原理"><span class="nav-number">2.2.2.</span> <span class="nav-text">运行原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs工作模式"><span class="nav-number">2.3.</span> <span class="nav-text">lvs工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NAT"><span class="nav-number">2.3.1.</span> <span class="nav-text">NAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DR-默认"><span class="nav-number">2.3.2.</span> <span class="nav-text">DR (默认)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tunnel"><span class="nav-number">2.3.3.</span> <span class="nav-text">Tunnel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-NAT"><span class="nav-number">2.3.4.</span> <span class="nav-text">Full-NAT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs算法"><span class="nav-number">2.4.</span> <span class="nav-text">lvs算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">3.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">113k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:08</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
