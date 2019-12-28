@@ -129,16 +129,19 @@
   <meta name="description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
 <meta name="keywords" content="loadbalance,lvs,nat,direct-route">
 <meta property="og:type" content="article">
-<meta property="og:title" content="lvs 必知必会(一)">
+<meta property="og:title" content="lvs 必知必会">
 <meta property="og:url" content="http://alopex.cc/2019/12/27/lvs-basic/index.html">
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/nf-lvs.png">
 <meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/nat.png">
-<meta property="og:updated_time" content="2019-12-27T13:00:55.019Z">
+<meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/dr.png">
+<meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/tunnel.png">
+<meta property="og:image" content="http://alopex.cc/2019/12/27/lvs-basic/full-nat.png">
+<meta property="og:updated_time" content="2019-12-28T08:18:06.784Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="lvs 必知必会(一)">
+<meta name="twitter:title" content="lvs 必知必会">
 <meta name="twitter:description" content="引言: 集群让同一业务部署到不同的服务器中, 负载均衡让不同服务器有序相应请求, lvs则是实现负载均衡的一个手段">
 <meta name="twitter:image" content="http://alopex.cc/2019/12/27/lvs-basic/nf-lvs.png">
 
@@ -159,7 +162,7 @@
 </script>
 
   
-  <title>lvs 必知必会(一) | Alopex</title>
+  <title>lvs 必知必会 | Alopex</title>
   
 
 
@@ -371,7 +374,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">lvs 必知必会(一)
+          <h1 class="post-title" itemprop="name headline">lvs 必知必会
 
               
             
@@ -397,13 +400,23 @@
                 
               
 
-              <time title="创建时间：2019-12-27 15:36:26 / 修改时间：21:00:55" itemprop="dateCreated datePublished" datetime="2019-12-27T15:36:26+08:00">2019-12-27</time>
+              <time title="创建时间：2019-12-27 15:36:26" itemprop="dateCreated datePublished" datetime="2019-12-27T15:36:26+08:00">2019-12-27</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-12-28 16:18:06" itemprop="dateModified" datetime="2019-12-28T16:18:06+08:00">2019-12-28</time>
+              </span>
             
           
 
@@ -459,7 +472,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">2.9k</span>
+              <span title="本文字数">3.7k</span>
             </span>
           
 
@@ -471,7 +484,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">5 分钟</span>
+              <span title="阅读时长">6 分钟</span>
             </span>
           
 
@@ -602,7 +615,8 @@
 </li>
 </ul>
 <h3 id="DR-默认"><a href="#DR-默认" class="headerlink" title="DR (默认)"></a>DR (默认)</h3><ul>
-<li>lvs-dr (direct routing) (GATEWAY)<ul>
+<li><p>lvs-dr (direct routing) (GATEWAY)</p>
+<ul>
 <li>特点<ul>
 <li>请求报文经由direcotr, 响应报文由RS直接响应Client</li>
 <li>Direcotr 与 RS 必须要在同一物理网络中</li>
@@ -622,6 +636,8 @@
 <li>RS的网关不能指向DIP</li>
 </ul>
 </li>
+<li><p>图解<br><img src="dr.png" alt="lvs-nat"></p>
+</li>
 </ul>
 <h3 id="Tunnel"><a href="#Tunnel" class="headerlink" title="Tunnel"></a>Tunnel</h3><ul>
 <li>lvs-tun (ip tunneling) (IPIP)<ul>
@@ -636,6 +652,7 @@
 <li>RS的OS必须支持隧道功能</li>
 </ul>
 </li>
+<li>图解<br><img src="tunnel.png" alt="lvs-tunnel"></li>
 </ul>
 <h3 id="Full-NAT"><a href="#Full-NAT" class="headerlink" title="Full-NAT"></a>Full-NAT</h3><ul>
 <li>lvs-fullnat<ul>
@@ -651,11 +668,75 @@
 <li>RS可以使用任意OS</li>
 </ul>
 </li>
+<li>图解<br><img src="full-nat.png" alt="lvs-full-nat"></li>
 </ul>
-<h2 id="lvs算法"><a href="#lvs算法" class="headerlink" title="lvs算法"></a>lvs算法</h2><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<h2 id="lvs调度算法"><a href="#lvs调度算法" class="headerlink" title="lvs调度算法"></a>lvs调度算法</h2><h3 id="静态方法-起点公平"><a href="#静态方法-起点公平" class="headerlink" title="静态方法 (起点公平)"></a>静态方法 (起点公平)</h3><ul>
+<li>特点<ul>
+<li>仅根据算法本身进行调度</li>
+</ul>
+</li>
+<li>类型<ul>
+<li>RR: round robin 轮询</li>
+<li>WRR: weighted round robin 加权轮询</li>
+<li>SH: soure (IP) hash 实现session保持的机制<ul>
+<li>同一个IP的请求将始终调度到同一个RS</li>
+</ul>
+</li>
+<li>DH: destination hash<ul>
+<li>将同一个目标的请求始终发往同一个RS</li>
+<li>使用率较低</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="动态方法-结果公平"><a href="#动态方法-结果公平" class="headerlink" title="动态方法 (结果公平)"></a>动态方法 (结果公平)</h3><ul>
+<li>特点<ul>
+<li>根据算法及各RS的当前负载状态进行调度<ul>
+<li>负载: overhead较小的主机将是被挑选的主机</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>类型<ul>
+<li>LC: least connection<ul>
+<li>overhead = Active * 256 + Inactive</li>
+<li>值较少则为挑选主机</li>
+</ul>
+</li>
+<li>WLC: weighted lease connection<ul>
+<li>overhead = (Active * 256 + Inactive) / weight</li>
+<li>值较少则为挑选主机</li>
+</ul>
+</li>
+<li>SED: shortest expection delay<ul>
+<li>overhead = (Active + 1) * 256 / weight</li>
+<li>值较少则为挑选主机</li>
+</ul>
+</li>
+<li>NQ: Never Queue<ul>
+<li>当用户请求较少时, 各主机分一个</li>
+<li>后续按权重分配 (首次RR + SED)</li>
+</ul>
+</li>
+<li>LBLC: Locality-Based lease connection<ul>
+<li>动态的DH算法</li>
+<li>正向代理情形下的server</li>
+</ul>
+</li>
+<li>LBLCR: Locality-Based lease connection with repliction<ul>
+<li>带复制的LBLC算法</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://www.zhihu.com/question/20004877" target="_blank" rel="noopener">分布式与集群的区别是什么？</a> </li>
 <li><a href="https://www.jianshu.com/p/8a61de3f8be9" target="_blank" rel="noopener">LVS原理介绍 - 简书</a>  </li>
 <li><a href="http://www.zsythink.net/archives/2134" target="_blank" rel="noopener">LVS详解系列：初识LVS</a>  </li>
+<li><a href="https://blog.csdn.net/legend_host/article/details/79006825" target="_blank" rel="noopener">lvs中nat和fullnat的区别与图示</a>  </li>
+<li><a href="https://networkengineering.stackexchange.com/questions/28329/does-the-source-mac-address-of-a-frame-change-when-it-passes-through-several-swi" target="_blank" rel="noopener">switch - Does the source MAC address of a frame change when it passes through several switches? - Network Engineering Stack Exchange</a>  </li>
 </ul>
 
       
@@ -967,7 +1048,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式集群和负载均衡"><span class="nav-number">2.1.</span> <span class="nav-text">分布式集群和负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#厨房的故事"><span class="nav-number">2.1.1.</span> <span class="nav-text">厨房的故事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs基本知识"><span class="nav-number">2.2.</span> <span class="nav-text">lvs基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">2.2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行原理"><span class="nav-number">2.2.2.</span> <span class="nav-text">运行原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs工作模式"><span class="nav-number">2.3.</span> <span class="nav-text">lvs工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NAT"><span class="nav-number">2.3.1.</span> <span class="nav-text">NAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DR-默认"><span class="nav-number">2.3.2.</span> <span class="nav-text">DR (默认)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tunnel"><span class="nav-number">2.3.3.</span> <span class="nav-text">Tunnel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-NAT"><span class="nav-number">2.3.4.</span> <span class="nav-text">Full-NAT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs算法"><span class="nav-number">2.4.</span> <span class="nav-text">lvs算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">3.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式集群和负载均衡"><span class="nav-number">2.1.</span> <span class="nav-text">分布式集群和负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#厨房的故事"><span class="nav-number">2.1.1.</span> <span class="nav-text">厨房的故事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs基本知识"><span class="nav-number">2.2.</span> <span class="nav-text">lvs基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">2.2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行原理"><span class="nav-number">2.2.2.</span> <span class="nav-text">运行原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs工作模式"><span class="nav-number">2.3.</span> <span class="nav-text">lvs工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NAT"><span class="nav-number">2.3.1.</span> <span class="nav-text">NAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DR-默认"><span class="nav-number">2.3.2.</span> <span class="nav-text">DR (默认)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tunnel"><span class="nav-number">2.3.3.</span> <span class="nav-text">Tunnel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-NAT"><span class="nav-number">2.3.4.</span> <span class="nav-text">Full-NAT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lvs调度算法"><span class="nav-number">2.4.</span> <span class="nav-text">lvs调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态方法-起点公平"><span class="nav-number">2.4.1.</span> <span class="nav-text">静态方法 (起点公平)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态方法-结果公平"><span class="nav-number">2.4.2.</span> <span class="nav-text">动态方法 (结果公平)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">3.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -1000,7 +1081,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">113k</span>
+    <span title="站点总字数">114k</span>
   
 
   
@@ -1009,7 +1090,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">3:08</span>
+    <span title="站点阅读时长">3:09</span>
   
 </div>
 
