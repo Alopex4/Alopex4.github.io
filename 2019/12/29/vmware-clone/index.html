@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 利用Vmware的克隆功能可以快速生成多个主机, 前提是你需要知道如何修改网卡, 以防止不必要的麻烦">
+<meta name="keywords" content="udev,VMware,clone">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VMware克隆和udev">
+<meta property="og:url" content="http://alopex.cc/2019/12/29/vmware-clone/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 利用Vmware的克隆功能可以快速生成多个主机, 前提是你需要知道如何修改网卡, 以防止不必要的麻烦">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-30T09:36:28.816Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VMware克隆和udev">
+<meta name="twitter:description" content="引言: 利用Vmware的克隆功能可以快速生成多个主机, 前提是你需要知道如何修改网卡, 以防止不必要的麻烦">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2019/12/29/vmware-clone/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>VMware克隆和udev | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2019/12/29/vmware-clone/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VMware克隆和udev
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-29 16:32:58" itemprop="dateCreated datePublished" datetime="2019-12-29T16:32:58+08:00">2019-12-29</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-12-30 17:36:28" itemprop="dateModified" datetime="2019-12-30T17:36:28+08:00">2019-12-30</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/virtualization/" itemprop="url" rel="index"><span itemprop="name">virtualization</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/virtualization/application/" itemprop="url" rel="index"><span itemprop="name">application</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/virtualization/application/network/" itemprop="url" rel="index"><span itemprop="name">network</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">1.6k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">3 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>利用Vmware的克隆功能可以快速生成多个主机, 前提是你需要知道如何修改网卡, 以防止不必要的麻烦</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统基本信息"><a href="#系统基本信息" class="headerlink" title="系统基本信息"></a>系统基本信息</h2><ul>
+<li>Vmware版本: <ul>
+<li>VMware Workstation 15.5.1 build-15018445</li>
+</ul>
+</li>
+<li>主机<ul>
+<li>Ubuntu 16.04 LTS</li>
+</ul>
+</li>
+<li>宿主机操作系统: <ul>
+<li>CentOS6.10</li>
+</ul>
+</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="克隆主机前置知识"><a href="#克隆主机前置知识" class="headerlink" title="克隆主机前置知识"></a>克隆主机前置知识</h2><ul>
+<li><p>新技术与新问题</p>
+<ul>
+<li>虚拟机是非常优秀的实验工具，在此之下我们可以创建多台接近真实系统的主机</li>
+<li>克隆(clone)功能，使得快速创建多台同等配置的虚拟机成为了可能。</li>
+<li>相同的CPU配置，相同的内存容量，相同的磁盘内容，相同的<code>网络配置</code></li>
+<li>等一下，<code>网络配置</code>如果相同了，岂不意味着<code>MAC</code>地址也是相同的</li>
+<li>那么在基于<code>MAC</code>作为标识的二层网络中，我们要如何进行访问内？</li>
+</ul>
+</li>
+<li><p>解决方法是</p>
+<ul>
+<li>对于相同的<code>MAC</code>地址，我们需要手动干预调整</li>
+<li>如何进行调整, 这需要我们先了解linux对块文件的管理策略</li>
+</ul>
+</li>
+</ul>
+<h2 id="udev"><a href="#udev" class="headerlink" title="udev"></a>udev</h2><h3 id="块设备管理的发展"><a href="#块设备管理的发展" class="headerlink" title="块设备管理的发展"></a>块设备管理的发展</h3><ul>
+<li>在对待块设备这件事上, linux作出了几次策略调整<ul>
+<li>早期:<ul>
+<li>设备文件仅仅是是一些带有适当的属性集的普通文件</li>
+<li>它由<code>mknod</code>命令创建，文件存放在<code>/dev</code>目录下</li>
+</ul>
+</li>
+<li>2.3.46内核中<ul>
+<li>采用了<code>devfs</code>, 一个基于内核的动态设备文件系统</li>
+<li><code>Mandrake</code>，<code>Gentoo</code>等<code>Linux</code>分发版本采用了这种方式</li>
+<li>devfs创建 的设备文件是动态的。但是<code>devfs</code>有一些严重的限制</li>
+</ul>
+</li>
+<li>2.6.13+<ul>
+<li><code>udev</code>出现, 一个用户空间程序</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="udev出现的根本"><a href="#udev出现的根本" class="headerlink" title="udev出现的根本"></a>udev出现的根本</h3><ul>
+<li><p>此前的设备文件管理方法(静态文件和devfs)的缺点</p>
+<ol>
+<li>不确定的设备映射<ul>
+<li>那些动态设备，比如USB设备，设备文件到实际设备的映射并不可靠和确定</li>
+<li>举一个例子：如果你有两个USB打印机, 一个可能称为<code>/dev/usb/lp0</code>,另外一个便是<code>/dev/usb/lp1</code></li>
+<li>但是到底哪个是哪个并不清楚，<code>lp0和lp1</code>和实际的设备没有一一对应的关系</li>
+<li>因为 他可能因为发现设备的顺序，打印机本身关闭等原因而导致这种映射并不确定</li>
+<li>理想的方式应该是：两个打印机应该采用基于他们的序列号或者其他标识信息的唯一的设备文件来映射</li>
+<li>但是静态文件和<code>devfs</code>都无法做到这点</li>
+</ul>
+</li>
+<li>没有足够的主/辅设备号<ul>
+<li>每一个设备文件是有两个<code>8</code>位的数字：一个是<code>主设备号</code>,另外一个是<code>辅设备号</code>来分配的</li>
+<li>这两个8位的数字加上设备类型(块设备或者字符设备)来唯一标识一个设备</li>
+<li>不幸的是，关联这些身边的的数字并不足够 </li>
+</ul>
+</li>
+<li><code>/dev</code>目录下文件太多<ul>
+<li>一个系统采用静态设备文件关联的方式，那么这个目录下的文件必然是足够多</li>
+<li>而同时你又不知道在你的系统上到底有那些设备文件是激活的</li>
+</ul>
+</li>
+<li>命名不够灵活<ul>
+<li>尽管<code>devfs</code>解决了以前的一些问题，但是它自身又带来了一些问题</li>
+<li>其中一个就是命名不够灵活，你不能简单地修改设备文件的名字</li>
+<li>缺省的<code>devfs</code>命令机制本身很奇怪，需要修改大量的配置文件和程序</li>
+</ul>
+</li>
+<li>内核内存使用<ul>
+<li><code>devfs</code>特有的另外一个问题是，作为内核驱动模块</li>
+<li><code>devfs</code>需要消耗大量的内存，特别当系统上有大量的设备时</li>
+<li>(比如上面我们提到的系统一个上有好几千磁盘时)</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p><code>udev</code>的出现</p>
+<ul>
+<li><code>udev</code>的目标是想解决上面提到的这些问题</li>
+<li>它通采用用户空间<code>user-space</code>工具来管理<code>/dev/</code>目录树</li>
+<li>它和文件系统分开, 知道如何改变缺省配置能让你之大如何定制自己的系统</li>
+<li>比如创建设备字符连接，改变设备文件属组，权限等</li>
+</ul>
+</li>
+</ul>
+<h3 id="udev的网卡"><a href="#udev的网卡" class="headerlink" title="udev的网卡"></a>udev的网卡</h3><h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h2 id="克隆主机"><a href="#克隆主机" class="headerlink" title="克隆主机"></a>克隆主机</h2><h2 id="再生mac地址"><a href="#再生mac地址" class="headerlink" title="再生mac地址"></a>再生mac地址</h2><h2 id="配置udev与ip"><a href="#配置udev与ip" class="headerlink" title="配置udev与ip"></a>配置udev与ip</h2><h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.jianshu.com/p/f9385d5703a7" target="_blank" rel="noopener">【Linux】udev详解 - 简书</a></li>
+<li><a href="https://unix.stackexchange.com/a/39371" target="_blank" rel="noopener">kernel - How to reload udev rules without reboot? - Unix &amp; Linux Stack Exchange</a></li>
+<li><a href="https://blog.51cto.com/lovelive/1857630" target="_blank" rel="noopener">vmware克隆centos修改mac地址-奇迹的颜色-51CTO博客</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/udev/" rel="tag"># udev</a>
+          
+            <a href="/tags/VMware/" rel="tag"># VMware</a>
+          
+            <a href="/tags/clone/" rel="tag"># clone</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/27/lvs-basic/" rel="next" title="lvs 必知必会">
+                <i class="fa fa-chevron-left"></i> lvs 必知必会
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/06/C1-file-management/" rel="prev" title="C1-file-management">
+                C1-file-management <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#克隆主机前置知识"><span class="nav-number">3.1.</span> <span class="nav-text">克隆主机前置知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#udev"><span class="nav-number">3.2.</span> <span class="nav-text">udev</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#块设备管理的发展"><span class="nav-number">3.2.1.</span> <span class="nav-text">块设备管理的发展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#udev出现的根本"><span class="nav-number">3.2.2.</span> <span class="nav-text">udev出现的根本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#udev的网卡"><span class="nav-number">3.2.3.</span> <span class="nav-text">udev的网卡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作步骤"><span class="nav-number">3.3.</span> <span class="nav-text">操作步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#克隆主机"><span class="nav-number">3.4.</span> <span class="nav-text">克隆主机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再生mac地址"><span class="nav-number">3.5.</span> <span class="nav-text">再生mac地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置udev与ip"><span class="nav-number">3.6.</span> <span class="nav-text">配置udev与ip</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">115k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:12</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
