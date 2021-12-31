@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+<meta name="keywords" content="redhat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rhcsa8.0 面向考试题解">
+<meta property="og:url" content="http://alopex.cc/2021/12/31/rhcsa/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-12-31T07:08:18.249Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rhcsa8.0 面向考试题解">
+<meta name="twitter:description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2021/12/31/rhcsa/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>rhcsa8.0 面向考试题解 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2021/12/31/rhcsa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">rhcsa8.0 面向考试题解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2021-12-31 13:54:18 / 修改时间：15:08:18" itemprop="dateCreated datePublished" datetime="2021-12-31T13:54:18+08:00">2021-12-31</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/Certification/" itemprop="url" rel="index"><span itemprop="name">Certification</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/Certification/knowlege/" itemprop="url" rel="index"><span itemprop="name">knowlege</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">9.5k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">16 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>对于RHCSA/RHCE考试的朋友，希望对你们有所帮助</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><ul>
+<li>对于linux的红帽认证一直未有太上心，但最近有时间便准备好好复习一下，也算是对自己的一个交代，因此有了这篇笔记内容。</li>
+</ul>
+<h2 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">* 服务器1: servera.lab.example.com  192.168.110.21</span><br><span class="line">    * 预安装 httpd</span><br><span class="line">    * 用户: root 密码: redht</span><br><span class="line">* 服务器2: serverb.lab.example.com  192.168.110.22</span><br><span class="line">    * 预安装: NFS</span><br><span class="line">    * 拥有sdb</span><br><span class="line">    * 拥有sdc</span><br><span class="line">    * 用户: tom, 密码: redhat</span><br><span class="line">    * 用户: root 密码: 重置为 redht</span><br><span class="line"></span><br><span class="line">* 使用源</span><br><span class="line">    * 使用光盘镜像的 baseOS 和 stream app</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><h2 id="1-设置相应ip地址-网关-dns-主机名"><a href="#1-设置相应ip地址-网关-dns-主机名" class="headerlink" title="1. 设置相应ip地址,网关,dns, 主机名"></a>1. 设置相应ip地址,网关,dns, 主机名</h2><ul>
+<li><p>hostname: servera.lab.example.com1</p>
+</li>
+<li><p>ip: 192.168.110.21/24  </p>
+</li>
+<li><p>route: 192.168.110.2</p>
+</li>
+<li><p>dns: 8.8.8.8</p>
+<ul>
+<li><p>网络设置</p>
+<blockquote>
+<p>方法1: nmtui 图形界面<br>方法2: nmcli 命令行配置</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看device</span></span><br><span class="line">nmcli device</span><br><span class="line"><span class="comment"># 连接设备</span></span><br><span class="line">nmcli connect &lt;DEVICE&gt;</span><br><span class="line"><span class="comment"># 查看设备连接 得到 name</span></span><br><span class="line">nmcli connect show</span><br><span class="line"><span class="comment"># 配置网络</span></span><br><span class="line">nmcli connect modify <span class="string">'&lt;NAME&gt;'</span> ipv4.method manual ipv4.address 192.168.110.21/24 ipv4.gateway 192.168.110.2 ipv4.dns 8.8.8.8 autoconnect yes</span><br><span class="line"><span class="comment"># 启动网络</span></span><br><span class="line">nmcli connect up <span class="string">'&lt;NAME&gt;'</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>方法3: 修改 /etc/sysconfig/network-script/ens32</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TYPE=Ethernet</span><br><span class="line">NAME=ens32</span><br><span class="line">ONBOOT=yes</span><br><span class="line">IPADDR=192.168.110.21</span><br><span class="line">PREFIX=24</span><br><span class="line">GATEWAY=192.168.110.2</span><br><span class="line">DNS1=8.8.8.8</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>主机名设置</p>
+<blockquote>
+<p>方法1: hostnamectl set-hostname <name><br>方法2: echo “<name>“ &gt; /etc/hostname</name></name></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-修改yum仓库-此处使用iso源"><a href="#2-修改yum仓库-此处使用iso源" class="headerlink" title="2. 修改yum仓库 (此处使用iso源)"></a>2. 修改yum仓库 (此处使用iso源)</h2><ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/yum.repos.d/rhcsa.repo</span><br><span class="line">[baseOS]</span><br><span class="line">name=baseOS</span><br><span class="line">baseurl=file:///mnt/cdrom/BaseOS/</span><br><span class="line">gpgcheck=<span class="literal">false</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">[appStream]</span><br><span class="line">name=streamApp</span><br><span class="line">baseurl=file:///mnt/cdrom/AppStream/</span><br><span class="line">gpgcheck=<span class="literal">false</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="3-在SELinux情况下"><a href="#3-在SELinux情况下" class="headerlink" title="3. 在SELinux情况下"></a>3. 在SELinux情况下</h2><ul>
+<li>放通82端口启动的httpd<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看http相关接口</span></span><br><span class="line">semanage port --list | grep http</span><br><span class="line"><span class="comment"># 放通82端口</span></span><br><span class="line">semanage port --add -t http_port_t -p tcp 82</span><br><span class="line"><span class="comment"># 查看修改</span></span><br><span class="line">semanage port -lC</span><br><span class="line"><span class="comment"># 修改文本SELinux (可选)</span></span><br><span class="line">semanage fcontext -a -t httpd_sys_content_t <span class="string">"/var/www/html/index.html"</span></span><br><span class="line"><span class="comment"># 刷新Selinux (可选)</span></span><br><span class="line">restorecon -v var/www/html/index.html</span><br><span class="line"><span class="comment"># 修改firewall-cmd</span></span><br><span class="line">firewall-cmd --add-port=82/tcp --permanent &amp;&amp; firewall-cmd --reload</span><br><span class="line"><span class="comment"># 开机启动服务, 开启服务</span></span><br><span class="line">systemctl <span class="built_in">enable</span> --now httpd</span><br><span class="line"><span class="comment"># 用主机访问测试</span></span><br><span class="line">curl 192.168.110.21:82</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-创建用户帐号"><a href="#4-创建用户帐号" class="headerlink" title="4. 创建用户帐号"></a>4. 创建用户帐号</h2><ul>
+<li>sysmgrs组</li>
+<li>natasha从属于sysmgrs</li>
+<li>harry从属于sysmgrs</li>
+<li>sarah无权访问系统上的交互式shell且不是sysmgrs成员</li>
+<li>natasha harry 和 sarah 的密码 redhat<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">groupadd sysmgrs</span><br><span class="line">useradd -G sysmgrs natasha</span><br><span class="line">useradd -G sysmgrs harry</span><br><span class="line">useradd -s /sbin/nologin sarah</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"redhat"</span> | passwd --stdin natasha</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"redhat"</span> | passwd --stdin harry</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"redhat"</span> | passwd --stdin sarah</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-设置cron定时作业"><a href="#5-设置cron定时作业" class="headerlink" title="5. 设置cron定时作业"></a>5. 设置cron定时作业</h2><ul>
+<li>logger “EX200 in progress” ,以用户 natasha 身份运行 每隔 2 分钟运行<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看模板</span></span><br><span class="line">cat /etc/crontab</span><br><span class="line"><span class="comment"># Example of job definition:</span></span><br><span class="line"><span class="comment"># .---------------- minute (0 - 59)</span></span><br><span class="line"><span class="comment"># |  .------------- hour (0 - 23)</span></span><br><span class="line"><span class="comment"># |  |  .---------- day of month (1 - 31)</span></span><br><span class="line"><span class="comment"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span></span><br><span class="line"><span class="comment"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span></span><br><span class="line"><span class="comment"># |  |  |  |  |</span></span><br><span class="line"><span class="comment"># *  *  *  *  * user-name  command to be executed</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定作业</span></span><br><span class="line">crontab -e -u natasha</span><br><span class="line">*/2 * * * * logger <span class="string">"EX200 in progress"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看作业</span></span><br><span class="line">crontab -l -u natasha</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="6-创建协作目录"><a href="#6-创建协作目录" class="headerlink" title="6. 创建协作目录"></a>6. 创建协作目录</h2><ul>
+<li>/home/managers 的组用权是 sysmgrs</li>
+<li>目录应当可被 sysmgrs 的成员读取、写入和访问,但任何其他用户不具这些权限。</li>
+<li>/home/managers 中创建的文件自动将组所有权设置到 sysmgrs 组<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/managers</span><br><span class="line">chgrp -R sysmgrs /home/managers</span><br><span class="line">chmod -R 2770 /home/managers</span><br><span class="line"></span><br><span class="line">ls -ld /home/managers</span><br><span class="line">drwxrws---. 2 root sysmgrs 6 Oct 16 09:16 /home/managers</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-配置NTP服务"><a href="#7-配置NTP服务" class="headerlink" title="7. 配置NTP服务"></a>7. 配置NTP服务</h2><ul>
+<li>使其成为 ip.ip.ip.ip 的 NTP 客户端<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/chrony.conf</span><br><span class="line">server ip.ip.ip.ip iburst</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> chronyd.service &amp;&amp; systemctl start chronyd.service</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="8-配置autofs"><a href="#8-配置autofs" class="headerlink" title="8. 配置autofs"></a>8. 配置autofs</h2><ul>
+<li>将NFS(192.168.110.22)的 /rhome导出到系统</li>
+<li>ldapuser0 的主目录为 /rhome/ldapuser0</li>
+<li>ldapuser0 的主目录应自动挂载到本地 /rhome 下的 /rhome/ldapuser0</li>
+<li>主目录必须可供其用户写入</li>
+<li>ldapuser0 密码为 redhat<ul>
+<li>解答<ul>
+<li>两个工具必须下载<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils autofs</span><br><span class="line"><span class="comment"># 查看可挂载目录</span></span><br><span class="line">showmount -e 192.168.110.22</span><br><span class="line"><span class="comment"># 配置本机挂载点根目录</span></span><br><span class="line">vim /etc/auto.master</span><br><span class="line">/rhome  /etc/rhcsa.misc</span><br><span class="line"><span class="comment"># 配置挂载至本机子目录</span></span><br><span class="line"><span class="comment"># 通过 /rhome/ldapuser0 即可访问 ==&gt; 192.168.110.22:/rhome/ldapuser0</span></span><br><span class="line">cat /etc/rhcsa.misc</span><br><span class="line">ldapuser0 -fstype=nfs,rw 192.168.110.22:/rhome/ldapuser0</span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">systemctl <span class="built_in">enable</span> --now autofs</span><br><span class="line"><span class="comment"># 切换目录触发挂载</span></span><br><span class="line"><span class="built_in">cd</span> /rhome/ldapuser0</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="9-配置-var-tmp-fstab-权限"><a href="#9-配置-var-tmp-fstab-权限" class="headerlink" title="9. 配置 /var/tmp/fstab 权限"></a>9. 配置 /var/tmp/fstab 权限</h2><ul>
+<li>将文件 /etc/fstab 复制到 /var/tmp/fstab</li>
+<li>文件 /var/tmp/fstab 自 root 用户所有</li>
+<li>文件 /var/tmp/fstab 属于组 root</li>
+<li>文件 /var/tmp/fstab 应不能被任何人执行</li>
+<li>用户 natasha 能够读取和写入 /var/tmp/fstab</li>
+<li>用户 harry 无法写入或读取 /var/tmp/fstab</li>
+<li>所有其他用户(当前或未来)能够读取 /var/tmp/fstab<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/fstab /var/tmp/</span><br><span class="line">ls -l /var/tmp/fstab</span><br><span class="line">-rw-r--r--. 1 root root 615 Oct 16 10:05 /var/tmp/fstab</span><br><span class="line">chown root:root /var/tmp/fstab</span><br><span class="line">chmod a-x /var/tmp/fstab</span><br><span class="line"><span class="comment"># man setfacl</span></span><br><span class="line">setfacl -m u:natasha:rw /var/tmp/fstab</span><br><span class="line">setfacl -m u:harry:- /var/tmp/fstab</span><br><span class="line"></span><br><span class="line">getfacl /var/tmp/fstab</span><br><span class="line"><span class="comment"># file: var/tmp/fstab</span></span><br><span class="line"><span class="comment"># owner: root</span></span><br><span class="line"><span class="comment"># group: root</span></span><br><span class="line">user::rw-</span><br><span class="line">user:natasha:rw-</span><br><span class="line">user:harry:---</span><br><span class="line">group::r--</span><br><span class="line">mask::rw-</span><br><span class="line">other::r--</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="10-配置用户帐户"><a href="#10-配置用户帐户" class="headerlink" title="10. 配置用户帐户"></a>10. 配置用户帐户</h2><ul>
+<li>配置用户 manalo ,其用户 ID 为 3533<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd -u 3533 manalo</span><br><span class="line">grep 3533 /etc/passwd</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="11-查找文件"><a href="#11-查找文件" class="headerlink" title="11. 查找文件"></a>11. 查找文件</h2><ul>
+<li>查找当 jacques 所有的所有文件并将其副本放入 /root/findfiles 目录<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/findfiles</span><br><span class="line">find / -user jacques -<span class="built_in">exec</span> cp -a &#123;&#125; /root/findfiles \;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="12-查找字符串"><a href="#12-查找字符串" class="headerlink" title="12. 查找字符串"></a>12. 查找字符串</h2><ul>
+<li>查找 /etc/man_db.conf 中的man并将其保存到 /root/list<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -w man /etc/man_db.conf &gt; /root/list</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="13-创建存档"><a href="#13-创建存档" class="headerlink" title="13. 创建存档"></a>13. 创建存档</h2><ul>
+<li>创建一个名为 /root/backup.tar.gz 的 tar 存档,其应包含 /usr/local 的 tar 存档</li>
+<li>其应包含 /usr/local 的内容。该 tar 存档必须使用 gzip 进行压缩。<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zcvf /root/backup.tar.gz /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="14-修改-serverB的主机密码"><a href="#14-修改-serverB的主机密码" class="headerlink" title="14. 修改 serverB的主机密码"></a>14. 修改 serverB的主机密码</h2><ul>
+<li>解答  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ctrl-e ==&gt; rd.break ==&gt; ctrl-x</span><br><span class="line">mount -o remount,rw /sysroot</span><br><span class="line">chroot /sysroot</span><br><span class="line">echo &quot;password&quot; | passwd --stdin root</span><br><span class="line">touch /.autorelabel</span><br><span class="line">exit</span><br><span class="line">exit</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="15-配置镜像源"><a href="#15-配置镜像源" class="headerlink" title="15. 配置镜像源"></a>15. 配置镜像源</h2><ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/yum.repos.d/rhcsa.repo</span><br><span class="line">[baseOS]</span><br><span class="line">name=baseOS</span><br><span class="line">baseurl=file:///mnt/cdrom/BaseOS/</span><br><span class="line">gpgcheck=<span class="literal">false</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">[appStream]</span><br><span class="line">name=streamApp</span><br><span class="line">baseurl=file:///mnt/cdrom/AppStream/</span><br><span class="line">gpgcheck=<span class="literal">false</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="16-调整逻辑卷大小"><a href="#16-调整逻辑卷大小" class="headerlink" title="16. 调整逻辑卷大小"></a>16. 调整逻辑卷大小</h2><ul>
+<li>将逻辑卷 vo 及其文件系统的大小调整到 230 MiB</li>
+<li>默认当前 /dev/myvol-vo 大小为 100M</li>
+<li>挂载到 /mnt/myvol_vo下, 开机自动挂载<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">lvextend -L 230 /dev/myvol/vo</span><br><span class="line">resize2fs /dev/myvol/vo</span><br><span class="line">    * xfs_growfs /dev/myvol/vo</span><br><span class="line"></span><br><span class="line">blkid /dev/mapper/myvol-vo</span><br><span class="line">/dev/mapper/myvol-vo: UUID=<span class="string">"6100fb5c-e697-4c19-b342-2f689830a293"</span> BLOCK_SIZE=<span class="string">"1024"</span> TYPE=<span class="string">"ext4"</span></span><br><span class="line"></span><br><span class="line">vim /etc/fstab</span><br><span class="line">UUID=6100fb5c-e697-4c19-b342-2f689830a293 /mnt/myvol_vo/          xfs     defaults        0 0</span><br><span class="line"></span><br><span class="line">mount -a</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="17-添加交换分区"><a href="#17-添加交换分区" class="headerlink" title="17. 添加交换分区"></a>17. 添加交换分区</h2><ul>
+<li>向您的系统添加一个额外的交换分区 756MiB 。交换分区应在系统启动时自动挂载<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/sdb</span><br><span class="line">partprobe</span><br><span class="line"></span><br><span class="line">mkswap /dev/sdb2</span><br><span class="line">swapon -a /dev/sdb2</span><br><span class="line"></span><br><span class="line">blkid /dev/sdb2</span><br><span class="line">/dev/sdb2: UUID=<span class="string">"e9a257d9-5a23-4cd3-889c-1bf7445091ce"</span> TYPE=<span class="string">"swap"</span> PARTUUID=<span class="string">"48ab6213-02"</span></span><br><span class="line"></span><br><span class="line">vim /etc/fstab</span><br><span class="line">UUID=e9a257d9-5a23-4cd3-889c-1bf7445091ce none                    swap    defaults        0 0</span><br><span class="line"></span><br><span class="line">mount -a</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="18-创建逻辑卷"><a href="#18-创建逻辑卷" class="headerlink" title="18. 创建逻辑卷"></a>18. 创建逻辑卷</h2><ul>
+<li>逻辑卷取名为 qa ,属于 qagroup 卷组,大小为 60 个扩展块</li>
+<li>qagroup 卷组中逻辑卷的扩展块大小应当为 16 MiB</li>
+<li>使用 ext3 文件系统格式化新逻辑卷 逻辑卷应在系统启动时自动挂载到 /mnt/qa 下<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/sdb</span><br><span class="line">partprobe</span><br><span class="line"></span><br><span class="line">pvcreate /dev/sdb3</span><br><span class="line">vgcreate -s 16M qagroup /dev/sdb3</span><br><span class="line">vgdisplay qagroup | grep PE</span><br><span class="line">PE Size               16.00 MiB</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">lvcreate -l 60 -n qa qagroup</span><br><span class="line">lvdisplay /dev/qagroup/qa  | grep LE</span><br><span class="line">Current LE             60</span><br><span class="line"></span><br><span class="line">mkfs.ext3 /dev/qagroup/qa</span><br><span class="line">mkdir /mnt/qa</span><br><span class="line">mount /dev/qagroup/qa /mnt/qa</span><br><span class="line"></span><br><span class="line">blkid /dev/qagroup/qa</span><br><span class="line">/dev/qagroup/qa: UUID=<span class="string">"bc0caaed-61e3-490e-a092-85da7661cc9f"</span> BLOCK_SIZE=<span class="string">"4096"</span> TYPE=<span class="string">"ext3"</span></span><br><span class="line"></span><br><span class="line">vim /etc/fstab</span><br><span class="line">UUID=bc0caaed-61e3-490e-a092-85da7661cc9f /mnt/qa/                ext3    defaults        0 0</span><br><span class="line"></span><br><span class="line">mount -a</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="19-创建新的-VDO-卷"><a href="#19-创建新的-VDO-卷" class="headerlink" title="19. 创建新的 VDO 卷"></a>19. 创建新的 VDO 卷</h2><ul>
+<li><p>使用未分区的磁盘</p>
+</li>
+<li><p>该卷的名称为 vdough</p>
+</li>
+<li><p>该卷的逻辑大小为 50G</p>
+</li>
+<li><p>该卷使用 xfs 文件系统格式化</p>
+</li>
+<li><p>该卷(在系统启动时)挂载到 /vbread 下</p>
+<ul>
+<li><p>解答</p>
+<blockquote>
+<p>方式1 vdo</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">yum install vdo kmod-kvdo</span><br><span class="line"></span><br><span class="line">man vdo | grep vdo.*create</span><br><span class="line">vdo   &#123;   activate  |  changeWritePolicy  |  create  |  deactivate  |  disableCompression  |</span><br><span class="line"><span class="comment"># vdo create --name=vdo0 --device=/dev/sdb1 --vdoLogicalSize=10T</span></span><br><span class="line">vdo create --name=vdough --device=/dev/sdc --vdoLogicalSize=50G</span><br><span class="line"></span><br><span class="line">mkfs.xfs /dev/mapper/vdough</span><br><span class="line">udevadm settle</span><br><span class="line">mkdir /vbread</span><br><span class="line">mount /dev/mapper/vdough /vbread</span><br><span class="line"></span><br><span class="line">blkid /dev/mapper/vdough</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">man systemd.mount | grep requires</span><br><span class="line">vim /etc/fstab</span><br><span class="line">UUID=bc0caaed-61e3-490e-a092-85da7661cc9f /vdough                 xfs     defaults,x-systemd.requires=vdo.service    0 0</span><br><span class="line">OR</span><br><span class="line">UUID=bc0caaed-61e3-490e-a092-85da7661cc9f /vdough                 xfs     defaults,_netdev    0 0</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> --now vdo.service</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>方式2 stratis</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">yum install stratis</span><br><span class="line">systemctl <span class="built_in">enable</span> --now stratisd</span><br><span class="line"></span><br><span class="line">stratis pool create mypool /dev/sdc</span><br><span class="line">stratis pool list</span><br><span class="line">Name                   Total Physical   Properties</span><br><span class="line">mypool   5 GiB / 37.63 MiB / 4.96 GiB      ~Ca,~Cr</span><br><span class="line"></span><br><span class="line">stratis blockdev list</span><br><span class="line">Pool Name   Device Node   Physical Size   Tier</span><br><span class="line">mypool      /dev/sdc              5 GiB   Data</span><br><span class="line"></span><br><span class="line">stratis filesystem create mypool vdough</span><br><span class="line">stratis filesystem list</span><br><span class="line">Pool Name   Name     Used      Created             Device                   UUID</span><br><span class="line">mypool      vdough   546 MiB   Oct 16 2021 14:26   /stratis/mypool/vdough   71354a99870240b6aae9fc78033fa4f1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认格式化 xfs</span></span><br><span class="line">blkid /dev/mapper/stratis-1-83ddd2bcc3b74330ac1697d5769c9b55-thin-fs-71354a99870240b6aae9fc78033fa4f1</span><br><span class="line">/dev/mapper/stratis-1-83ddd2bcc3b74330ac1697d5769c9b55-thin-fs-71354a99870240b6aae9fc78033fa4f1: UUID=<span class="string">"71354a99-8702-40b6-aae9-fc78033fa4f1"</span> BLOCK_SIZE=<span class="string">"512"</span> TYPE=<span class="string">"xfs"</span></span><br><span class="line"></span><br><span class="line">vim /etc/fstab</span><br><span class="line">UUID=71354a99-8702-40b6-aae9-fc78033fa4f1 /vbrea                  xfs     defaults,x-systemd.requires=stratisd.service 0 0</span><br><span class="line">OR</span><br><span class="line">UUID=71354a99-8702-40b6-aae9-fc78033fa4f1 /vbrea                  xfs     defaults,_netdev 0 0</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="20-配置系统调优"><a href="#20-配置系统调优" class="headerlink" title="20. 配置系统调优"></a>20. 配置系统调优</h2><ul>
+<li>为您的系统选择建议的 tuned 配置集并将它设为默认设置<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看推介配置</span></span><br><span class="line">tuned-adm recommend</span><br><span class="line">virtual-guest</span><br><span class="line"><span class="comment"># 设置推介配置</span></span><br><span class="line">tuned-adm profile virtual-guest</span><br><span class="line"><span class="comment"># 查询当前配置</span></span><br><span class="line">tuned-adm active</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="21-容器配置持久存储"><a href="#21-容器配置持久存储" class="headerlink" title="21. 容器配置持久存储"></a>21. 容器配置持久存储</h2><ul>
+<li>配置主机系统的 journald 日志以在系统重启后保留数据, </li>
+<li>将主机 /var/log/journal 目录下任何以 *.journal 的文件复制到</li>
+<li>/home/tom/container_logfile 中</li>
+<li>将服务配置为在启动时自动将 /home/tom/container_logfile 挂载到容器中的 /var/log/journal 下<ul>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">yum install podman</span><br><span class="line"></span><br><span class="line">useradd tom</span><br><span class="line"><span class="built_in">echo</span> redhat | passwd --stdin tom</span><br><span class="line"></span><br><span class="line">ssh tom@192.168.110.22</span><br><span class="line">loginctl <span class="built_in">enable</span>-linger tom</span><br><span class="line">loginctl show-user tom | grep -i linger</span><br><span class="line">&gt; Linger=yes</span><br><span class="line"></span><br><span class="line">podman login registry.redham.com</span><br><span class="line">Username:</span><br><span class="line">Pasword:</span><br><span class="line"></span><br><span class="line">mkdir /home/tom/container_logfile</span><br><span class="line">cp /var/<span class="built_in">log</span>/journal/*.journal  /home/tom/container_logfile</span><br><span class="line">podman pull rsyslog</span><br><span class="line">podman run -dit --name=journal-server -v /home/tom/container_logfile:/var/<span class="built_in">log</span>/journal:Z rsyslog</span><br><span class="line">podman ps -a</span><br><span class="line">mkdir ~/.config/systemd/user/ &amp;&amp; <span class="built_in">cd</span> ~/.config/systemd/user</span><br><span class="line">podman generate systemd --name journal-server --restart-policy always --files journal-server</span><br><span class="line">systemctl --user daemon-reload</span><br><span class="line">systemctl --user <span class="built_in">enable</span> container-journal-server</span><br><span class="line"></span><br><span class="line">systemctl --user list-unit-files</span><br><span class="line">systemctl --user status</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/redhat/" rel="tag"># redhat</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/29/vmware-clone/" rel="next" title="VMware克隆和udev">
+                <i class="fa fa-chevron-left"></i> VMware克隆和udev
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目"><span class="nav-number">3.</span> <span class="nav-text">题目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-设置相应ip地址-网关-dns-主机名"><span class="nav-number">3.1.</span> <span class="nav-text">1. 设置相应ip地址,网关,dns, 主机名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-修改yum仓库-此处使用iso源"><span class="nav-number">3.2.</span> <span class="nav-text">2. 修改yum仓库 (此处使用iso源)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-在SELinux情况下"><span class="nav-number">3.3.</span> <span class="nav-text">3. 在SELinux情况下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-创建用户帐号"><span class="nav-number">3.4.</span> <span class="nav-text">4. 创建用户帐号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-设置cron定时作业"><span class="nav-number">3.5.</span> <span class="nav-text">5. 设置cron定时作业</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-创建协作目录"><span class="nav-number">3.6.</span> <span class="nav-text">6. 创建协作目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-配置NTP服务"><span class="nav-number">3.7.</span> <span class="nav-text">7. 配置NTP服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-配置autofs"><span class="nav-number">3.8.</span> <span class="nav-text">8. 配置autofs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-配置-var-tmp-fstab-权限"><span class="nav-number">3.9.</span> <span class="nav-text">9. 配置 /var/tmp/fstab 权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-配置用户帐户"><span class="nav-number">3.10.</span> <span class="nav-text">10. 配置用户帐户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-查找文件"><span class="nav-number">3.11.</span> <span class="nav-text">11. 查找文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-查找字符串"><span class="nav-number">3.12.</span> <span class="nav-text">12. 查找字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-创建存档"><span class="nav-number">3.13.</span> <span class="nav-text">13. 创建存档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-修改-serverB的主机密码"><span class="nav-number">3.14.</span> <span class="nav-text">14. 修改 serverB的主机密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-配置镜像源"><span class="nav-number">3.15.</span> <span class="nav-text">15. 配置镜像源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-调整逻辑卷大小"><span class="nav-number">3.16.</span> <span class="nav-text">16. 调整逻辑卷大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-添加交换分区"><span class="nav-number">3.17.</span> <span class="nav-text">17. 添加交换分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-创建逻辑卷"><span class="nav-number">3.18.</span> <span class="nav-text">18. 创建逻辑卷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-创建新的-VDO-卷"><span class="nav-number">3.19.</span> <span class="nav-text">19. 创建新的 VDO 卷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-配置系统调优"><span class="nav-number">3.20.</span> <span class="nav-text">20. 配置系统调优</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-容器配置持久存储"><span class="nav-number">3.21.</span> <span class="nav-text">21. 容器配置持久存储</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">125k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:28</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
