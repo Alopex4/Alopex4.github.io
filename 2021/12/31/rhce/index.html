@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+<meta name="keywords" content="redhat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rhce 8.0 面向考试题解">
+<meta property="og:url" content="http://alopex.cc/2021/12/31/rhce/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-12-31T09:19:04.663Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rhce 8.0 面向考试题解">
+<meta name="twitter:description" content="引言: 对于RHCSA/RHCE考试的朋友，希望对你们有所帮助">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2021/12/31/rhce/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>rhce 8.0 面向考试题解 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2021/12/31/rhce/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">rhce 8.0 面向考试题解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2021-12-31 17:09:59 / 修改时间：17:19:04" itemprop="dateCreated datePublished" datetime="2021-12-31T17:09:59+08:00">2021-12-31</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/Certification/" itemprop="url" rel="index"><span itemprop="name">Certification</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/Certification/knowlege/" itemprop="url" rel="index"><span itemprop="name">knowlege</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">15k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">26 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>对于RHCSA/RHCE考试的朋友，希望对你们有所帮助</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><ul>
+<li>对于linux的红帽认证一直未有太上心，但最近有时间便准备好好复习一下，也算是对自己的一个交代，因此有了这篇笔记内容。</li>
+</ul>
+<h2 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">* control: control.example.com  192.168.110.40</span><br><span class="line">* workstation: workstation.example.com  192.168.110.30</span><br><span class="line">* 服务器1: servera.example.com  192.168.110.31</span><br><span class="line">* 服务器2: serverb.example.com  192.168.110.32</span><br><span class="line">* 服务器3: serverc.example.com  192.168.110.33</span><br><span class="line">* 服务器4: serverd.example.com  192.168.110.34</span><br><span class="line">* 密码信息</span><br><span class="line">    * root, redhat</span><br><span class="line">    * greg, redhat</span><br><span class="line">    * 运行需要在 control greg用户</span><br><span class="line">* 使用源</span><br><span class="line">    * 使用光盘镜像的 baseOS 和 stream app</span><br><span class="line">* 防火墙不启用, SELinux处于强制模式</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><h2 id="1-安装和配置-Ansible"><a href="#1-安装和配置-Ansible" class="headerlink" title="1. 安装和配置 Ansible"></a>1. 安装和配置 Ansible</h2><ul>
+<li><p>要求</p>
+<ul>
+<li>创建名为 /home/greg/ansible/inventory 的静态清单文件,以满足以下要求:</li>
+<li>192.168.110.30 是 dev 主机组的成员</li>
+<li>192.168.110.31 是 test 主机组的成员</li>
+<li>192.168.110.32 和 192.168.110.33 是 prod 主机组的成员</li>
+<li>192.168.110.34 是 balancers 主机组的成员</li>
+<li>prod 组是 webservers 主机组的成员</li>
+<li>创建名为 /home/greg/ansible/ansible.cfg 的配置文件,以满足以下要求:</li>
+<li>主机清单文件为 /home/greg/ansible/inventory</li>
+<li>playbook 中使用的角色的位置包括 /home/greg/ansible/roles</li>
+</ul>
+</li>
+<li><p>解答</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ansible</span><br><span class="line"></span><br><span class="line">su - greg</span><br><span class="line">mkdir ansible &amp;&amp; <span class="built_in">cd</span> ansible</span><br><span class="line">touch inventory</span><br><span class="line">mkdir roles</span><br><span class="line">cp /etc/ansible/ansible.cfg . </span><br><span class="line"></span><br><span class="line">vim ansible.cfg</span><br><span class="line">&gt; host_key_checking = False</span><br><span class="line">&gt; remote_user = root</span><br><span class="line">&gt; inventory      = /home/greg/ansible/inventory</span><br><span class="line">&gt; roles_path    = /home/greg/ansible/roles/</span><br><span class="line"></span><br><span class="line">vim invntory</span><br><span class="line">&gt; [dev]</span><br><span class="line">&gt; 192.168.110.30</span><br><span class="line"></span><br><span class="line">&gt; [<span class="built_in">test</span>]</span><br><span class="line">&gt; 192.168.110.31</span><br><span class="line"></span><br><span class="line">&gt; [prod]</span><br><span class="line">&gt; 192.168.110.32</span><br><span class="line">&gt; 192.168.110.33</span><br><span class="line"></span><br><span class="line">&gt; [balancers]</span><br><span class="line">&gt; 192.168.110.34</span><br><span class="line"></span><br><span class="line">&gt; [webservers:children]</span><br><span class="line">&gt; prod</span><br><span class="line"></span><br><span class="line">&gt; [all:vars]</span><br><span class="line">&gt; ansible_password=redhat</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="2-创建和运行-Ansible-临时命令"><a href="#2-创建和运行-Ansible-临时命令" class="headerlink" title="2. 创建和运行 Ansible 临时命令"></a>2. 创建和运行 Ansible 临时命令</h2><ul>
+<li><p>要求</p>
+<ul>
+<li>创建一个名为 /home/greg/ansible/adhoc.sh 的 shell 脚本，该脚本将使用 Ansible 临时命令在各个受管节点上安装 yum 存储库：</li>
+<li>储存库1：<ul>
+<li>存储库的名称为 EX294_BASE</li>
+<li>描述为 EX294 base software</li>
+<li>基础 URL 为 <a href="http://xxx.example.com.com/BaseOS" target="_blank" rel="noopener">http://xxx.example.com.com/BaseOS</a> (file:///mnt/BaseOS)</li>
+<li>GPG 签名检查为启用状态</li>
+<li>GPG URL 为 <a href="http://xxx.example.com/RHEL/RPM-GPG-KEY-redhat-release" target="_blank" rel="noopener">http://xxx.example.com/RHEL/RPM-GPG-KEY-redhat-release</a> (/etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial)</li>
+<li>存储库为启用状态</li>
+</ul>
+</li>
+<li>存储库2:<ul>
+<li>存储库的名称为 EX294_STREAM</li>
+<li>描述为 EX294 stream software</li>
+<li>基础 URL 为 <a href="http://xxx.example.com.com/AppStream" target="_blank" rel="noopener">http://xxx.example.com.com/AppStream</a> (file:///mnt/AppStream)</li>
+<li>GPG 签名检查为启用状态</li>
+<li>GPG URL 为 <a href="http://xxx.example.com/RHEL/RPM-GPG-KEY-redhat-release" target="_blank" rel="noopener">http://xxx.example.com/RHEL/RPM-GPG-KEY-redhat-release</a> (/etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial)</li>
+<li>存储库为启用状态</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>解答</p>
+<ul>
+<li><p>vim /home/greg/ansible/adhoc.sh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> ansible all -m yum_repository -a <span class="string">'name=EX295_BASE</span></span><br><span class="line"><span class="string"> description="EX294 base software"</span></span><br><span class="line"><span class="string"> baseurl=file:///mnt/BaseOS/</span></span><br><span class="line"><span class="string"> gpgcheck=1</span></span><br><span class="line"><span class="string"> gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial</span></span><br><span class="line"><span class="string"> enabled=1'</span></span><br><span class="line"></span><br><span class="line"> ansible all -m yum_repository -a <span class="string">'name=EX294_STREAM</span></span><br><span class="line"><span class="string"> description="EX294 stream software"</span></span><br><span class="line"><span class="string"> baseurl=file:///mnt/AppStream/</span></span><br><span class="line"><span class="string"> gpgcheck=1</span></span><br><span class="line"><span class="string"> gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial</span></span><br><span class="line"><span class="string"> enabled=1'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>chomod a+x adhoc.sh &amp;&amp; ./adhoc.sh</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-安装软件包"><a href="#3-安装软件包" class="headerlink" title="3. 安装软件包"></a>3. 安装软件包</h2><ul>
+<li><p>创建一个名为 /home/greg/ansible/packages.yml 的 playbook :</p>
+<ul>
+<li>将 php 和 mariadb 软件包安装到 dev、test 和 prod 主机组中的主机上</li>
+<li>将 RPM Development Tools 软件包组安装到 dev 主机组中的主机上</li>
+<li>将 dev 主机组中主机上的所有软件包更新为最新版本</li>
+</ul>
+</li>
+<li><p>解答</p>
+<ul>
+<li><p>vim packages.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">install</span> <span class="string">software</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">dev,test,prod</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">install</span> <span class="string">php</span> <span class="string">and</span> <span class="string">mariadb</span></span><br><span class="line"><span class="attr">      yum:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">"<span class="template-variable">&#123;&#123;item&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">present</span></span><br><span class="line"><span class="attr">      loop:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">php</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">mariadb</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - block:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">install</span> <span class="string">RPM</span> <span class="string">for</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">          yum:</span></span><br><span class="line"><span class="attr">            name:</span> <span class="string">"@RPM Development Tools"</span></span><br><span class="line"><span class="attr">            state:</span> <span class="string">present</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">update</span> <span class="string">dev</span> <span class="string">host</span> <span class="string">software</span></span><br><span class="line"><span class="attr">          yum:</span></span><br><span class="line"><span class="attr">            name:</span> <span class="string">"*"</span></span><br><span class="line"><span class="attr">            state:</span> <span class="string">latest</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"'dev' in group_names"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ansible-playbook packages.yml</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-使用-RHEL-系统角色"><a href="#4-使用-RHEL-系统角色" class="headerlink" title="4. 使用 RHEL 系统角色"></a>4. 使用 RHEL 系统角色</h2><ul>
+<li><p>安装 RHEL 系统角色软件包，并创建符合以下条件的 playbook /home/greg/ansible/timesync.yml</p>
+<ul>
+<li>在所有受管节点上运行</li>
+<li>使用 timesync 角色</li>
+<li>配置该角色，以使用当前有效的 NTP 提供商</li>
+<li>配置该角色，以使用时间服务器 172.20.20.254</li>
+<li>配置该角色，以启用 iburst 参数</li>
+</ul>
+</li>
+<li><p>解答</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装相应的软件包</span></span><br><span class="line">yum install rhel-system-roles.noarch -y</span><br><span class="line">rpm -ql rhel-system-roles</span><br><span class="line">/usr/share/doc/rhel-system-roles/...</span><br><span class="line"></span><br><span class="line"><span class="comment">#增加roles搜索路径</span></span><br><span class="line">vim ansible.cfg</span><br><span class="line">roles_path    = /home/greg/ansible/roles/:/usr/share/ansible/roles</span><br><span class="line"><span class="comment"># 查看galaxy列表</span></span><br><span class="line">ansible-galaxy list</span><br><span class="line"><span class="comment"># 复制相关文件</span></span><br><span class="line">cp /usr/share/doc/rhel-system-roles/timesync/example-timesync-playbook.yml /home/greg/ansible/timesync.yml</span><br><span class="line"><span class="comment"># 修改配置文件 timesync.yml</span></span><br></pre></td></tr></table></figure>
+
+  <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- hosts:</span> <span class="string">all</span>  <span class="comment"># 修改位置</span></span><br><span class="line"><span class="attr">  vars:</span></span><br><span class="line"><span class="attr">    timesync_ntp_servers:</span>     </span><br><span class="line"><span class="attr">      - hostname:</span> <span class="number">172.20</span><span class="number">.20</span><span class="number">.254</span>     <span class="comment"># 修改位置</span></span><br><span class="line"><span class="attr">        iburst:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  roles:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">rhel-system-roles.timesync</span></span><br><span class="line"></span><br><span class="line"><span class="string">ansible-playbook</span> <span class="string">/home/greg/ansible/timesync.yml</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="5-使用-Ansible-Galaxy-安装角色"><a href="#5-使用-Ansible-Galaxy-安装角色" class="headerlink" title="5. 使用 Ansible Galaxy 安装角色"></a>5. 使用 Ansible Galaxy 安装角色</h2><ul>
+<li>使用 Ansible Galaxy和要求文件 /home/greg/ansible/roles/requirements.yml </li>
+<li>从以下 URL 下载角色并安装到 /home/greg/ansible/roles<ul>
+<li><a href="http://materials/haproxy.tar" target="_blank" rel="noopener">http://materials/haproxy.tar</a> 此角色的名称应当为 balancer</li>
+<li><a href="http://materials/phpinfo.tar" target="_blank" rel="noopener">http://materials/phpinfo.tar</a> 此角色的名称应当为 phpinfo</li>
+</ul>
+</li>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ansible/roles</span><br><span class="line"></span><br><span class="line">vim requirements.yml</span><br><span class="line">---</span><br><span class="line">- src: http://materials/haproxy.tar</span><br><span class="line">  name: balancer</span><br><span class="line">- src: http://materials/phpinfo.tar</span><br><span class="line">  name: phpinfo</span><br><span class="line"></span><br><span class="line">ansible-galaxy install -r requirements.yml</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="6-创建和使用角色"><a href="#6-创建和使用角色" class="headerlink" title="6. 创建和使用角色"></a>6. 创建和使用角色</h2><ul>
+<li><p>根据下列要求，在 /home/greg/ansible/roles 中创建名为 apache 的角色：</p>
+<ul>
+<li>httpd 软件包已安装，设为在系统启动时启用并启动</li>
+<li>防火墙已启用并正在运行，并使用允许访问 Web 服务器的规则</li>
+<li>模板文件 index.html.j2 已存在，用于创建具有以下输出的文件 /var/www/html/index.html ：</li>
+<li>Welcome to HOSTNAME on IPADDRESS</li>
+<li>其中，HOSTNAME 是受管节点的完全限定域名，IPADDRESS 则是受管节点的 IP 地址。</li>
+<li>创建 playbook /home/greg/ansible/apache.yml ,使用apache 的角色,在 webservers 主机组。</li>
+</ul>
+</li>
+<li><p>解答</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> roles</span><br><span class="line">ansible-galaxy init apache</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>apache/tasks/main.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># tasks file for apache</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">install</span> <span class="string">httpd</span></span><br><span class="line"><span class="attr">  yum:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">httpd</span></span><br><span class="line"><span class="attr">    state:</span> <span class="string">present</span></span><br><span class="line"></span><br><span class="line"><span class="attr">- name:</span> <span class="string">enable</span> <span class="string">relate</span> <span class="string">service</span></span><br><span class="line"><span class="attr">  service:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">"<span class="template-variable">&#123;&#123;item&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">    state:</span> <span class="string">started</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  loop:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">httpd</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">firewalld</span></span><br><span class="line"></span><br><span class="line"><span class="attr">- name:</span> <span class="string">firewall</span> <span class="string">permission</span></span><br><span class="line"><span class="attr">  firewalld:</span></span><br><span class="line"><span class="attr">    immediate:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">    permanent:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">    port:</span> <span class="number">80</span><span class="string">/tcp</span></span><br><span class="line"><span class="attr">    state:</span> <span class="string">enabled</span></span><br><span class="line"></span><br><span class="line"><span class="attr">- name:</span> <span class="string">copy</span> <span class="string">index</span> <span class="string">to</span> <span class="string">remote</span> <span class="string">host</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    src:</span> <span class="string">index.html.j2</span></span><br><span class="line"><span class="attr">    dest:</span> <span class="string">/var/www/html/index.html</span></span><br><span class="line"><span class="attr">    setype:</span> <span class="string">httpd_sys_content_t</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>apache/templates/index.html.j2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to &#123;&#123;ansible_fqdn&#125;&#125; on &#123;&#123;ansible_default_ipv4.address&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-从-Ansible-Galaxy-使用角色"><a href="#7-从-Ansible-Galaxy-使用角色" class="headerlink" title="7. 从 Ansible Galaxy 使用角色"></a>7. 从 Ansible Galaxy 使用角色</h2><ul>
+<li>根据下列要求，创建一个名为 /home/greg/ansible/roles.yml 的 playbook ：<ul>
+<li>playbook 中包含一个 play， 该 play 在 balancers 主机组中的主机上运行并将使用 balancer 角色。</li>
+<li>此角色配置一项服务，以在 webservers 主机组中的主机之间平衡 Web 服务器请求的负载。</li>
+<li>浏览到 balancers 主机组中的主机（例如 <a href="http://node5.example.com/）将生成以下输出：" target="_blank" rel="noopener">http://node5.example.com/）将生成以下输出：</a></li>
+<li>Welcom to node3.example.com on 172.24.22.8</li>
+<li>重新加载浏览器将从另一 Web 服务器生成输出：</li>
+<li>Welcom to node4.example.com on 172.24.22.9</li>
+<li>playbook 中包含一个 play， 该 play 在 webservers 主机组中的主机上运行并将使用 phpinfo 角色。</li>
+<li>请通过 URL /hello.php 浏览到 webservers 主机组中的主机将生成以下输出：</li>
+<li>Hello PHP World from FQDN</li>
+<li>其中，FQDN 是主机的完全限定名称。</li>
+<li>例如，浏览到 <a href="http://node3.example.com/hello.php" target="_blank" rel="noopener">http://node3.example.com/hello.php</a> 会生成以下输出：</li>
+<li>Hello PHP World from node3.example.com</li>
+<li>另外还有 PHP 配置的各种详细信息，如安装的 PHP 版本等。</li>
+<li>同样，浏览到 <a href="http://node4.example.com/hello.php" target="_blank" rel="noopener">http://node4.example.com/hello.php</a> 会生成以下输出：</li>
+<li>Hello PHP World from</li>
+<li>node4.example.com</li>
+<li>另外还有 PHP 配置的各种详细信息，如安装的 PHP 版本等</li>
+</ul>
+</li>
+<li>解答<ul>
+<li>ansible/roles.yml<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">balancer</span> <span class="string">entry</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">balancer</span></span><br><span class="line"><span class="attr">  roles:</span> </span><br><span class="line"><span class="bullet">    -</span> <span class="string">balancer</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">phpinfo</span> <span class="string">entry</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">webservers</span></span><br><span class="line"><span class="attr">  roles:</span> </span><br><span class="line"><span class="bullet">    -</span> <span class="string">phpinfo</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">apache</span> <span class="string">entry</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">webservers</span></span><br><span class="line"><span class="attr">  roles:</span> </span><br><span class="line"><span class="bullet">    -</span> <span class="string">apache</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="8-a-创建和使用逻辑卷"><a href="#8-a-创建和使用逻辑卷" class="headerlink" title="8-a. 创建和使用逻辑卷"></a>8-a. 创建和使用逻辑卷</h2><ul>
+<li>创建一个名为 /home/greg/ansible/lv.yml 的 playbook ，它将在所有受管节点上运行以执行下列任务：<ul>
+<li>创建符合以下要求的逻辑卷：</li>
+<li>逻辑卷创建在 research 卷组中</li>
+<li>逻辑卷名称为 data</li>
+<li>逻辑卷大小为 1500 MiB</li>
+<li>使用 ext4 文件系统格式化逻辑卷</li>
+<li>如果无法创建请求的逻辑卷大小，应显示错误信息</li>
+<li>Could not create logical volume of that size，并且应改为使用大小 800 MiB。</li>
+<li>如果卷组 research 不存在，应显示错误信息</li>
+<li>Volume group does not exist。</li>
+<li>不要以任何方式挂载逻辑卷</li>
+</ul>
+</li>
+<li>解答<ul>
+<li>ansible/lv.yml<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">create</span> <span class="string">lv</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  tasks:</span> </span><br><span class="line"><span class="attr">    - name:</span> <span class="string">check</span> <span class="string">vg</span> <span class="string">group</span></span><br><span class="line"><span class="attr">      debug:</span> </span><br><span class="line"><span class="attr">        msg:</span> <span class="string">"Volume group does not exist"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">ansible_lvm.vgs.research</span> <span class="string">is</span> <span class="string">undefined</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - block:</span> </span><br><span class="line"><span class="attr">        - name:</span> <span class="string">create</span> <span class="string">lv</span> <span class="string">size</span> <span class="string">"1500M"</span></span><br><span class="line"><span class="attr">          lvol:</span> </span><br><span class="line"><span class="attr">            vg:</span> <span class="string">research</span></span><br><span class="line"><span class="attr">            lv:</span> <span class="string">data</span></span><br><span class="line"><span class="attr">            size:</span> <span class="number">1500</span><span class="string">M</span></span><br><span class="line"><span class="attr">      rescue:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">size</span> <span class="string">error</span></span><br><span class="line"><span class="attr">          debug:</span> </span><br><span class="line"><span class="attr">            msg:</span> <span class="string">"Could not create logical volume of that size"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">create</span> <span class="string">lv</span> <span class="string">size</span> <span class="string">"800M"</span></span><br><span class="line"><span class="attr">          lvol:</span> </span><br><span class="line"><span class="attr">            vg:</span> <span class="string">research</span></span><br><span class="line"><span class="attr">            lv:</span> <span class="string">data</span></span><br><span class="line"><span class="attr">            size:</span> <span class="number">800</span><span class="string">M</span></span><br><span class="line"><span class="attr">      always:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">foramt</span> <span class="string">lv</span></span><br><span class="line"><span class="attr">          filesystem:</span> </span><br><span class="line"><span class="attr">            dev:</span> <span class="string">/dev/research/data</span></span><br><span class="line"><span class="attr">            fstype:</span> <span class="string">ext4</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">ansible_lvm.vgs.research</span> <span class="string">is</span> <span class="string">defined</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="8-b-创建并使用磁盘分区"><a href="#8-b-创建并使用磁盘分区" class="headerlink" title="8-b 创建并使用磁盘分区"></a>8-b 创建并使用磁盘分区</h2><ul>
+<li>创建名为 partition.yml 的 playbook,对所有的节点进行操作:<ul>
+<li>在 vdb 上创建一个主分区, 1500MiB</li>
+<li>使用 ext4 文件系统进行格式化</li>
+<li>将文件系统挂载到/newpart</li>
+<li>如果分区大小不满足,产生报错信息: could not create partation of that size</li>
+<li>则创建分区大小变成 800MiB</li>
+<li>如果磁盘不存在,产生报错信息: disk does not exist</li>
+<li>在练习环境里,创建 diskroup 分组,把 serverb 和 serverd 添加过去,对 diskgroup 分组来做</li>
+</ul>
+</li>
+<li>解答<ul>
+<li>ansible/partition.yml<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">partation</span> <span class="string">fs</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">check</span> <span class="string">fdisk</span></span><br><span class="line"><span class="attr">      debug:</span></span><br><span class="line"><span class="attr">        msg:</span> <span class="string">"disk does not exist"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">ansible_devices.sdb</span> <span class="string">is</span> <span class="string">undefined</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - block:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">start</span> <span class="string">to</span> <span class="string">parted</span> <span class="string">"1500M"</span></span><br><span class="line"><span class="attr">          parted:</span></span><br><span class="line"><span class="attr">            device:</span> <span class="string">/dev/sdb</span></span><br><span class="line"><span class="attr">            number:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">            part_end:</span> <span class="number">1500</span><span class="string">MiB</span></span><br><span class="line"><span class="attr">            state:</span> <span class="string">present</span></span><br><span class="line"><span class="attr">      rescue:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">size</span> <span class="string">error</span></span><br><span class="line"><span class="attr">          debug:</span></span><br><span class="line"><span class="attr">            msg:</span> <span class="string">"could not create partation of that size"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">start</span> <span class="string">to</span> <span class="string">parted</span> <span class="string">"800M"</span></span><br><span class="line"><span class="attr">          parted:</span></span><br><span class="line"><span class="attr">            device:</span> <span class="string">/dev/sdb</span></span><br><span class="line"><span class="attr">            number:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">            part_end:</span> <span class="number">800</span><span class="string">MiB</span></span><br><span class="line"><span class="attr">            state:</span> <span class="string">present</span></span><br><span class="line"><span class="attr">      always:</span> </span><br><span class="line"><span class="attr">        - name:</span> <span class="string">foramt</span> <span class="string">parte</span></span><br><span class="line"><span class="attr">          filesystem:</span></span><br><span class="line"><span class="attr">            dev:</span> <span class="string">/dev/sdb1</span></span><br><span class="line"><span class="attr">            fstype:</span> <span class="string">ext4</span></span><br><span class="line"></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">mount</span> <span class="string">fs</span></span><br><span class="line"><span class="attr">          mount:</span></span><br><span class="line"><span class="attr">            src:</span> <span class="string">/dev/sdb1</span></span><br><span class="line"><span class="attr">            fstype:</span> <span class="string">ext4</span></span><br><span class="line"><span class="attr">            path:</span> <span class="string">/newpart</span></span><br><span class="line"><span class="attr">            state:</span> <span class="string">mounted</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">ansible_devices.sdb</span> <span class="string">is</span> <span class="string">defined</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="9-生成主机文件"><a href="#9-生成主机文件" class="headerlink" title="9. 生成主机文件"></a>9. 生成主机文件</h2><ul>
+<li><p>将一个初始模板文件从 <a href="http://rhgls.realm8.example.com/materials/hosts.j2" target="_blank" rel="noopener">http://rhgls.realm8.example.com/materials/hosts.j2</a> 下载到 /home/greg/ansible</p>
+<ul>
+<li>完成该模板，以便用它生成以下文件：针对每个清单主机包含一行内容，其格式与 /etc/hosts 相同</li>
+<li>创建名为 /home/greg/ansible/hosts.yml 的 playbook ，它将使用此模板在 dev 主机组中的主机上生成文件 /etc/myhosts 。</li>
+<li>该 playbook 运行后， dev 主机组中主机上的文件 /etc/myhosts 应针对每个受管主机包含一行内容：</li>
+</ul>
+</li>
+<li><p>解答</p>
+<ul>
+<li><p>hosts.j2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">&#123;% for host in groups[&apos;all&apos;]%&#125;</span><br><span class="line">&#123;&#123; hostvars[host][&apos;ansible_facts&apos;][&apos;default_ipv4&apos;][&apos;address&apos;] &#125;&#125; &#123;&#123;hostvars[host][&apos;ansible_facts&apos;][&apos;fqdn&apos;]&#125;&#125;  &#123;&#123;hostvars[host][&apos;ansible_facts&apos;][&apos;hostname&apos;]&#125;&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hosts.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">copy</span> <span class="string">hosts</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">copy</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      template:</span></span><br><span class="line"><span class="attr">        src:</span> <span class="string">hosts.j2</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/etc/hosts</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"'dev' in group_names"</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="10-修改文件内容"><a href="#10-修改文件内容" class="headerlink" title="10.  修改文件内容"></a>10.  修改文件内容</h2><ul>
+<li>按照下方所述，创建一个名为 /home/greg/ansible/issue.yml 的 playbook ：<ul>
+<li>该 playbook 将在所有清单主机上运行</li>
+<li>该 playbook 会将 /etc/issue 的内容替换为下方所示的一行文本：</li>
+<li>在 dev 主机组中的主机上，这行文本显示 为：Development</li>
+<li>在 test 主机组中的主机上，这行文本显示 为：Test</li>
+<li>在 prod 主机组中的主机上，这行文本显示 为：Production</li>
+</ul>
+</li>
+<li>解答  <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">generate</span> <span class="string">issue</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">modify</span> <span class="string">issue</span></span><br><span class="line"><span class="attr">      copy:</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/etc/issue</span></span><br><span class="line"><span class="attr">        content:</span> <span class="string">"Development\n"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"'dev' in group_names"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">modify</span> <span class="string">issue</span></span><br><span class="line"><span class="attr">      copy:</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/etc/issue</span></span><br><span class="line"><span class="attr">        content:</span> <span class="string">"Test\n"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">inventory_hostname</span> <span class="string">in</span> <span class="string">groups.test</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">modify</span> <span class="string">issue</span></span><br><span class="line"><span class="attr">      copy:</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/etc/issue</span></span><br><span class="line"><span class="attr">        content:</span> <span class="string">"Production\n"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">inventory_hostname</span> <span class="string">in</span> <span class="string">groups.prod</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="11-创建-Web-内容目录"><a href="#11-创建-Web-内容目录" class="headerlink" title="11. 创建 Web 内容目录"></a>11. 创建 Web 内容目录</h2><ul>
+<li>按照下方所述，创建一个名为 /home/greg/ansible/webcontent.yml 的 playbook ：<ul>
+<li>该 playbook 在 dev 主机组中的受管节点上运行</li>
+<li>创建符合下列要求的目录 /webdev ：</li>
+<li>所有者为 webdev 组</li>
+<li>具有常规权限：owner=read+write+execute ， group=read+write+execute ，other=read+execute</li>
+<li>具有特殊权限：设置组 ID</li>
+<li>用符号链接将 /var/www/html/webdev 链接到 /webdev</li>
+<li>创建文件 /webdev/index.html ，其中包含如下所示的单行文件： Development</li>
+<li>在 dev 主机组中主机上浏览此目录（例如 <a href="http://node1.realm8.example.com/webdev）将生成以下输出：Development" target="_blank" rel="noopener">http://node1.realm8.example.com/webdev）将生成以下输出：Development</a></li>
+</ul>
+</li>
+<li>解答<ul>
+<li>ansible/webdev.yml<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">webcontent</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">  roles:</span> </span><br><span class="line"><span class="bullet">    -</span> <span class="string">apache</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">group</span></span><br><span class="line"><span class="attr">      group:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">webdev</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">directory</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">directory</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/webdev</span></span><br><span class="line"><span class="attr">        group:</span> <span class="string">webdev</span></span><br><span class="line"><span class="attr">        mode:</span> <span class="number">2775</span></span><br><span class="line"><span class="attr">        setype:</span> <span class="string">httpd_sys_content_t</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">link</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">link</span></span><br><span class="line"><span class="attr">        src:</span> <span class="string">/webdev</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/var/www/html/webdev</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">index</span></span><br><span class="line"><span class="attr">      copy:</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/webdev/index.html</span></span><br><span class="line"><span class="attr">        content:</span> <span class="string">"Development\n"</span></span><br><span class="line"><span class="attr">        setype:</span> <span class="string">httpd_sys_content_t</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="12-生成硬件报告"><a href="#12-生成硬件报告" class="headerlink" title="12. 生成硬件报告"></a>12. 生成硬件报告</h2><ul>
+<li><p>创建一个名为 /home/greg/ansible/hwreport.yml 的 playbook ，它将在所有受管节点上生成含有以下信息的输出文件 /root/hwreport.txt ：</p>
+<ul>
+<li>清单主机名称</li>
+<li>以 MB 表示的总内存大小</li>
+<li>BIOS 版本</li>
+<li>磁盘设备 vda 的大小</li>
+<li>磁盘设备 vdb 的大小</li>
+<li>输出文件中的每一行含有一个 key=value 对。</li>
+<li>您的 playbook 应当：</li>
+<li>从 <a href="http://rhgl.realm8.example.com/materials/hwreport.empty" target="_blank" rel="noopener">http://rhgl.realm8.example.com/materials/hwreport.empty</a> 下载文件，并将它保存为 /root/hwreport.txt</li>
+<li>使用正确的值改为 /root/hwreport.txt</li>
+<li>如果硬件项不存在，相关的值应设为 NONE</li>
+</ul>
+</li>
+<li><p>解答</p>
+<ul>
+<li><p>hwreport.empty</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HOST=</span><br><span class="line">MEMERY=</span><br><span class="line">BIOS=</span><br><span class="line">DISK_SIZE_VDA=</span><br><span class="line">DISK_SIZE_VDB=</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hwreport.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">generate</span> <span class="string">report</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  tasks:</span> </span><br><span class="line"><span class="attr">    - name:</span> <span class="string">remote</span> <span class="string">exist</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">"rm -f /root/hwreport.txt"</span></span><br><span class="line"><span class="attr">      ignore_errors:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">get</span> <span class="string">hwreport.empty</span></span><br><span class="line"><span class="attr">      get_url:</span> </span><br><span class="line"><span class="attr">        url:</span> <span class="attr">https://termbin.com/vkmm</span>  <span class="comment"># 修改相应link即可</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/root/hwreport.txt</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">modify</span> <span class="string">inform</span></span><br><span class="line"><span class="attr">      lineinfile:</span> </span><br><span class="line"><span class="attr">        path:</span> <span class="string">/root/hwreport.txt</span></span><br><span class="line"><span class="attr">        line:</span> <span class="string">"<span class="template-variable">&#123;&#123;item.name&#125;&#125;</span>=<span class="template-variable">&#123;&#123;item.value&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        regexp:</span> <span class="string">"^<span class="template-variable">&#123;&#123;item.name&#125;&#125;</span>="</span></span><br><span class="line"><span class="attr">      loop:</span> <span class="string">"<span class="template-variable">&#123;&#123;data&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">      vars:</span> </span><br><span class="line"><span class="attr">        data:</span> </span><br><span class="line"><span class="attr">          - name:</span> <span class="string">HOST</span></span><br><span class="line"><span class="attr">            value:</span> <span class="string">"<span class="template-variable">&#123;&#123; inventory_hostname | default('NONE') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">MEMERY</span></span><br><span class="line"><span class="attr">            value:</span> <span class="string">"<span class="template-variable">&#123;&#123; ansible_memtotal_mb | default('NONE') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">BIOS</span></span><br><span class="line"><span class="attr">            value:</span> <span class="string">"<span class="template-variable">&#123;&#123; ansible_bios_version | default('NONE') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">DISK_SIZE_SDA</span></span><br><span class="line"><span class="attr">            value:</span> <span class="string">"<span class="template-variable">&#123;&#123; ansible_devices.sda.size | default('NONE') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">DISK_SIZE_SDB</span></span><br><span class="line"><span class="attr">            value:</span> <span class="string">"<span class="template-variable">&#123;&#123; ansible_devices.sdb.size | default('NONE') &#125;&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="13-创建密码库"><a href="#13-创建密码库" class="headerlink" title="13. 创建密码库"></a>13. 创建密码库</h2><ul>
+<li>按照下方所述，创建一个 Ansible 库来存储用户密码：<ul>
+<li>库名称为 /home/greg/ansible/locker.yml</li>
+<li>库中含有两个变量，名称如下：</li>
+<li>pw_developer，值为 Imadev</li>
+<li>pw_manager，值为 Imamgr</li>
+<li>用于加密和解密该库的密码为 qqqqqqqqqq</li>
+<li>密码存储在文件 /home/greg/ansible/secret.txt 中</li>
+</ul>
+</li>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">vim /home/greg/ansible/locker.yml</span><br><span class="line">---</span><br><span class="line">pw_developer: Imadev</span><br><span class="line">pw_manager: Imamgr</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> qqqqqqqqqq &gt; /home/greg/ansible/secret.txt</span><br><span class="line"></span><br><span class="line">vim /etc/ansible/ansible.cfg</span><br><span class="line">vault_password_file = /home/greg/ansible/secret.txt</span><br><span class="line">ansible-vault encrypt /home/greg/ansible/locker.yml</span><br><span class="line"><span class="comment">#OR</span></span><br><span class="line">ansible-vault encrypt --vault-password-file secret.txt locker.yml</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="14-创建用户帐户"><a href="#14-创建用户帐户" class="headerlink" title="14. 创建用户帐户"></a>14. 创建用户帐户</h2><ul>
+<li><p>从 <a href="http://xxx.example.com.com/materials/user_list.yml" target="_blank" rel="noopener">http://xxx.example.com.com/materials/user_list.yml</a> 下载要创建的用户的列表，并将它保存到 /home/greg/ansible</p>
+<ul>
+<li><p>在本次考试中使用在其他位置创建的密码库 /home/greg/ansible/locker.yml 。创建名为 /home/greg/ansible/users.yml 的 playbook ，从而按以下所述创建用户帐户：</p>
+</li>
+<li><p>职位描述为 developer 的用户应当：</p>
+<ul>
+<li>在 dev 和 test 主机组中的受管节点上创建</li>
+<li>从 pw_developer 变量分配密码</li>
+<li>是补充组 devops 的成员</li>
+</ul>
+</li>
+<li><p>职位描述为 manager 的用户应当：</p>
+<ul>
+<li>在 prod 主机组中的受管节点上创建</li>
+<li>从 pw_manager 变量分配密码</li>
+<li>是补充组 opsmgr 的成员</li>
+<li>密码采用 SHA512 哈希格式。</li>
+</ul>
+</li>
+<li><p>您的 playbook 应能够在本次考试中使用在其他位置创建的库密码文件 /home/greg/ansible/secret.txt 正常运行</p>
+</li>
+</ul>
+</li>
+<li><p>解答</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://xxx.example.com.com/materials/user_list.yml  -P /home/greg/ansible</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>user_list.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="attr">  - job:</span> <span class="string">developer</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">alfie</span></span><br><span class="line"><span class="attr">  - job:</span> <span class="string">manager</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">alopex</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>/home/greg/ansible/users.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">generate</span> <span class="string">relate</span> <span class="string">user</span> <span class="string">and</span> <span class="string">group</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  vars_files:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">/home/greg/ansible/locker.yml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">/home/greg/ansible/user_list.yml</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">developer</span> <span class="string">group</span></span><br><span class="line"><span class="attr">      group:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"'dev' in group_names"</span> <span class="string">or</span> <span class="string">"'test' in group_names"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">developer</span> <span class="string">group</span> <span class="string">member</span></span><br><span class="line"><span class="attr">      user:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">"<span class="template-variable">&#123;&#123;item.name&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        password:</span> <span class="string">"<span class="template-variable">&#123;&#123;pw_developer | password_hash('sha512') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        group:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">      loop:</span> <span class="string">"<span class="template-variable">&#123;&#123;users&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"item.job == 'developer' and ('dev' in group_names or 'test' in group_names)"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">manager</span> <span class="string">group</span></span><br><span class="line"><span class="attr">      group:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">opsmgr</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"'prod' in group_names"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">create</span> <span class="string">manager</span> <span class="string">group</span> <span class="string">member</span></span><br><span class="line"><span class="attr">      user:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">"<span class="template-variable">&#123;&#123;item.name&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        password:</span> <span class="string">"<span class="template-variable">&#123;&#123;pw_manager | password_hash('sha512') &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">        group:</span> <span class="string">opsmgr</span></span><br><span class="line"><span class="attr">      loop:</span> <span class="string">"<span class="template-variable">&#123;&#123;users&#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">      when:</span> <span class="string">"item.job == 'manager' and 'prod' in group_names"</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="15-更新-Ansible-库的密钥"><a href="#15-更新-Ansible-库的密钥" class="headerlink" title="15. 更新 Ansible 库的密钥"></a>15. 更新 Ansible 库的密钥</h2><ul>
+<li>按照下方所述，更新现有 Ansible 库的**：<ul>
+<li>从 <a href="http://xxx.example.com.com/materls/salaries.yml" target="_blank" rel="noopener">http://xxx.example.com.com/materls/salaries.yml</a> 下载 Ansible 库到 /root/greg/ansible</li>
+<li>当前的库密码为 111</li>
+<li>新的库密码为 123</li>
+<li>库使用新密码保持加密状态</li>
+</ul>
+</li>
+<li>解答  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://materls/salaries.yml</span><br><span class="line">ansible-vault rekey --ask-vault-pass salaries.yml</span><br><span class="line">Vault password: `111`</span><br><span class="line">New Vault password: `123`</span><br><span class="line">Confirm New Vault password: `123`</span><br><span class="line">ansible-vault view salaries.yml</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/redhat/" rel="tag"># redhat</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/12/31/rhcsa/" rel="next" title="rhcsa 8.0 面向考试题解">
+                <i class="fa fa-chevron-left"></i> rhcsa 8.0 面向考试题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本信息"><span class="nav-number">2.1.</span> <span class="nav-text">基本信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目"><span class="nav-number">3.</span> <span class="nav-text">题目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装和配置-Ansible"><span class="nav-number">3.1.</span> <span class="nav-text">1. 安装和配置 Ansible</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-创建和运行-Ansible-临时命令"><span class="nav-number">3.2.</span> <span class="nav-text">2. 创建和运行 Ansible 临时命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-安装软件包"><span class="nav-number">3.3.</span> <span class="nav-text">3. 安装软件包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-使用-RHEL-系统角色"><span class="nav-number">3.4.</span> <span class="nav-text">4. 使用 RHEL 系统角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-使用-Ansible-Galaxy-安装角色"><span class="nav-number">3.5.</span> <span class="nav-text">5. 使用 Ansible Galaxy 安装角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-创建和使用角色"><span class="nav-number">3.6.</span> <span class="nav-text">6. 创建和使用角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-从-Ansible-Galaxy-使用角色"><span class="nav-number">3.7.</span> <span class="nav-text">7. 从 Ansible Galaxy 使用角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-a-创建和使用逻辑卷"><span class="nav-number">3.8.</span> <span class="nav-text">8-a. 创建和使用逻辑卷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-b-创建并使用磁盘分区"><span class="nav-number">3.9.</span> <span class="nav-text">8-b 创建并使用磁盘分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-生成主机文件"><span class="nav-number">3.10.</span> <span class="nav-text">9. 生成主机文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-修改文件内容"><span class="nav-number">3.11.</span> <span class="nav-text">10.  修改文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-创建-Web-内容目录"><span class="nav-number">3.12.</span> <span class="nav-text">11. 创建 Web 内容目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-生成硬件报告"><span class="nav-number">3.13.</span> <span class="nav-text">12. 生成硬件报告</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-创建密码库"><span class="nav-number">3.14.</span> <span class="nav-text">13. 创建密码库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-创建用户帐户"><span class="nav-number">3.15.</span> <span class="nav-text">14. 创建用户帐户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-更新-Ansible-库的密钥"><span class="nav-number">3.16.</span> <span class="nav-text">15. 更新 Ansible 库的密钥</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">140k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:54</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
