@@ -129,15 +129,35 @@
   <meta name="description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
 <meta name="keywords" content="offensive">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nmap基本知识">
+<meta property="og:title" content="nmap原理图解及命令使用">
 <meta property="og:url" content="http://alopex.cc/2021/12/31/nmap/index.html">
 <meta property="og:site_name" content="Alopex">
 <meta property="og:description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/michael-jasmund-t-WxNy6CMyU-unsplash.jpg">
-<meta property="og:updated_time" content="2022-01-01T03:37:25.011Z">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_syn.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_syn_packet_success.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_syn_packet_ignore.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_syn_packet_rst.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_connect.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_connect_packet_success.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_connect_packet_ignore.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_connect_packet_rst.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_ack.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_ack_vs_syn.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_fin.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_fin_test.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_xmas.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/xmas_local.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/xmas_gateway.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/TCP_null.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/null_local.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/null_gateway.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/udp.png">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/nse.png">
+<meta property="og:updated_time" content="2022-01-01T10:54:51.220Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nmap基本知识">
+<meta name="twitter:title" content="nmap原理图解及命令使用">
 <meta name="twitter:description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
 <meta name="twitter:image" content="http://alopex.cc/2021/12/31/nmap/michael-jasmund-t-WxNy6CMyU-unsplash.jpg">
 
@@ -158,7 +178,7 @@
 </script>
 
   
-  <title>nmap基本知识 | Alopex</title>
+  <title>nmap原理图解及命令使用 | Alopex</title>
   
 
 
@@ -370,7 +390,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">nmap基本知识
+          <h1 class="post-title" itemprop="name headline">nmap原理图解及命令使用
 
               
             
@@ -411,7 +431,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2022-01-01 11:37:25" itemprop="dateModified" datetime="2022-01-01T11:37:25+08:00">2022-01-01</time>
+                <time title="修改时间：2022-01-01 18:54:51" itemprop="dateModified" datetime="2022-01-01T18:54:51+08:00">2022-01-01</time>
               </span>
             
           
@@ -468,7 +488,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">14k</span>
+              <span title="本文字数">32k</span>
             </span>
           
 
@@ -480,7 +500,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span title="阅读时长">24 分钟</span>
+              <span title="阅读时长">53 分钟</span>
             </span>
           
 
@@ -541,7 +561,9 @@
 </ul>
 </li>
 </ul>
-<h3 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h3><ul>
+<h3 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下测试的基本信息</span></span><br><span class="line"></span><br><span class="line">192.168.1.0/24 ==&gt; 局域网</span><br><span class="line">192.168.1.1    ==&gt; 网关</span><br><span class="line">  * 21 open</span><br><span class="line">  * 80 open</span><br><span class="line">192.168.1.8    ==&gt; 本地主机</span><br><span class="line">  * 443 open</span><br><span class="line">192.168.1.xxx  ==&gt; 不存在的主机</span><br></pre></td></tr></table></figure>
+
+<ul>
 <li><p>局域网内</p>
 <ul>
 <li><p>默认检测方式，是通过向主机发送TCP报文到端口<code>80</code>, <code>443</code>，探测主机端口是否开通相关服务，以此判断主机是否存活。</p>
@@ -558,8 +580,8 @@
 </li>
 <li><p>如果局域网内有ARP的限制，这是甚少的情况</p>
 </li>
-<li><p>那么可以考虑使用 ping echo 作为主机存活的测试依据(-Pe)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># non root just could use TCP ping</span></span><br><span class="line">~ ❯ nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line">Warning:  You are not root -- using TCP pingscan rather than ICMP</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">CONN (0.0015s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0221s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.021s latency).</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.02 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># under root privilege</span></span><br><span class="line">~ ❯ sudo nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">SENT (0.0487s) ARP who-has 192.168.1.1 tell 192.168.1.8</span><br><span class="line">RCVD (0.0589s) ARP reply 192.168.1.1 is-at 48:5A:AB:CD:AB:CD</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.010s latency).</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD (Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.29 seconds</span><br></pre></td></tr></table></figure>
+<li><p>那么可以考虑使用 ping echo 作为主机存活的测试依据(-PE)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># non root just could use TCP ping</span></span><br><span class="line">~ ❯ nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line">Warning:  You are not root -- using TCP pingscan rather than ICMP</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">CONN (0.0015s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0221s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.021s latency).</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.02 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># under root privilege</span></span><br><span class="line">~ ❯ sudo nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">SENT (0.0487s) ARP who-has 192.168.1.1 tell 192.168.1.8</span><br><span class="line">RCVD (0.0589s) ARP reply 192.168.1.1 is-at 48:5A:AB:CD:AB:CD</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.010s latency).</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD (Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.29 seconds</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
@@ -585,24 +607,218 @@
 </li>
 </ul>
 <h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><ul>
-<li>namp对于端口的扫描，是通过端口的常用情况进行扫描的而不是按端口编号，nmap默认扫描最常用的1000个端口 (-F 扫描最常用100个)</li>
-<li>端口的扫描是通过发送TCP/UDP数据包于目标主机的著名端口尝试进行连接，以此获得目标主机的响应回复，进而判断主机端口的开启与否<ul>
-<li>扫描分类<ul>
-<li>TCP SYN 扫描</li>
-<li>TCP connect 扫描</li>
-<li>秘密扫描<ul>
-<li>TCP FIN 扫描</li>
-<li>TCP ACP 扫描</li>
-<li>NULL 扫描</li>
-<li>XMAS 扫描</li>
-<li>SYN/ACK 扫描</li>
+<li><p>基本信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下测试的基本信息</span></span><br><span class="line"></span><br><span class="line">192.168.1.0/24 ==&gt; 局域网</span><br><span class="line">192.168.1.1    ==&gt; 网关</span><br><span class="line">  * 21 open</span><br><span class="line">  * 80 open</span><br><span class="line">192.168.1.8    ==&gt; 本地主机</span><br><span class="line">  * 443 open</span><br><span class="line">192.168.1.xxx  ==&gt; 不存在的主机</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>namp对于端口的扫描，是通过端口的常用情况进行扫描的而不是按端口编号，nmap默认扫描最常用的1000个端口 (-F 扫描最常用100个)</p>
+</li>
+<li><p>端口的扫描是通过发送TCP/UDP数据包于目标主机的著名端口尝试进行连接，以此获得目标主机的响应回复，进而判断主机端口的开启与否</p>
+<ul>
+<li><p>扫描分类</p>
+<ul>
+<li><p>TCP SYN 扫描 (-sS)</p>
+<ul>
+<li><p>原理: 默认的端口扫描方式，通过发送SYN报文至目标端口，如若收到SYN/ACK回复，则代表端口是开放状态，如果收到<code>RST</code>则表示关闭</p>
+</li>
+<li><p>场景: 扫描端口的存活情况</p>
+</li>
+<li><p>优/缺点:</p>
+<ul>
+<li>优点: 对比<code>TCP connect扫描</code>,该扫描不需要三次握手，速度更快，也较为隐蔽</li>
+<li>缺点: 需要root权限</li>
 </ul>
 </li>
-<li>其他扫描<ul>
-<li>UDP 扫描</li>
-<li>IP 头信息dump扫描</li>
-<li>慢速扫描</li>
-<li>乱序扫描</li>
+<li><p>图解</p>
+<p><img src="TCP_syn.png" alt="tcp_syn"></p>
+<ul>
+<li>补充: 收到<code>RST</code>的TCP包出现情况<ul>
+<li>RST: reset: 用于复位因某种原因引起出现的错误连接，也用来拒绝非法数据和请求</li>
+</ul>
+<ol>
+<li>connect 一个不存在的端口</li>
+<li>向一个已关闭的连接发送数据</li>
+<li>向一个已经崩溃的对端发送数据（连接之前已经被建立）</li>
+<li>close(sockfd)时，直接丢弃接收缓冲区未读取数据，发送给对方一个RST</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>测试</p>
+<ul>
+<li>-sS: TCP connect测试 (可不写，缺省就是它)</li>
+<li>-Pn: 默认主机存活（不进行主机存活测试）</li>
+<li>-n: 不对域名进行解释</li>
+<li>–disable-arp-ping: 不进行arp测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP syn success</span></span><br><span class="line">~ ❯ sudo nmap -sS 192.168.1.1 -p80 -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 14:54 HKT</span><br><span class="line">SENT (0.0999s) TCP 192.168.1.8:47604 &gt; 192.168.1.1:80 S ttl=52 id=4666 iplen=44  seq=4122108757 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.1045s) TCP 192.168.1.1:80 &gt; 192.168.1.8:47604 SA ttl=64 id=0 iplen=44  seq=3362087325 win=29200 &lt;mss 1460&gt;</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0047s latency).</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">80/tcp open  http</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD (Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.37 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_syn_packet_success.png" alt="TCP_SYN_success"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP SYN fail withou response</span></span><br><span class="line">~ ❯ sudo nmap -sS 192.168.1.1 -p12345 -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 15:06 HKT</span><br><span class="line">SENT (0.0848s) TCP 192.168.1.8:44822 &gt; 192.168.1.1:12345 S ttl=55 id=57037 iplen=44  seq=1085289323 win=1024 &lt;mss 1460&gt;</span><br><span class="line">SENT (1.0862s) TCP 192.168.1.8:44823 &gt; 192.168.1.1:12345 S ttl=38 id=55583 iplen=44  seq=1085354858 win=1024 &lt;mss 1460&gt;</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up.</span><br><span class="line">PORT      STATE    SERVICE</span><br><span class="line">12345/tcp filtered netbus</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 2.12 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_syn_packet_ignore.png" alt="TCP_SYN_fail"></p>
+<ul>
+<li>上述测试，似乎和图解有所不符，其实不然。我们可以发现这里状态为<code>filtered</code>，而非open/closed</li>
+<li>一般情况下，这会有几种原因导致主机端口显示<code>filtered</code>状态<ul>
+<li>数据包发送过去了，没有回包，被丢弃了<code>droped</code> (我们这里的情况)</li>
+<li>数据包发送过去了被拒绝了<code>rejected</code> (图解所示情况)</li>
+</ul>
+</li>
+<li>注意一点! <code>filtered</code>的状态表明无法知晓主机端口暂时无法得知是否启用，可能是暗门（防火墙/IPS/IDS保护）,也可能是死胡同</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP syn fail with RST reply</span></span><br><span class="line">~ ❯ sudo nmap -sS 192.168.1.8 -p12345 -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 15:09 HKT</span><br><span class="line">SENT (0.0712s) TCP 192.168.1.8:61757 &gt; 192.168.1.8:12345 S ttl=42 id=7212 iplen=44  seq=3997263221 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.0711s) TCP 192.168.1.8:61757 &gt; 192.168.1.8:12345 S ttl=42 id=7212 iplen=44  seq=3997263221 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.0712s) TCP 192.168.1.8:12345 &gt; 192.168.1.8:61757 RA ttl=64 id=0 iplen=40  seq=0 win=0</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.8</span><br><span class="line">Host is up (0.000049s latency).</span><br><span class="line">PORT      STATE  SERVICE</span><br><span class="line">12345/tcp closed netbus</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.31 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_syn_packet_rst.png" alt="TCP_SYN_fail"></p>
+</li>
+</ul>
+</li>
+<li><p>TCP connect 扫描 (-sT)</p>
+<ul>
+<li><p>原理: 通过网路的API connect向目标主机端口发送TCP连接，如果端口在监听状态，则会成功收到返回包，判断端口可达</p>
+</li>
+<li><p>场景: 扫描端口的存活情况</p>
+</li>
+<li><p>优/缺点:</p>
+<ul>
+<li>优点: 无需使用root权限</li>
+<li>缺点: 需要建立三次握手，严重影响效率,目标主机的日志将记录大批连接请求错误信息,容易被检测</li>
+</ul>
+</li>
+<li><p>图解</p>
+<p><img src="TCP_connect.png" alt="tcp_connect"></p>
+</li>
+<li><p>测试</p>
+<ul>
+<li>-sT: TCP connect测试</li>
+<li>-Pn: 默认主机存活（不进行主机存活测试）</li>
+<li>-n: 不对域名进行解释</li>
+<li>–disable-arp-ping: 不进行arp测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP connect success</span></span><br><span class="line">~ ❯ nmap -sT 192.168.1.1 -p80 -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 12:33 HKT</span><br><span class="line">CONN (0.0466s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0495s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0030s latency).</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">80/tcp open  http</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.04 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_connect_packet_success.png" alt="tcp_connect_success"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP connect fail without response</span></span><br><span class="line">~ ❯ nmap -sT 192.168.1.1 -p12345 -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 15:04 HKT</span><br><span class="line">CONN (0.0447s) TCP localhost &gt; 192.168.1.1:12345 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (1.0461s) TCP localhost &gt; 192.168.1.1:12345 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up.</span><br><span class="line">PORT      STATE    SERVICE</span><br><span class="line">12345/tcp filtered netbus</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 2.05 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_connect_packet_ignore.png" alt="tcp_connect_fail"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP connect fail with RST reply</span></span><br><span class="line">~ ❯ nmap -sT  192.168.1.8 -p12345 --<span class="built_in">disable</span>-arp-ping -n -Pn --packet-trace </span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 13:04 HKT</span><br><span class="line">CONN (0.0421s) TCP localhost &gt; 192.168.1.8:12345 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0421s) TCP localhost &gt; 192.168.1.8:12345 =&gt; Connection refused</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.8</span><br><span class="line">Host is up (0.000076s latency).</span><br><span class="line">PORT      STATE  SERVICE</span><br><span class="line">12345/tcp closed netbus</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.04 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_connect_packet_rst.png" alt="tcp_connect_fail"></p>
+</li>
+</ul>
+</li>
+<li><p>秘密扫描</p>
+<ul>
+<li><p>TCP ACK 扫描 (-sA)</p>
+<ul>
+<li>原理: 对于TCP的<code>ACK</code>数据包，无论目标主机端口是否打开，都会返回一个<code>RST</code>数据包。这是因为防火墙无法判断对于<code>ACK</code>的连接的建立是来自外部网络，还是内部网络的。该方法主要用于判断端口是否被防火墙屏蔽过滤，如果被屏蔽则无法收到<code>RST</code>包，如果没有被屏蔽则可以收到。</li>
+<li>说明: <ul>
+<li>最正常的场景，端口开启 （open）</li>
+<li>不正常或值得怀疑的场景，端口关闭（closed）或被屏蔽（filtered）<ul>
+<li><code>closed</code> 是由于 <code>SYN</code>扫描时，目标主机发送<code>RST</code> ==&gt; 也可能是防御设备故意为止 ==&gt; 较大概率不是暗门</li>
+<li><code>filtered</code> 是由于发送的<code>SYN</code>数据包没有被应答 ==&gt; 可能是防御设备对数据包丢弃 ==&gt; 可能是暗门,也可能是全局设置对不启动端口一概拒绝回包导致</li>
+</ul>
+</li>
+<li>因此看到<code>filtered</code>是暗门还是墙需要再做分析</li>
+</ul>
+</li>
+<li>场景: 配合<code>TCP SYN</code>扫描，判断目标主机防火墙情况，一般不用于独立扫描端口。</li>
+<li>优/缺点:<ul>
+<li>优点: 由于不建立三次握手，因此不会被审计记录，是一种隐蔽的端口扫描手段</li>
+<li>缺点: 结果的可靠性较低，精度较低,需要自己构建非常规数据包，所以需要root权限</li>
+</ul>
+</li>
+<li>图解</li>
+</ul>
+<p><img src="TCP_ack.png" alt="tcp_ack"></p>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># detect port status via TCP-ACK</span></span><br><span class="line"><span class="comment"># 21/ftp response with RST packet</span></span><br><span class="line"><span class="comment"># 80/http without response</span></span><br><span class="line">~ ❯ sudo nmap -sA 192.168.1.1 -p21,80 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 16:08 HKT</span><br><span class="line">SENT (0.0673s) TCP 192.168.1.8:58315 &gt; 192.168.1.1:21 A ttl=46 id=13123 iplen=40  seq=0 win=1024</span><br><span class="line">SENT (0.0674s) TCP 192.168.1.8:58315 &gt; 192.168.1.1:80 A ttl=42 id=7442 iplen=40  seq=0 win=1024</span><br><span class="line">RCVD (0.0719s) TCP 192.168.1.1:21 &gt; 192.168.1.8:58315 R ttl=64 id=29658 iplen=40  seq=1283672207 win=0</span><br><span class="line">SENT (1.2575s) TCP 192.168.1.8:58316 &gt; 192.168.1.1:80 A ttl=58 id=44888 iplen=40  seq=0 win=1024</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0046s latency).</span><br><span class="line">PORT   STATE      SERVICE</span><br><span class="line">21/tcp unfiltered ftp</span><br><span class="line">80/tcp filtered   http</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD(Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 1.41 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># detect port status via TCP-SYN</span></span><br><span class="line"><span class="comment"># 21/ftp response with SYN/ACK</span></span><br><span class="line"><span class="comment"># 80/http response with SYN/ACK</span></span><br><span class="line">~ ❯ sudo nmap -sS 192.168.1.1 -p21,80 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 16:08 HKT</span><br><span class="line">SENT (0.0758s) TCP 192.168.1.8:53884 &gt; 192.168.1.1:80 S ttl=48 id=45707 iplen=44  seq=2482515593 win=1024 &lt;mss 1460&gt;</span><br><span class="line">SENT (0.0758s) TCP 192.168.1.8:53884 &gt; 192.168.1.1:21 S ttl=39 id=56209 iplen=44  seq=2482515593 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.0776s) TCP 192.168.1.1:80 &gt; 192.168.1.8:53884 SA ttl=64 id=0 iplen=44  seq=1011603273 win=29200 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.0789s) TCP 192.168.1.1:21 &gt; 192.168.1.8:53884 SA ttl=64 id=0 iplen=44  seq=912965821 win=29200 &lt;mss 1460&gt;</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0021s latency).</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">21/tcp open  ftp</span><br><span class="line">80/tcp open  http</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD(Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.34 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_ack_vs_syn.png" alt="ack vs syn"></p>
+</li>
+<li><p>TCP FIN 扫描 (-sF)</p>
+<ul>
+<li>原理: 通过向目标主机发送<code>FIN</code>标识的数据包，如果端口开启，无论防火墙是否过滤请求包，都不会回应任何信息，如果端口关闭，则会返回<code>RST</code>报文</li>
+<li>场景: 同样作为<code>ACK</code>扫描获得过滤端口后的一种补充手段</li>
+<li>优/缺点:<ul>
+<li>优点: 由于不建立完整的TCP连接，减少了目标主机记录的可能性</li>
+<li>缺点: 结果的可靠性较低，精度较低,需要自己构建非常规数据包，所以需要root权限</li>
+</ul>
+</li>
+<li>图解</li>
+</ul>
+<p><img src="TCP_fin.png" alt="tcp fin"></p>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">~ ❯ sudo nmap -sF 192.168.1.1 -p21,80,81 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 16:31 HKT</span><br><span class="line">SENT (0.0568s) TCP 192.168.1.8:39321 &gt; 192.168.1.1:21 F ttl=39 id=38152 iplen=40  seq=3873576394 win=1024</span><br><span class="line">SENT (0.0568s) TCP 192.168.1.8:39321 &gt; 192.168.1.1:80 F ttl=38 id=43385 iplen=40  seq=3873576394 win=1024</span><br><span class="line">SENT (0.0568s) TCP 192.168.1.8:39321 &gt; 192.168.1.1:81 F ttl=53 id=461 iplen=40  seq=3873576394 win=1024</span><br><span class="line">SENT (2.0584s) TCP 192.168.1.8:39322 &gt; 192.168.1.1:81 F ttl=48 id=15552 iplen=40  seq=3873641931 win=1024</span><br><span class="line">SENT (2.0585s) TCP 192.168.1.8:39322 &gt; 192.168.1.1:80 F ttl=56 id=57396 iplen=40  seq=3873641931 win=1024</span><br><span class="line">SENT (2.0586s) TCP 192.168.1.8:39322 &gt; 192.168.1.1:21 F ttl=45 id=957 iplen=40  seq=3873641931 win=1024</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up.</span><br><span class="line">PORT   STATE         SERVICE</span><br><span class="line">21/tcp open|filtered ftp</span><br><span class="line">80/tcp open|filtered http</span><br><span class="line">81/tcp open|filtered hosts2-ns</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 3.12 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="TCP_fin_test.png" alt="tcp fin test"></p>
+</li>
+<li><p>XMAS 扫描 (-sX)</p>
+<ul>
+<li>原理: 通过向目标主机发送<code>PSH</code>,<code>FIN</code>,<code>URG</code>标识且值为1的数据包，其中<code>URG</code>表示紧急数据，应立即处理，<code>PSH</code>表示强制将数据压入缓存区，<code>FIN</code>提示结束TCP会话。如果端口开放，不会有任何的响应，如果目标主机返回一个<code>RST</code>响应，表明端口处于关闭状态，如果返回一个ICMP数据包，表明数据包被过滤。</li>
+<li>场景: 同样作为<code>ACK</code>扫描获得过滤端口后的一种补充手段</li>
+<li>优/缺点:<ul>
+<li>优点: 由于不建立完整的TCP连接，减少了目标主机记录的可能性</li>
+<li>缺点: 结果的可靠性较低，精度较低,需要自己构建非常规数据包，所以需要root权限</li>
+</ul>
+</li>
+<li>图解</li>
+</ul>
+<p><img src="TCP_xmas.png" alt="tcp xmas"></p>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scan 443(open) no reply, 21 (closed) recevie RSA</span></span><br><span class="line">~ ❯ sudo nmap -sX 192.168.1.8 -p21,443 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace </span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 17:01 HKT</span><br><span class="line">SENT (0.0667s) TCP 192.168.1.8:39516 &gt; 192.168.1.8:21 FPU ttl=47 id=47136 iplen=40  seq=31448153 win=1024 </span><br><span class="line">SENT (0.0667s) TCP 192.168.1.8:39516 &gt; 192.168.1.8:443 FPU ttl=49 id=32612 iplen=40  seq=31448153 win=1024 </span><br><span class="line">RCVD (0.0667s) TCP 192.168.1.8:39516 &gt; 192.168.1.8:21 FPU ttl=47 id=47136 iplen=40  seq=31448153 win=1024 </span><br><span class="line">RCVD (0.0667s) TCP 192.168.1.8:21 &gt; 192.168.1.8:39516 RA ttl=64 id=0 iplen=40  seq=0 win=0 </span><br><span class="line">RCVD (0.0667s) TCP 192.168.1.8:39516 &gt; 192.168.1.8:443 FPU ttl=49 id=32612 iplen=40  seq=31448153 win=1024 </span><br><span class="line">SENT (1.2582s) TCP 192.168.1.8:39517 &gt; 192.168.1.8:443 FPU ttl=40 id=12770 iplen=40  seq=31382616 win=1024 </span><br><span class="line">RCVD (1.2582s) TCP 192.168.1.8:39517 &gt; 192.168.1.8:443 FPU ttl=40 id=12770 iplen=40  seq=31382616 win=1024 </span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.8</span><br><span class="line">Host is up (0.000035s latency).</span><br><span class="line">PORT    STATE         SERVICE</span><br><span class="line">21/tcp  closed        ftp</span><br><span class="line">443/tcp open|filtered https</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 1.39 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="xmas_local.png" alt="xmas local"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scan 21(open), 80(open), 81(closed) no response</span></span><br><span class="line">~ ❯ sudo nmap -sX 192.168.1.1 -p21,80,81 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace </span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 17:10 HKT</span><br><span class="line">SENT (0.0653s) TCP 192.168.1.8:45847 &gt; 192.168.1.1:80 FPU ttl=48 id=58896 iplen=40  seq=2912625709 win=1024 </span><br><span class="line">SENT (0.0653s) TCP 192.168.1.8:45847 &gt; 192.168.1.1:21 FPU ttl=50 id=35999 iplen=40  seq=2912625709 win=1024 </span><br><span class="line">SENT (0.0654s) TCP 192.168.1.8:45847 &gt; 192.168.1.1:81 FPU ttl=49 id=56865 iplen=40  seq=2912625709 win=1024 </span><br><span class="line">SENT (2.0678s) TCP 192.168.1.8:45848 &gt; 192.168.1.1:81 FPU ttl=55 id=38027 iplen=40  seq=2912560172 win=1024 </span><br><span class="line">SENT (2.0679s) TCP 192.168.1.8:45848 &gt; 192.168.1.1:21 FPU ttl=57 id=50047 iplen=40  seq=2912560172 win=1024 </span><br><span class="line">SENT (2.0680s) TCP 192.168.1.8:45848 &gt; 192.168.1.1:80 FPU ttl=50 id=3027 iplen=40  seq=2912560172 win=1024 </span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up.</span><br><span class="line">PORT   STATE         SERVICE</span><br><span class="line">21/tcp open|filtered ftp</span><br><span class="line">80/tcp open|filtered http</span><br><span class="line">81/tcp open|filtered hosts2-ns</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 3.10 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="xmas_gateway.png" alt="xmas gateway"></p>
+</li>
+<li><p>NULL 扫描 (-sN)</p>
+<ul>
+<li>原理: 该方法又被称为反向扫描。正常的数据包至少要有一个标志位（RFC793）,该扫描则不包含任何标志位。在端口关闭的情况下，若收到一个没有任何标志位的数据包，主机将舍弃该分段，并发送一个<code>RST</code>数据包，如果端口开启则不会响应任何数据包。</li>
+<li>场景: 由于<code>windows</code>不遵守RFC793，，且只要收到没有设置任何标志位的数据包时，不管端口是处于开放还是关闭都响应一个RST 数据包，因此该方法可以用于扫描判断主机是<code>windows</code>还是<code>linux</code>。</li>
+<li>优/缺点:<ul>
+<li>优点: 由于不建立完整的TCP连接，减少了目标主机记录的可能性</li>
+<li>缺点: 结果的可靠性较低，精度较低,需要自己构建非常规数据包，所以需要root权限</li>
+</ul>
+</li>
+<li>图解</li>
+</ul>
+<p><img src="TCP_null.png" alt="tcp null"></p>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scan 443(open) no reply, 21 (closed)</span></span><br><span class="line">~ ❯ sudo nmap -sN 192.168.1.8 -p21,443 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 17:35 HKT</span><br><span class="line">SENT (0.0475s) TCP 192.168.1.8:51354 &gt; 192.168.1.8:443  ttl=51 id=56194 iplen=40  seq=3680893313 win=1024</span><br><span class="line">SENT (0.0475s) TCP 192.168.1.8:51354 &gt; 192.168.1.8:21  ttl=45 id=39654 iplen=40  seq=3680893313 win=1024</span><br><span class="line">RCVD (0.0475s) TCP 192.168.1.8:51354 &gt; 192.168.1.8:443  ttl=51 id=56194 iplen=40  seq=3680893313 win=1024</span><br><span class="line">RCVD (0.0475s) TCP 192.168.1.8:51354 &gt; 192.168.1.8:21  ttl=45 id=39654 iplen=40  seq=3680893313 win=1024</span><br><span class="line">RCVD (0.0475s) TCP 192.168.1.8:21 &gt; 192.168.1.8:51354 RA ttl=64 id=0 iplen=40  seq=0 win=0</span><br><span class="line">SENT (1.2387s) TCP 192.168.1.8:51355 &gt; 192.168.1.8:443  ttl=53 id=1462 iplen=40  seq=3680827776 win=1024</span><br><span class="line">RCVD (1.2387s) TCP 192.168.1.8:51355 &gt; 192.168.1.8:443  ttl=53 id=1462 iplen=40  seq=3680827776 win=1024</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.8</span><br><span class="line">Host is up (0.000013s latency).</span><br><span class="line">PORT    STATE         SERVICE</span><br><span class="line">21/tcp  closed        ftp</span><br><span class="line">443/tcp open|filtered https</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 1.38 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="null_local.png" alt="null gateway"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scan 21(open), 80(open), 81(closed)</span></span><br><span class="line">~ ❯ sudo nmap -sN 192.168.1.1 -p21,80,81 -n --<span class="built_in">disable</span>-arp-ping -Pn --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 17:36 HKT</span><br><span class="line">SENT (0.1021s) TCP 192.168.1.8:49193 &gt; 192.168.1.1:21  ttl=52 id=7330 iplen=40  seq=766912146 win=1024</span><br><span class="line">SENT (0.1022s) TCP 192.168.1.8:49193 &gt; 192.168.1.1:80  ttl=41 id=48147 iplen=40  seq=766912146 win=1024</span><br><span class="line">SENT (0.1022s) TCP 192.168.1.8:49193 &gt; 192.168.1.1:81  ttl=39 id=28638 iplen=40  seq=766912146 win=1024</span><br><span class="line">SENT (2.1047s) TCP 192.168.1.8:49194 &gt; 192.168.1.1:81  ttl=38 id=58446 iplen=40  seq=766977683 win=1024</span><br><span class="line">SENT (2.1049s) TCP 192.168.1.8:49194 &gt; 192.168.1.1:80  ttl=48 id=12120 iplen=40  seq=766977683 win=1024</span><br><span class="line">SENT (2.1050s) TCP 192.168.1.8:49194 &gt; 192.168.1.1:21  ttl=46 id=36563 iplen=40  seq=766977683 win=1024</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up.</span><br><span class="line">PORT   STATE         SERVICE</span><br><span class="line">21/tcp open|filtered ftp</span><br><span class="line">80/tcp open|filtered http</span><br><span class="line">81/tcp open|filtered hosts2-ns</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 3.15 seconds</span><br></pre></td></tr></table></figure>
+
+<p><img src="null_gateway.png" alt="null gateway"></p>
+</li>
+</ul>
+</li>
+<li><p>其他扫描</p>
+<ul>
+<li><p>UDP 扫描 (-sU)</p>
+<ul>
+<li>原理: UDP 并非是面向连接的，因此不能像TCP端口扫描，其依赖于建立连接的过程，使得UDP端口扫描可靠性不高<ul>
+<li>利用ICMP端口不可达报文进行扫描: 当UDP端口收到一个UDP数据报时，如果它是关闭状态，将会返回一个<code>ICMP port unreachable</code>, 如果开放则不返回任何信息</li>
+<li>利用UDP <code>recvfrom()</code>和<code>write()</code>扫描: 无需管理员权限，该方法调用recvfrom和write接口，对于关闭的状态端口，第二次调用<code>write</code>会得到错误信息，而调用recvfrom，如果未收到ICMP返回错误代码<code>13</code>收到了ICMP返回错误代码<code>111</code>，可以通过这些区别判断端口状态。</li>
+<li>如果返回 ICMP 端口不可达错误（类型 3，代码 3），则端口关闭。 其他 ICMP 不可达错误（类型 3，代码 0、1、2、9、10 或 13）将端口标记为已过滤。 有时，服务会以 UDP 数据包响应，证明它是开放的。 如果重传后没有收到响应，则该端口被归类为开放|过滤。 这意味着端口可能是开放的，或者数据包过滤器可能会阻止通信。</li>
+</ul>
+</li>
+<li>场景: 使用UDP服务的业务，例如DNS</li>
+<li>图解:</li>
+</ul>
+<p><img src="udp.png" alt="udp"></p>
+</li>
+<li><p>IP 头信息dump扫描</p>
+<ul>
+<li>原理: 也被称为IDLE扫描，在扫描主机时应用了第三方僵尸计算机进行扫描。由僵尸计算机向目标主机发送SYN包，目标主机端口开放时回复<code>SYN/ACK</code>，关闭时返回<code>RST</code>。僵尸主机对<code>SYN/ACK</code>回应<code>RST</code>，对于<code>RST</code>不做回应。</li>
 </ul>
 </li>
 </ul>
@@ -610,11 +826,72 @@
 </ul>
 </li>
 </ul>
-<h3 id="操作系统探测"><a href="#操作系统探测" class="headerlink" title="操作系统探测"></a>操作系统探测</h3><h3 id="防火墙-IDS规避"><a href="#防火墙-IDS规避" class="headerlink" title="防火墙/IDS规避"></a>防火墙/IDS规避</h3><h3 id="NSE-脚本引擎"><a href="#NSE-脚本引擎" class="headerlink" title="NSE 脚本引擎"></a>NSE 脚本引擎</h3><h2 id="总结使用"><a href="#总结使用" class="headerlink" title="总结使用"></a>总结使用</h2><h3 id="nmap-帮助页面"><a href="#nmap-帮助页面" class="headerlink" title="nmap 帮助页面"></a>nmap 帮助页面</h3><ul>
+</li>
+</ul>
+<h3 id="版本侦测"><a href="#版本侦测" class="headerlink" title="版本侦测"></a>版本侦测</h3><ul>
+<li>原理: namp 对于软件的检测，是基于其庞大的应用签名和数百种应用协议的。但是其识别的准确性也不是特别高，如果其无法识别将会尝试将应用指纹打印出来，让用户自行判断</li>
+<li>对应过程<ol>
+<li>首先检查开启状态下的端口是否在排除端口列表内。如果在则将端口剔除。</li>
+<li>若是TCP 端口，尝试TCP 连接。在等待连接的时间里，会接受到目标机发送的“WelcomeBanner”信息。Nmap将接收到的Bnner与nmap -service -probes中NULL prode的签名进行对比。查找对应应用程序的名字和版本信息。</li>
+<li>若无法通过Banner确定应用程序版本，那么Nmap再次尝试发送其他的探测包将probe得到回复包与数据库中的签名进行对比。如果反复探测都无法得出具体应用，那么打印出应用返回报文，让用户自行进一步判定。</li>
+<li>若是UDP 端口，那么直接使用nmap -service -probes中探测包进行匹配，根据匹配结果分析应用程序版本。</li>
+<li>如果探测到的应用程序时SSL，那么调用openSSL进一步侦查运行在SSL之上的具体的应用程序。如果探测到的应用程序时SunRPC，那么调用brute -force RPC grinder 进一步探测具体服务。</li>
+<li>如果探测到的应用程序时SunRPC，那么调用brute -force RPC grinder 进一步探测具体服务。</li>
+</ol>
+</li>
+<li>例子: 检查ftp服务版本<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">~ ❯ sudo nmap -p21 192.168.1.1 -sV --<span class="built_in">disable</span>-arp-ping -n -Pn  --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 18:27 HKT</span><br><span class="line">SENT (0.2761s) TCP 192.168.1.8:53761 &gt; 192.168.1.1:21 S ttl=38 id=1602 iplen=44  seq=1630633811 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.2781s) TCP 192.168.1.1:21 &gt; 192.168.1.8:53761 SA ttl=64 id=0 iplen=44  seq=2086576656 win=29200 &lt;mss 1460&gt;</span><br><span class="line">NSOCK INFO [0.5930s] nsock_iod_new2(): nsock_iod_new (IOD <span class="comment">#1)</span></span><br><span class="line">NSOCK INFO [0.5930s] nsock_connect_tcp(): TCP connection requested to 192.168.1.1:21 (IOD <span class="comment">#1) EID 8</span></span><br><span class="line">NSOCK INFO [0.6000s] nsock_trace_handler_callback(): Callback: CONNECT SUCCESS <span class="keyword">for</span> EID 8 [192.168.1.1:21]</span><br><span class="line">Service scan sending probe NULL to 192.168.1.1:21 (tcp)</span><br><span class="line">NSOCK INFO [0.6000s] nsock_read(): Read request from IOD <span class="comment">#1 [192.168.1.1:21] (timeout: 6000ms) EID 18</span></span><br><span class="line">NSOCK INFO [0.6090s] nsock_trace_handler_callback(): Callback: READ SUCCESS <span class="keyword">for</span> EID 18 [192.168.1.1:21] (20 bytes): 220 (vsFTPd 3.0.4)..</span><br><span class="line">Service scan match (Probe NULL matched with NULL line 685): 192.168.1.1:21 is ftp.  Version: |vsftpd|3.0.4||</span><br><span class="line">NSOCK INFO [0.6090s] nsock_iod_delete(): nsock_iod_delete (IOD <span class="comment">#1)</span></span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0021s latency).</span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">21/tcp open  ftp     vsftpd 3.0.4</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD(Unknown)</span><br><span class="line">Service Info: OS: Unix</span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.70 seconds</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="操作系统侦测"><a href="#操作系统侦测" class="headerlink" title="操作系统侦测"></a>操作系统侦测</h3><ul>
+<li>原理: Nmap使用TCP/IP协议栈指纹来识别不同的操作系统和设备。在RFC规范中，有些地方对TCP/IP的实现并没有强制规定，由此不同的TCP/IP方案中可能都有自己的特定方式。Nmap主要是根据这些细节上的差异来判断操作系统的类型的。</li>
+<li>具体内容: <ol>
+<li>Nmap内部包含了2600多已知系统的指纹特征（在文件nmap-os-db文件中）, 可以识别通用PC系统、路由器、交换机等设备类型。将此指纹数据库作为进行指纹对比的样本库</li>
+<li>分别挑选一个开启和关闭状态下的端口，向其发送经过精心设计的TCP / UDP / ICMP数据包，根据返回的数据包生成一份系统指纹。</li>
+<li>将探测生成的指纹与 nmap -os -db中指纹进行对比，查找匹配的系统。如果无法匹配，以概率形式列举出可能的系统。</li>
+</ol>
+</li>
+</ul>
+<h3 id="防火墙-IDS规避"><a href="#防火墙-IDS规避" class="headerlink" title="防火墙/IDS规避"></a>防火墙/IDS规避</h3><ul>
+<li><p>原理: 规避防火墙的监察，关键点在于桥装打扮，骗过门卫</p>
+<ul>
+<li><p>伪装分类</p>
+<ol>
+<li><p>分片: 将可疑的探测包进行分片处理（例如将TCP包拆分成多个IP包发送过去），某些简单的防火墙为了加快处理速度可能不会进行重组检查</p>
+</li>
+<li><p>IP诱骗: 在进行扫描时（其他主机需要在线，否则目标主机将回复大量数据包到不存在的主机，从而实质构成了拒绝服务攻击），将真实IP地址和其他主机的IP地址混合使用，以此让目标主机的防火墙或IDS追踪检查大量的不同IP地址的数据包，降低其追查到自身的概率。</p>
+</li>
+<li><p>IP伪装: IP伪装即将自己发送的数据包中的IP地址伪装成其他主机的地址，从而目标机认为是其他主机在与之通信。如果希望接收到目标主机的回复包，那么伪装的IP需要位于统一局域网内。另外，如果既希望隐蔽自己的IP地址，又希望收到目标主机的回复包，那么可以尝试使用idle scan或匿名代理（如TOR）等网络技术。</p>
+</li>
+<li><p>指定源端口: 某些目标主机只允许来自特定端口的数据包通过防火墙。例如FTP服务器配置为：允许源端口为21号的TCP包通过防火墙与FTP服务端通信，但是源端口为其他端口的数据包被屏蔽。所以，在此类情况下，可以指定Nmap将发送的数据包的源端口都设置特定的端口。</p>
+<ul>
+<li>例如在HTB中有相关问题，某些特定的服务可能只允许特定的端口和它进行通信：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nmap 10.129.2.28 -p50000 -sS -Pn -n --<span class="built_in">disable</span>-arp-ping --packet-trace --<span class="built_in">source</span>-port 53</span><br><span class="line">SENT (0.0482s) TCP 10.10.14.2:53 &gt; 10.129.2.28:50000 S ttl=58 id=27470 iplen=44  seq=4003923435 win=1024 &lt;mss 1460&gt;</span><br><span class="line">RCVD (0.0608s) TCP 10.129.2.28:50000 &gt; 10.10.14.2:53 SA ttl=64 id=0 iplen=44  seq=540635485 win=64240 &lt;mss 1460&gt;</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 10.129.2.28</span><br><span class="line">Host is up (0.013s latency).</span><br><span class="line">PORT      STATE SERVICE</span><br><span class="line">50000/tcp open  ibm-db2</span><br><span class="line">MAC Address: DE:AD:00:00:BE:EF (Intel Corporate)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.08 seconds</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>扫描延时: 某些防火墙针对发送过于频繁的数据包会进行严格的侦查，而且某些系统限制错误报文产生的频率（例如，Solaris 系统通常会限制每秒钟只能产生一个ICMP消息回复给UDP扫描），所以，定制该情况下发包的频率和发包延时可以降低目标主机的审查强度、节省网络带宽。</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="NSE-脚本引擎"><a href="#NSE-脚本引擎" class="headerlink" title="NSE 脚本引擎"></a>NSE 脚本引擎</h3><ul>
+<li>NSE 是 nmap十分强大的延展功能</li>
+<li>其执行的原理图如下<br><img src="nse.png" alt="nse"></li>
+<li>脚本的功能十分强大，有必要下次单独说一说一些常用的脚本<ul>
+<li>这里稍微说一个场景案例：获得目标主机的DNS使用的DNS服务器版本</li>
+<li><a href="https://nmap.org/nsedoc/scripts/dns-nsid.html" target="_blank" rel="noopener">参考文章</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ nmap -sSU -p 53 --script dns-nsid &lt;target&gt;</span><br><span class="line"> </span><br><span class="line">53/udp open  domain  udp-response</span><br><span class="line">| dns-nsid:</span><br><span class="line">|   NSID dns.example.com (646E732E6578616D706C652E636F6D)</span><br><span class="line">|   id.server: dns.example.com</span><br><span class="line">|_  bind.version: 9.7.3-P3</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结使用"><a href="#总结使用" class="headerlink" title="总结使用"></a>总结使用</h2><h3 id="nmap-帮助页面"><a href="#nmap-帮助页面" class="headerlink" title="nmap 帮助页面"></a>nmap 帮助页面</h3><ul>
 <li><p>nmap 的使用， 通过 nmap -h 可大致获得所有的信息。这样显示的坏处是，将会导致扫屏的出现，许多人都会放弃查看了。这充分说明了<code>nmap</code>功能的复杂，为了对其有进一步的了解，这里我将试着将其简化，把主要内容捋一遍，以便后续内容的开展。</p>
 <ul>
 <li><p>核心格式 <code>nmap [Scan Type(s)] [Options] {target specification}</code>  # Nmap 7.01</p>
-<ul>
+</li>
 <li><p>target specification: 目标规格</p>
 <ul>
 <li>一般格式： 1.1.1.1, 1.1.1.0/24, 1.1.1.10-123, example.com</li>
@@ -759,8 +1036,6 @@
 </ul>
 </li>
 </ul>
-</li>
-</ul>
 <h3 id="实用命令总结"><a href="#实用命令总结" class="headerlink" title="实用命令总结"></a>实用命令总结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><ul>
 <li>nc 端口通信工具</li>
 <li>lsof 端口占用查看工具</li>
@@ -775,6 +1050,7 @@
 <li><a href="https://www.speedguide.net/port.php" target="_blank" rel="noopener">port check</a>  # 查找端口用途,有详细的罗列信息</li>
 <li><a href="https://academy.hackthebox.com/module/19" target="_blank" rel="noopener">NETWORK ENUMERATION WITH NMAP</a> # 学习nmap基本知识与实战</li>
 <li><a href="https://codeantenna.com/a/28vYpBDFkT" target="_blank" rel="noopener">nmap攻击技术原理简述</a>  # nmap原理的重要参考内容</li>
+<li><a href="https://blog.csdn.net/BryantLmm/article/details/81671457" target="_blank" rel="noopener">TCP的RST报文</a> # RST报文的引用参考</li>
 </ul>
 
       
@@ -1104,7 +1380,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-简介"><span class="nav-number">2.1.</span> <span class="nav-text">nmap 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是nmap"><span class="nav-number">2.1.1.</span> <span class="nav-text">什么是nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">nmap 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何使用nmap"><span class="nav-number">2.2.1.</span> <span class="nav-text">如何使用nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">2.2.2.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描"><span class="nav-number">2.2.3.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统探测"><span class="nav-number">2.2.4.</span> <span class="nav-text">操作系统探测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙-IDS规避"><span class="nav-number">2.2.5.</span> <span class="nav-text">防火墙/IDS规避</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSE-脚本引擎"><span class="nav-number">2.2.6.</span> <span class="nav-text">NSE 脚本引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结使用"><span class="nav-number">2.3.</span> <span class="nav-text">总结使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap-帮助页面"><span class="nav-number">2.3.1.</span> <span class="nav-text">nmap 帮助页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实用命令总结"><span class="nav-number">2.3.2.</span> <span class="nav-text">实用命令总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">3.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-简介"><span class="nav-number">2.1.</span> <span class="nav-text">nmap 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是nmap"><span class="nav-number">2.1.1.</span> <span class="nav-text">什么是nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">nmap 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何使用nmap"><span class="nav-number">2.2.1.</span> <span class="nav-text">如何使用nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">2.2.2.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描"><span class="nav-number">2.2.3.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本侦测"><span class="nav-number">2.2.4.</span> <span class="nav-text">版本侦测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统侦测"><span class="nav-number">2.2.5.</span> <span class="nav-text">操作系统侦测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙-IDS规避"><span class="nav-number">2.2.6.</span> <span class="nav-text">防火墙/IDS规避</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSE-脚本引擎"><span class="nav-number">2.2.7.</span> <span class="nav-text">NSE 脚本引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结使用"><span class="nav-number">2.3.</span> <span class="nav-text">总结使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap-帮助页面"><span class="nav-number">2.3.1.</span> <span class="nav-text">nmap 帮助页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实用命令总结"><span class="nav-number">2.3.2.</span> <span class="nav-text">实用命令总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">3.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
@@ -1137,7 +1413,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">154k</span>
+    <span title="站点总字数">172k</span>
   
 
   
@@ -1146,7 +1422,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">4:17</span>
+    <span title="站点阅读时长">4:47</span>
   
 </div>
 
