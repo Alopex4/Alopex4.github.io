@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
+<meta name="keywords" content="offensive">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nmap基本知识">
+<meta property="og:url" content="http://alopex.cc/2021/12/31/nmap/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://alopex.cc/2021/12/31/nmap/michael-jasmund-t-WxNy6CMyU-unsplash.jpg">
+<meta property="og:updated_time" content="2022-01-01T03:37:25.011Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nmap基本知识">
+<meta name="twitter:description" content="引言: 这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。">
+<meta name="twitter:image" content="http://alopex.cc/2021/12/31/nmap/michael-jasmund-t-WxNy6CMyU-unsplash.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2021/12/31/nmap/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>nmap基本知识 | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2021/12/31/nmap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">nmap基本知识
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2021-12-31 17:25:46" itemprop="dateCreated datePublished" datetime="2021-12-31T17:25:46+08:00">2021-12-31</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-01 11:37:25" itemprop="dateModified" datetime="2022-01-01T11:37:25+08:00">2022-01-01</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/skill/" itemprop="url" rel="index"><span itemprop="name">skill</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/skill/application/" itemprop="url" rel="index"><span itemprop="name">application</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">14k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">24 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>这是第一步，也是至关重要的一步，它是方向的决定，切记要小心。</p>
+</blockquote>
+<a id="more"></a>
+
+<p><img src="michael-jasmund-t-WxNy6CMyU-unsplash.jpg" alt="door"></p>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><h2 id="nmap-简介"><a href="#nmap-简介" class="headerlink" title="nmap 简介"></a>nmap 简介</h2><p>如果把目的主机比喻成一个房子，IP地址就是它的住址，端口号就好比是一个个的大门。大门上有各自的门锁，这些门锁的复杂于否，取决于锁的设计与规范这便是网络协议于相应的算法。我们无法敲开一所不存在的房子，同样也无法攻破不存在的大门。因此要开门的第一步，便是先知道房子在哪里（IP 存活）,一眼可以看到的大门（端口号），以及被一些树枝杂物（防火墙/IPS/IDS）所掩盖的暗门。</p>
+<ul>
+<li><a href="https://nmap.org/" target="_blank" rel="noopener">nmap</a>有其专属的网站，其风格设计像是90年代的网站，首页标题的人眼睛，这么看都觉得有点违和，但这不妨碍它成为一个高价值的网站</li>
+<li>目前<code>nmap</code>的版本是7.9，它拥有这十分稳定的更新维护，虽然作为一个开源的工具，但其迭代与维护从来都没有懈怠过。如果想全面了解<code>nmap</code>，可能一本书都不够，并且需要不断地对知识进行更新，因为它也不断在更新。因此学习<code>nmap</code>，更为重要的是了解它主要的使用场景，了解原理（如：它如何判定主机的存活）更为之重要。更不要掉进了工具的黑洞中，在一个工具中无法自拔。其同类型的工具<code>nessus</code>,<code>Masscan</code>，<code>Nikto</code>等，也是十分优秀的存在。</li>
+</ul>
+<h3 id="什么是nmap"><a href="#什么是nmap" class="headerlink" title="什么是nmap"></a>什么是nmap</h3><ul>
+<li>nmap是一个多才多艺的(versatile)网络探测和端口扫描工具<ul>
+<li>网络<ul>
+<li>探测存活在网络中的主机</li>
+</ul>
+</li>
+<li>主机<ul>
+<li>探测主机的主机名称，使用的操作系统</li>
+</ul>
+</li>
+<li>端口<ul>
+<li>探测主机所使用的端口，以及所使用的服务</li>
+</ul>
+</li>
+<li>扩展<ul>
+<li>探测手段的多样化，如订制包的字段（如TCP的 syn, ack标识等）, 定制数据包类型（icmp, tcp, udp等）</li>
+<li>可指定输出特定格式报告</li>
+<li>探测性能的个性化设置</li>
+<li>提供脚本(<code>Lua</code>)引擎(NSE: (<code>Nmap Scripting Engine</code>)，为高级探测提供了丰富的延伸</li>
+<li>对漏洞的扫描并提供相应的信息提示</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="nmap-工作原理"><a href="#nmap-工作原理" class="headerlink" title="nmap 工作原理"></a>nmap 工作原理</h2><h3 id="如何使用nmap"><a href="#如何使用nmap" class="headerlink" title="如何使用nmap"></a>如何使用nmap</h3><ul>
+<li>namp 最简单是以下的方式，如下所示，可以直接跟IP解析，这里将会使用大量的默认参数。这并不是问题，既然可以选为默认意味着它是最常见的，对付一般的情况已经足够了。可以网络环境是复杂的，我们的网络可以有多种不确定性和不同的网络防御手段，因此这种单纯的使用，很有可能让我们错失很多。正因为如此，我们需要进一步了解<code>nmap</code>的工作方式。<ul>
+<li><code>nmap &lt;ip&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h3><ul>
+<li><p>局域网内</p>
+<ul>
+<li><p>默认检测方式，是通过向主机发送TCP报文到端口<code>80</code>, <code>443</code>，探测主机端口是否开通相关服务，以此判断主机是否存活。</p>
+</li>
+<li><p>如果判断主机存活，它会继续对主机常用的top-100端口进行扫描，因此该方式的主机探测效率极低</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># not exist in LAN</span></span><br><span class="line">~ ❯ nmap 192.168.1.111 --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:19 HKT</span><br><span class="line">CONN (0.0202s) TCP localhost &gt; 192.168.1.111:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0202s) TCP localhost &gt; 192.168.1.111:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0215s) TCP localhost &gt; 192.168.1.111:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0216s) TCP localhost &gt; 192.168.1.111:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (0 hosts up) scanned <span class="keyword">in</span> 3.02 seconds</span><br><span class="line">~ took 3s❯</span><br><span class="line"></span><br><span class="line"><span class="comment"># exist in LAN</span></span><br><span class="line">~ ❯ nmap 192.168.1.1 --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:22 HKT</span><br><span class="line">CONN (0.0476s) TCP localhost &gt; 192.168.1.111:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0476s) TCP localhost &gt; 192.168.1.111:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0493s) TCP localhost &gt; 192.168.1.111:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0494s) TCP localhost &gt; 192.168.1.111:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (0 hosts up) scanned <span class="keyword">in</span> 3.05 seconds</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:22 HKT</span><br><span class="line">CONN (0.0247s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0247s) TCP localhost &gt; 192.168.1.1:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0314s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">CONN (0.0375s) TCP localhost &gt; 192.168.1.1:1720 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0375s) TCP localhost &gt; 192.168.1.1:445 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">...</span><br><span class="line">~ took 6s ❯</span><br><span class="line"></span><br><span class="line"><span class="comment"># if you just want to detect host status, try with `-sn` and `-n`</span></span><br><span class="line">~ ❯ nmap 192.168.1.1 -sn -n --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:41 HKT</span><br><span class="line">CONN (0.0046s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0047s) TCP localhost &gt; 192.168.1.1:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0136s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0093s latency).</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.01 seconds</span><br><span class="line">~ took less than 1s &gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在同一局域网内，通过ARP探测存活应该是首要的选择</p>
+</li>
+<li><p>在该过程中，主机会发送目的MAC为<code>FF:FF:FF:FF:FF:FF</code>的<code>ARP</code>请求报文, 默认发送两个包</p>
+</li>
+<li><p>注意ARP属于更为底层的数据包，因此需要更高的权限<code>sudo</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># not exist in LAN</span></span><br><span class="line">~ ❯ sudo nmap 192.168.1.111 --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:36 HKT</span><br><span class="line">SENT (0.0590s) ARP who-has 192.168.1.111 tell 192.168.1.8</span><br><span class="line">SENT (0.2593s) ARP who-has 192.168.1.111 tell 192.168.1.8</span><br><span class="line">Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (0 hosts up) scanned <span class="keyword">in</span> 0.50 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># exist in LAN (recommend use -sn(no port scan), -n(no DNS resolve))</span></span><br><span class="line">~ ❯ sudo nmap 192.168.1.1 -sn -n --packet-trace</span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:37 HKT</span><br><span class="line">SENT (0.0477s) ARP who-has 192.168.1.1 tell 192.168.1.8</span><br><span class="line">RCVD (0.0510s) ARP reply 192.168.1.1 is-at 48:5A:AB:CD:AB:CD</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.0034s latency).</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD (Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.30 seconds</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果局域网内有ARP的限制，这是甚少的情况</p>
+</li>
+<li><p>那么可以考虑使用 ping echo 作为主机存活的测试依据(-Pe)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># non root just could use TCP ping</span></span><br><span class="line">~ ❯ nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line">Warning:  You are not root -- using TCP pingscan rather than ICMP</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">CONN (0.0015s) TCP localhost &gt; 192.168.1.1:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0221s) TCP localhost &gt; 192.168.1.1:80 =&gt; Connected</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.021s latency).</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.02 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># under root privilege</span></span><br><span class="line">~ ❯ sudo nmap 192.168.1.1 -sn -n -PE --packet-trace</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 10:49 HKT</span><br><span class="line">SENT (0.0487s) ARP who-has 192.168.1.1 tell 192.168.1.8</span><br><span class="line">RCVD (0.0589s) ARP reply 192.168.1.1 is-at 48:5A:AB:CD:AB:CD</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 192.168.1.1</span><br><span class="line">Host is up (0.010s latency).</span><br><span class="line">MAC Address: 48:5A:AB:CD:AB:CD (Unknown)</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.29 seconds</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>外网主机</p>
+<ul>
+<li>外网主机的检测，有很大的不同，主机会依次发送四种数据包来探测主机是否在线 (发送两轮，每次发送一个)<ul>
+<li>ICMP echo request</li>
+<li>TCP SYN</li>
+<li>TCP ACK</li>
+<li>ICMP timestamp request</li>
+</ul>
+</li>
+<li>如若有一个返回包则证明目标主机是开启的，当然它还支持其他类型的探测:<code>SCTP INIT, cookie-echo, netmask</code></li>
+<li>鉴于只是希望获得主机存活，因此我们可以优化选项，使用<ul>
+<li>–diable-arp-ping: 不进行arp 测试</li>
+<li>-sn: 不进行端口扫描</li>
+<li>-n: 不进行域名解析<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># non root privilege </span></span><br><span class="line">~ ❯ nmap 31.234.26.62 --<span class="built_in">disable</span>-arp-ping -sn -n --packet-trace</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 11:01 HKT</span><br><span class="line">CONN (0.0022s) TCP localhost &gt; 31.234.26.62:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (0.0023s) TCP localhost &gt; 31.234.26.62:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0040s) TCP localhost &gt; 31.234.26.62:443 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">CONN (2.0042s) TCP localhost &gt; 31.234.26.62:80 =&gt; Operation now <span class="keyword">in</span> progress</span><br><span class="line">Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (0 hosts up) scanned <span class="keyword">in</span> 3.00 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># under root privilege (not alive)</span></span><br><span class="line">~ ❯ sudo nmap 31.234.26.62 --<span class="built_in">disable</span>-arp-ping -sn -n --packet-trace</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 11:02 HKT</span><br><span class="line">SENT (0.0557s) ICMP [192.168.1.8 &gt; 31.234.26.62 Echo request (<span class="built_in">type</span>=8/code=0) id=34333 seq=0] IP [ttl=48 id=39945 iplen=28 ]</span><br><span class="line">SENT (0.0559s) TCP 192.168.1.8:37193 &gt; 31.234.26.62:443 S ttl=40 id=38886 iplen=44  seq=1818477275 win=1024 &lt;mss 1460&gt;</span><br><span class="line">SENT (0.0560s) TCP 192.168.1.8:37193 &gt; 31.234.26.62:80 A ttl=47 id=37900 iplen=40  seq=0 win=1024</span><br><span class="line">SENT (0.0561s) ICMP [192.168.1.8 &gt; 31.234.26.62 Timestamp request (<span class="built_in">type</span>=13/code=0) id=48531 seq=0 orig=0 recv=0 trans=0] IP [ttl=37 id=40254 iplen=40 ]</span><br><span class="line">SENT (2.0583s) ICMP [192.168.1.8 &gt; 31.234.26.62 Timestamp request (<span class="built_in">type</span>=13/code=0) id=47396 seq=0 orig=0 recv=0 trans=0] IP [ttl=57 id=23396 iplen=40 ]</span><br><span class="line">SENT (2.0586s) TCP 192.168.1.8:37194 &gt; 31.234.26.62:80 A ttl=48 id=54151 iplen=40  seq=0 win=1024</span><br><span class="line">SENT (2.0587s) TCP 192.168.1.8:37194 &gt; 31.234.26.62:443 S ttl=37 id=46532 iplen=44  seq=1818411738 win=1024 &lt;mss 1460&gt;</span><br><span class="line">SENT (2.0588s) ICMP [192.168.1.8 &gt; 31.234.26.62 Echo request (<span class="built_in">type</span>=8/code=0) id=50572 seq=0] IP [ttl=41 id=45715 iplen=28 ]</span><br><span class="line">Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (0 hosts up) scanned <span class="keyword">in</span> 3.11 seconds</span><br><span class="line"></span><br><span class="line"><span class="comment"># under root privilege (alive)</span></span><br><span class="line">~ ❯ sudo nmap 8.8.8.8 --<span class="built_in">disable</span>-arp-ping -sn -n --packet-trace</span><br><span class="line"></span><br><span class="line">Starting Nmap 7.01 ( https://nmap.org ) at 2022-01-01 11:02 HKT</span><br><span class="line">SENT (0.0412s) ICMP [192.168.1.8 &gt; 8.8.8.8 Echo request (<span class="built_in">type</span>=8/code=0) id=16451 seq=0] IP [ttl=53 id=50491 iplen=28 ]</span><br><span class="line">SENT (0.0413s) TCP 192.168.1.8:52656 &gt; 8.8.8.8:443 S ttl=50 id=27813 iplen=44  seq=1617699854 win=1024 &lt;mss 1460&gt;</span><br><span class="line">SENT (0.0414s) TCP 192.168.1.8:52656 &gt; 8.8.8.8:80 A ttl=45 id=21604 iplen=40  seq=0 win=1024</span><br><span class="line">SENT (0.0414s) ICMP [192.168.1.8 &gt; 8.8.8.8 Timestamp request (<span class="built_in">type</span>=13/code=0) id=23460 seq=0 orig=0 recv=0 trans=0] IP [ttl=46 id=50823 iplen=40 ]</span><br><span class="line">RCVD (0.1114s) ICMP [8.8.8.8 &gt; 192.168.1.8 Echo reply (<span class="built_in">type</span>=0/code=0) id=16451 seq=0] IP [ttl=116 id=0 iplen=28 ]</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 8.8.8.8</span><br><span class="line">Host is up (0.070s latency).</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 0.28 seconds</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><ul>
+<li>namp对于端口的扫描，是通过端口的常用情况进行扫描的而不是按端口编号，nmap默认扫描最常用的1000个端口 (-F 扫描最常用100个)</li>
+<li>端口的扫描是通过发送TCP/UDP数据包于目标主机的著名端口尝试进行连接，以此获得目标主机的响应回复，进而判断主机端口的开启与否<ul>
+<li>扫描分类<ul>
+<li>TCP SYN 扫描</li>
+<li>TCP connect 扫描</li>
+<li>秘密扫描<ul>
+<li>TCP FIN 扫描</li>
+<li>TCP ACP 扫描</li>
+<li>NULL 扫描</li>
+<li>XMAS 扫描</li>
+<li>SYN/ACK 扫描</li>
+</ul>
+</li>
+<li>其他扫描<ul>
+<li>UDP 扫描</li>
+<li>IP 头信息dump扫描</li>
+<li>慢速扫描</li>
+<li>乱序扫描</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="操作系统探测"><a href="#操作系统探测" class="headerlink" title="操作系统探测"></a>操作系统探测</h3><h3 id="防火墙-IDS规避"><a href="#防火墙-IDS规避" class="headerlink" title="防火墙/IDS规避"></a>防火墙/IDS规避</h3><h3 id="NSE-脚本引擎"><a href="#NSE-脚本引擎" class="headerlink" title="NSE 脚本引擎"></a>NSE 脚本引擎</h3><h2 id="总结使用"><a href="#总结使用" class="headerlink" title="总结使用"></a>总结使用</h2><h3 id="nmap-帮助页面"><a href="#nmap-帮助页面" class="headerlink" title="nmap 帮助页面"></a>nmap 帮助页面</h3><ul>
+<li><p>nmap 的使用， 通过 nmap -h 可大致获得所有的信息。这样显示的坏处是，将会导致扫屏的出现，许多人都会放弃查看了。这充分说明了<code>nmap</code>功能的复杂，为了对其有进一步的了解，这里我将试着将其简化，把主要内容捋一遍，以便后续内容的开展。</p>
+<ul>
+<li><p>核心格式 <code>nmap [Scan Type(s)] [Options] {target specification}</code>  # Nmap 7.01</p>
+<ul>
+<li><p>target specification: 目标规格</p>
+<ul>
+<li>一般格式： 1.1.1.1, 1.1.1.0/24, 1.1.1.10-123, example.com</li>
+<li>-iL <inputfilename>: 包含主机和网络, 如 192.168.10/24</inputfilename></li>
+<li>-iR <num hosts>: 随机扫描</num></li>
+<li>–exclude &lt;host1, host2..&gt; / –excludefile <exclude_file>: 排除主机或文件内的主机</exclude_file></li>
+</ul>
+</li>
+<li><p>Option: 选项/开关</p>
+<ul>
+<li>scan types: 指定扫描方式<ul>
+<li>主机发现： <ul>
+<li>-sL: 列出扫描目标 (只是显示目标)</li>
+<li>-sn: 使用ping测试目标，不进行端口扫描（端口扫描花费时间较长）<ul>
+<li>其显示结果会换行显示， 因此较为推介使用sed对内容整理。<ul>
+<li><code>nmap  192.168.1.0/28 -sn | sed -n &#39;2,$N;s/\n/\t/gp&#39;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>-Pn: 将所有主机认为是存活的，避开主机发现（一般用在已知主机存活）</li>
+<li>-PS/PA/PU/PY: TCP SYN/ACP UDP, <a href="https://www.wikiwand.com/en/Stream_Control_Transmission_Protocol" target="_blank" rel="noopener">SCTP</a> 不同协议的主机测试发现 </li>
+<li>-PE/PP/PM: ICMP echo, timestamp, 网络掩码探测</li>
+<li>-PO[protocol list]: IP 协议 ping</li>
+<li>-n/-R: 不启动DNS解析/总是启动DNS解释（默认）</li>
+<li>–dns-servers &lt;serv1,[serv2]&gt;: 指定DNS服务器</li>
+<li>–system-dns: 使用操作系统的DNS做解析</li>
+<li>–traceroute: 路由信息的追踪</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>scan techniques: 扫描技术<ul>
+<li>-sS/-sT/-sA/-sW/-sM: 指定TCP连接的flag SYN/Connect()/ACK/Windows/Maimon scans</li>
+<li>-sU : 使用UDP</li>
+<li>–scanflags <flags>: 定制TCP扫描的flags</flags></li>
+<li>-sY/-sZ: SXTP InIT/Cookie-echo 扫描</li>
+<li>-b <ftp relay host>: FTP <a href="https://nmap.org/book/scan-methods-ftp-bounce-scan.html" target="_blank" rel="noopener">主机代理链接</a><ul>
+<li>这是FTP协议支持的代理FTP链接，允许用户连接到FTP服务器并要求将文件发往第三方服务器，因为安全原因现在一般都禁止了，但这是一个很棒绕过防火墙的方式</li>
+<li>具体格式 <username>:<password>@<server>:<port>, 其中<code>server</code>是FTP server</port></server></password></username></li>
+<li>默认方式下帐号信息: user: anonymous password:-wwwuser@</li>
+<li>由于端口默认为 21可以省略， 因此最简单的方式为 -b <ftp server></ftp></li>
+</ul>
+</ftp></li>
+</ul>
+</li>
+<li>port specification and scan order: 端口规格和扫描顺序<ul>
+<li>-p <port range>: 指定扫描端口<ul>
+<li>例如 -p22; -p1-65535; -p U:53,111,137,T:21-25,139,S:9</li>
+</ul>
+</port></li>
+<li>–exclude-ports <port range>: 排除的端口</port></li>
+<li>-F: 快速扫描模式，比默认的端口扫描更少</li>
+<li>-r: 按顺序扫描端口，而不是非顺序 （默认扫描顺序按照常用程度来划分的）</li>
+<li>–top-port <number>: 扫描最常用的N个端口</number></li>
+<li>–port-ratio <ratio>: 扫描最常用的百分比个端口</ratio></li>
+</ul>
+</li>
+<li>service/version detection: 服务/版本的探测<ul>
+<li>-sV: 探测打开端口所关联的服务和版本</li>
+<li>–version-intensity <level>: 0 - 9 版本扫描强度</level></li>
+<li>–version-light: 轻量级扫描，但速度更快 （强度 2）</li>
+<li>–version-all: 尽所有可能进行强调扫描 （强度 9）</li>
+<li>–version-trace: 查看扫描的详细信息 （包含使用的脚本）</li>
+</ul>
+</li>
+<li>script scan: 脚本定义扫描<ul>
+<li>-sC = –script=default</li>
+<li>–script=<lua scripts>: <lua scripts>: 指定多个脚本</lua></lua></li>
+<li>–script-args=&lt;n1=v1,[n2=v2..]&gt;: 为脚本提供参数</li>
+<li>–script-args-file=filename: 指定参数所在的文件</li>
+<li>–script-updatedb: 更新脚本的数据库</li>
+<li>–script-help=<lua script>: 打开脚本的使用说明</lua></li>
+</ul>
+</li>
+<li>OS detection: 操作系统探测<ul>
+<li>-O: 启动OS探测</li>
+<li>–osscan-limit: 对操作系统的类型进行限定</li>
+<li>–osscan-guess: 猜测目标主机操作系统类型</li>
+</ul>
+</li>
+<li>timing and performance: 定时和性能<ul>
+<li><time> 表示时间，后最ms， s， m， h 都可以</time></li>
+<li>-T&lt;0-5&gt;: 设定定时模板 (数字越大速度越快)</li>
+<li>–min-hostgroup/max-hostgroup <size>: 并行主机扫描组的大小</size></li>
+<li>–min-parallelism/max-parallelism <numprobes>: 并行的的数量</numprobes></li>
+<li>–min-rtt-timeout/max-rtt-timeout/initial-rtt-timeout <time>: 固定探测的每轮时间</time></li>
+<li>–max-retries <tries>: 为了防止数据包传输过程丢失，设置最大重传次数，默认是1</tries></li>
+<li>–host-timeout <time>: 主机最长等待时间</time></li>
+<li>–scan-delay/–max-scan-dely <time>: 扫描的时间间隔设定</time></li>
+<li>–min-rate/–max-rate <number>: 发送数据包不少于/不多于多少个每秒</number></li>
+</ul>
+</li>
+<li>firewall/IDS evasion and spoofing:  防火墙/IDS 规避和欺骗<ul>
+<li>-f; –mtu <val>: 数据包分片</val></li>
+<li>-D &lt;decoy1,decoy2,…,[me]&gt; 伪装多个IP对其进行访问，在其中包含自己<ul>
+<li><code>nmap 192.168.1.1 -p 80 -D RND:3</code> # 伪装有3个不同IP对其访问，其中一个是自己的IP</li>
+</ul>
+</li>
+<li>-S <ip_address>: 伪装源地址</ip_address></li>
+<li>-e <iface>: 指定特定的端口发出</iface></li>
+<li>-g/–source-pot <portnum>: 使用给定的端口号去访问</portnum></li>
+<li>–proxies &lt;url1, [url2]&gt;: 通过HTTP/SOCKS4 中继连接代理</li>
+<li>–data <hex string>: 指定数据包内容 16进制</hex></li>
+<li>–data-string <string>: 指定数据包内容 字符串</string></li>
+<li>–data-length <num>: 指定数据长度</num></li>
+<li>–ip-option <option>: 制定IP选项内容</option></li>
+<li>–ttl <val>: 修改TTL值</val></li>
+<li>–spoof-mac <mac address>: 伪装MAC地址</mac></li>
+<li>–badsum: 发送数据包包含一个虚假的 TCP/UDP/SCTP 校验值</li>
+</ul>
+</li>
+<li>output: 格式化输出<ul>
+<li>-oN/-oX/-oS/-oG <file>: 扫描结果以 正常，XML，ScRipT, 可查询方式输出<ul>
+<li>-oX ==&gt; convert to HTML <code>xsltproc target.xml -o target.html</code></li>
+</ul>
+</file></li>
+<li>-oA <basename>: 以三个主要的方式输出，使用相应的basename</basename></li>
+<li>-d: 开启debug信息</li>
+<li>-v: 提供详细输出信息 -vv， 可增强效果</li>
+<li>–packet-trace: 提供数据包跟踪功能</li>
+<li>–iflist: 输出包括网卡信息</li>
+<li>–append-output: 追加内容</li>
+<li>–resume <filename>: 恢复中断扫描</filename></li>
+<li>–webxml: 提供拥有网页格式的输出的xml</li>
+<li>–no-stylesheet: 不提供格式的xml</li>
+</ul>
+</li>
+<li>misc: 杂乱项<ul>
+<li>-6: 开启IPV6 扫描</li>
+<li>-A: 开启 OS detection, version detction, script scanning 和 traceroute</li>
+<li>–datadir <dirname>: 制定自定义nmap数据存放位置</dirname></li>
+<li>–send-eth/–send-ip: 发送元以太网数据包/IP数据包</li>
+<li>–privileged: 假设用户有最高权限</li>
+<li>–unprivileged: 假设用户没有打开raw sockt权限</li>
+<li>-V: 打印版本名称</li>
+<li>-h: 打印帮转页面</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="实用命令总结"><a href="#实用命令总结" class="headerlink" title="实用命令总结"></a>实用命令总结</h3><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><ul>
+<li>nc 端口通信工具</li>
+<li>lsof 端口占用查看工具</li>
+<li>/etc/service 本地端口服务类型查看</li>
+<li>IP地址/MAC地址 BASH 在线查看脚本<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ipip</span></span>()&#123;</span><br><span class="line">    <span class="built_in">local</span> RED=<span class="string">"\e[31m"</span></span><br><span class="line">    <span class="built_in">local</span> GREEN=<span class="string">"\e[32m"</span></span><br><span class="line">    <span class="built_in">local</span> CLEAR=<span class="string">"\e[0m"</span></span><br><span class="line">    <span class="built_in">local</span> request_parse=<span class="string">"<span class="variable">$&#123;1&#125;</span>"</span></span><br><span class="line">    <span class="built_in">local</span> ipip_api=<span class="string">"http://ip-api.com/json/"</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># ipv4: ([0-9.]&#123;1,4&#125;)&#123;3&#125;[0-9]&#123;1,3&#125;</span></span><br><span class="line">    <span class="comment"># ipv6: ([a-f0-9:]+:+)+[a-f0-9]+</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$&#123;request_parse&#125;</span> | egrep -xq <span class="string">'([0-9.]&#123;1,4&#125;)&#123;3&#125;[0-9]&#123;1,3&#125;|([a-f0-9:]+:+)+[a-f0-9]+'</span></span><br><span class="line">    <span class="keyword">if</span> [ $? == 0 ]</span><br><span class="line">    <span class="keyword">then</span></span><br><span class="line">    ┆   hosts=<span class="variable">$&#123;request_parse&#125;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    ┆   <span class="built_in">echo</span> <span class="variable">$&#123;request_parse&#125;</span> | grep -iq <span class="string">'http'</span></span><br><span class="line">    ┆   <span class="keyword">if</span> [ $? == 0 ]</span><br><span class="line">    ┆   <span class="keyword">then</span></span><br><span class="line">    ┆   ┆   request_parse=`<span class="built_in">echo</span> <span class="variable">$&#123;request_parse&#125;</span> | cut -d <span class="string">':'</span> -f2 | cut -d <span class="string">'/'</span> -f3`</span><br><span class="line">    ┆   <span class="keyword">fi</span></span><br><span class="line">    ┆   hosts=`getent hosts <span class="variable">$&#123;request_parse&#125;</span> | awk <span class="string">'&#123;print $1&#125;'</span>`</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> host <span class="keyword">in</span> <span class="variable">$&#123;hosts&#125;</span></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    ┆   <span class="built_in">local</span> dash=<span class="string">'-'</span></span><br><span class="line">    ┆   len_host=$(<span class="built_in">echo</span> $(<span class="built_in">echo</span> <span class="variable">$&#123;host&#125;</span> | wc -c) - 1 | bc)</span><br><span class="line">    ┆   <span class="keyword">for</span> i <span class="keyword">in</span> `seq <span class="variable">$&#123;len_host&#125;</span>`; <span class="keyword">do</span> dash=<span class="string">"<span class="variable">$dash</span>-"</span>; <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">    ┆   <span class="built_in">echo</span> -e <span class="string">"<span class="variable">$&#123;GREEN&#125;</span>/*------&lt;&lt; <span class="variable">$&#123;host&#125;</span> &gt;&gt;-------*/<span class="variable">$&#123;CLEAR&#125;</span>"</span></span><br><span class="line">    ┆   url=<span class="variable">$&#123;ipip_api&#125;</span><span class="variable">$&#123;host&#125;</span></span><br><span class="line">    ┆   parse <span class="variable">$&#123;url&#125;</span></span><br><span class="line">    ┆   <span class="built_in">echo</span> -e <span class="string">"<span class="variable">$&#123;GREEN&#125;</span>/*---------<span class="variable">$&#123;dash&#125;</span>----------*/<span class="variable">$&#123;CLEAR&#125;</span>"</span></span><br><span class="line">    ┆   <span class="built_in">echo</span> <span class="string">''</span></span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">macmac</span></span>()&#123;</span><br><span class="line">    <span class="built_in">local</span> RED=<span class="string">"\e[31m"</span></span><br><span class="line">    <span class="built_in">local</span> GREEN=<span class="string">"\e[32m"</span></span><br><span class="line">    <span class="built_in">local</span> CLEAR=<span class="string">"\e[0m"</span></span><br><span class="line">    <span class="built_in">local</span> macaddr=`<span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> | tr <span class="string">'-'</span> <span class="string">':'</span>`</span><br><span class="line">    <span class="built_in">local</span> url=<span class="string">"https://macvendors.co/api/<span class="variable">$&#123;macaddr&#125;</span>"</span></span><br><span class="line">    <span class="built_in">local</span> dash=<span class="string">'-'</span></span><br><span class="line">    len_mac=$(<span class="built_in">echo</span> $(<span class="built_in">echo</span> <span class="variable">$&#123;macaddr&#125;</span> | wc -c) - 1 | bc)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> `seq <span class="variable">$&#123;len_mac&#125;</span>`; <span class="keyword">do</span> dash=<span class="string">"<span class="variable">$dash</span>-"</span>; <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">"<span class="variable">$&#123;GREEN&#125;</span>/*------&lt;&lt; <span class="variable">$&#123;macaddr&#125;</span> &gt;&gt;-------*/<span class="variable">$&#123;CLEAR&#125;</span>"</span></span><br><span class="line">    parse <span class="variable">$&#123;url&#125;</span></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">"<span class="variable">$&#123;GREEN&#125;</span>/*---------<span class="variable">$&#123;dash&#125;</span>----------*/<span class="variable">$&#123;CLEAR&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">parse</span></span>()&#123;</span><br><span class="line">    <span class="built_in">local</span> url=<span class="string">"<span class="variable">$&#123;1&#125;</span>"</span></span><br><span class="line">    parse_raw=`curl --fail --silent --show-error <span class="variable">$&#123;url&#125;</span>`</span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$&#123;parse_raw&#125;</span> | python3 -m json.tool</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://nmap.org/" target="_blank" rel="noopener">namp</a> # nmap官方网站</li>
+<li><a href="https://command-not-found.com/" target="_blank" rel="noopener">command not found</a> # 覆盖主流的发行版，命令找不到时，可查找相应安装命令</li>
+<li><a href="https://www.speedguide.net/port.php" target="_blank" rel="noopener">port check</a>  # 查找端口用途,有详细的罗列信息</li>
+<li><a href="https://academy.hackthebox.com/module/19" target="_blank" rel="noopener">NETWORK ENUMERATION WITH NMAP</a> # 学习nmap基本知识与实战</li>
+<li><a href="https://codeantenna.com/a/28vYpBDFkT" target="_blank" rel="noopener">nmap攻击技术原理简述</a>  # nmap原理的重要参考内容</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/offensive/" rel="tag"># offensive</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/12/31/rhce/" rel="next" title="rhce 8.0 面向考试题解">
+                <i class="fa fa-chevron-left"></i> rhce 8.0 面向考试题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">2.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-简介"><span class="nav-number">2.1.</span> <span class="nav-text">nmap 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是nmap"><span class="nav-number">2.1.1.</span> <span class="nav-text">什么是nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap-工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">nmap 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何使用nmap"><span class="nav-number">2.2.1.</span> <span class="nav-text">如何使用nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">2.2.2.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描"><span class="nav-number">2.2.3.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统探测"><span class="nav-number">2.2.4.</span> <span class="nav-text">操作系统探测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙-IDS规避"><span class="nav-number">2.2.5.</span> <span class="nav-text">防火墙/IDS规避</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSE-脚本引擎"><span class="nav-number">2.2.6.</span> <span class="nav-text">NSE 脚本引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结使用"><span class="nav-number">2.3.</span> <span class="nav-text">总结使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap-帮助页面"><span class="nav-number">2.3.1.</span> <span class="nav-text">nmap 帮助页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实用命令总结"><span class="nav-number">2.3.2.</span> <span class="nav-text">实用命令总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">3.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">154k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">4:17</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+
+ <script async src="//dn-lbstatics.gbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script> 
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
